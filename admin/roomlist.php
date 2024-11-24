@@ -16,6 +16,7 @@
             </div>
         </div>
     </div>
+    <div class="modal-container"></div>
     <div class="row">
         <div class="col-12">
             <div class="card p-4">
@@ -52,7 +53,7 @@
                                         $roomTypeList = $roomObj->fetchroomType();
                                         foreach ($roomTypeList as $rmt) {
                                     ?>
-                                    <option value="<?= $rmt['room_code'] ?>"><?= $rmt['room_code'] ?></option>
+                                    <option value="<?= $rmt['type_id'] ?>"><?= $rmt['room_type'] ?></option>
                                     <?php
                                     }
                                 ?>

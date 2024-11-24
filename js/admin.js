@@ -120,6 +120,10 @@ $(document).ready(function () {
         $("#staticBackdropedit").modal("show"); // Show the modal
         $("#staticBackdropedit").attr("data-id", roomId);
 
+        $.when(fetchRoomType(), fetchroomlistRecord(roomId)).done(function () {
+          $("#staticBackdropedit").modal("show");
+        });
+
         // Event listener for the add product form submission
         $("#form-edit-room").on("submit", function (e) {
           e.preventDefault(); // Prevent default form submission
@@ -317,8 +321,29 @@ $(document).ready(function () {
   }
 
 
-  // Function to fetch product categories
-  function fetchroomType() {
+
+  function fetchRoomType() {
+    $.ajax({
+      url: "../admin/roomlist/fetch-roomtype.php",
+      type: "GET",
+      dataType: "json",
+      success: function (data) {
+          $("#room-type").empty().append('<option value="">--Select--</option>');
+          $.each(data, function (index, roomType) {
+              $("#room-type").append(
+                  $("<option>", { value: roomType.id, text: roomType.name })
+              );
+          });
+      },
+      error: function (xhr, status, error) {
+          console.error("Failed to fetch room types:", error);
+          alert("Error fetching room types. Please try again.");
+      },
+    });
+  }
+
+  // Function to fetch room type
+  function fetchroomType(){
     $.ajax({
       url: "../admin/roomlist/fetch-roomtype.php", // URL for fetching categories
       type: "GET", // Use GET request
@@ -328,15 +353,19 @@ $(document).ready(function () {
         $("#room-type").empty().append('<option value="">--Select--</option>');
 
         // Append each category to the select dropdown
-        $.each(data, function (index, roomtype) {
+        $.each(data, function (index, room) {
           $("#room-type").append(
             $("<option>", {
-              value: roomtype.id, // Value attribute
-              text: roomtype.room_code, // Displayed text
+              value: room.type_id, // Value attribute
+              text: room.room_type, // Displayed text
             })
           );
         });
       },
+      error: function (xhr, status, error) {
+        console.error("Error fetching product:", error);
+        alert('Failed to fetch roomtype.');
+      }
     });
   }
 
@@ -347,8 +376,13 @@ $(document).ready(function () {
       dataType: "json", // Expect JSON response
       success: function (room) {
         $("#room-name").val(room.room_name); // val(name of var initialized within fetch-room.php  .   refers to room.class.php public var)
-        $("#room-type").val(room.room_type); //
+        $("#room-type").val(room.room_type).trigger("change"); //
       },
+
+      error: function (xhr, status, error) {
+        alert('Failed to fetch roomlist.');
+        console.error("Error fetching product:", status, error);
+      }
     });
   }
 

@@ -1,22 +1,22 @@
 <?php 
-require_once('../classes/room.class.php');
+// require_once('../classes/room.class.php');
 
-$roomObj = new Room();
-if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    if (isset($_GET['id'])) {
-        $id = $_GET['id'];
-        $record = $roomObj->fetchRoomName($id);
-        if (!empty($record)) {
-            $roomname = $record['room_name'];
-        } else {
-            echo 'No product found (GET)';
-            exit;
-        }
-    } else {
-        echo 'No product found(Noset GET)';
-        exit;
-    }
-}
+// $roomObj = new Room();
+// if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+//     if (isset($_GET['id'])) {
+//         $id = $_GET['id'];
+//         $record = $roomObj->fetchRoomName($id);
+//         if (!empty($record)) {
+//             $roomname = $record['room_name'];
+//         } else {
+//             echo 'No product found (GET)';
+//             exit;
+//         }
+//     } else {
+//         echo 'No product found(Noset GET)';
+//         exit;
+//     }
+// } <?= $roomname >
 ?>
 
 <!-- Modal -->
@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="staticBackdropLabel">Edit Room: <?= $roomname ?></h5>
+        <h5 class="modal-title" id="staticBackdropLabel">Edit Room: </h5>
         <button
           type="button"
           class="btn-close"
@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             Close
           </button>
           <button type="submit" class="btn btn-primary brand-bg-color">
-            update Product
+            Update Room
           </button>
         </div>
       </form>

@@ -8,6 +8,9 @@ class Room
 
     public $room_code = '';
 
+
+    //room_list
+    public $room_id = '';
     public $room_name = '';
     public $room_type = '';
     public $room_no = '';
@@ -134,6 +137,16 @@ INNER JOIN room_type rt ON r.room_type = rt.room_code;
         return $query->execute();
     }
     
+    function editRoom()
+    {
+        $sql = "UPDATE room_list SET room_name = :room_name, room_type = :room_type WHERE id = :room_id;";
+        $query = $this->db->connect()->prepare($sql);   
+        $query->bindParam(':room_name', $this->room_name);
+        $query->bindParam(':room_type', $this->room_type);
+        $query->bindParam(':room_id', $this->room_id);
+        return $query->execute();
+    }
+
     //fetch room list record
     function fetchroomlistRecord($recordID)
     {
@@ -195,9 +208,10 @@ INNER JOIN room_type rt ON r.room_type = rt.room_code;
         return $data;
     }
 
+    //fetch room type for dropdown
     public function fetchroomType()
     {
-        $sql = " SELECT room_code, room_description FROM room_type;";
+        $sql = " SELECT *, id as type_id, CONCAT(room_code,' ',room_description) as room_type FROM room_type;";
         $query = $this->db->connect()->prepare($sql);
         $data = null;
         if ($query->execute()) {
@@ -206,6 +220,7 @@ INNER JOIN room_type rt ON r.room_type = rt.room_code;
         return $data;
     }
 
+    //for filter dropdown, room_name in room list
     public function fetchroomList()
     {
         $sql = " SELECT * FROM room_list;";
