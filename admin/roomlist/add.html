@@ -18,14 +18,6 @@
               <label for="room-type" class="form-label">Category</label>
               <select class="form-select" id="room-type" name="room-type">
                   <option value="">--Select--</option>
-                    <?php
-                        $roomTypeList = $roomObj->fetchroomType();
-                        foreach ($roomTypeList as $rmt) {
-                    ?>
-                    <option value="<?= $rmt['type_id'] ?>"><?= $rmt['room_type'] ?></option>
-                    <?php
-                    }
-                    ?>
               </select>
               <div class="invalid-feedback"></div>
             </div>

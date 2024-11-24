@@ -399,7 +399,7 @@ $(document).ready(function () {
         });
       },
       error: function (xhr, status, error) {
-        console.error("Error fetching product:", error);
+        console.error("Error fetching room type:", error);
         alert('Failed to fetch roomtype.');
       }
     });
@@ -408,7 +408,7 @@ $(document).ready(function () {
   function fetchroomlistRecord(roomId) {
     $.ajax({
       url: `../admin/roomlist/fetch-room.php?id=${roomId}`, // URL for fetching categories
-      type: "POST", // Use GET request
+      type: "GET", // Use GET request
       dataType: "json", // Expect JSON response
       success: function (room) {
         $("#room-name").val(room.room_name); // val(name of var initialized within fetch-room.php  .   refers to room.class.php public var)
@@ -417,7 +417,7 @@ $(document).ready(function () {
 
       error: function (xhr, status, error) {
         alert('Failed to fetch roomlist.');
-        console.error("Error fetching product:", status, error);
+        console.error("Error fetching roomlist:", status, error);
       }
     });
   }
