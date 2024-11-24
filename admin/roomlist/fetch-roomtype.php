@@ -1,7 +1,7 @@
 <?php
     require_once('../classes/room.class.php');
 
-    $roomObj = new Product();
+    $roomObj = new Room();
 
     $room_type = $roomObj->fetchroomType();
 

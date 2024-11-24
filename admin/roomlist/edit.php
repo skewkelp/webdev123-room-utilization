@@ -1,11 +1,11 @@
 <?php 
 require_once('../classes/room.class.php');
 
-$productObj = new Product();
+$roomObj = new Room();
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if (isset($_GET['id'])) {
         $id = $_GET['id'];
-        $record = $productObj->fetchRecord($id);
+        $record = $roomObj->fetchRoomName($id);
         if (!empty($record)) {
             $roomname = $record['room_name'];
         } else {

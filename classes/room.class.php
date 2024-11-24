@@ -2,18 +2,15 @@
 
 require_once 'database.class.php';
 
-class Product
+class Room
 {
     public $id = '';
-    public $code = '';
-    public $name = '';
-    public $category_id = '';
-    public $price = '';
 
+    public $room_code = '';
 
     public $room_name = '';
-    public $room_no = '';
     public $room_type = '';
+    public $room_no = '';
 
     protected $db;
 
@@ -136,6 +133,20 @@ INNER JOIN room_type rt ON r.room_type = rt.room_code;
         $query->bindParam(':id', $this->id);
         return $query->execute();
     }
+    
+    //fetch room list record
+    function fetchroomlistRecord($recordID)
+    {
+        $sql = "SELECT * FROM room_list WHERE id = :recordID;";
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':recordID', $recordID);
+        $data = null;
+        if ($query->execute()) {
+            $data = $query->fetch();
+        }
+        return $data;
+    }
+
 
     function fetchRoomName($recordID)
     {
@@ -206,4 +217,5 @@ INNER JOIN room_type rt ON r.room_type = rt.room_code;
         return $data;
     }
 
+    
 }

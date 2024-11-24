@@ -90,7 +90,7 @@ $(document).ready(function () {
           editRoom(); // Call the function to load products
         });
 
-         $(".edit-room").on("click", function (e) {
+         $(".edit-room").off("submit").on("click", function (e) {
           e.preventDefault(); // Prevent default behavior
           editRoom(this.dataset.id); // Call the function to load products
         });
@@ -110,11 +110,11 @@ $(document).ready(function () {
   function editRoom(roomId) {
     $.ajax({
       type: "GET", // Use GET request
-      url: "../admin/roomlist/edit.php", // URL to get product data
+      url: "../admin/roomlist/edit.php?v=" + new Date().getTime(), // URL to get product data
       dataType: "html", // Expect JSON response
       success: function (view) {
-        
-        fetchRecord(roomId);
+        fetchroomType();
+        fetchroomlistRecord(roomId);
         // Assuming 'view' contains the new content you want to display
         $(".modal-container").empty().html(view); // Load the modal view
         $("#staticBackdropedit").modal("show"); // Show the modal
@@ -316,13 +316,11 @@ $(document).ready(function () {
     });
   }
 
-  
-
 
   // Function to fetch product categories
-  function fetchCategories() {
+  function fetchroomType() {
     $.ajax({
-      url: "../roomlist/fetch-roomtype.php", // URL for fetching categories
+      url: "../admin/roomlist/fetch-roomtype.php", // URL for fetching categories
       type: "GET", // Use GET request
       dataType: "json", // Expect JSON response
       success: function (data) {
@@ -334,7 +332,7 @@ $(document).ready(function () {
           $("#room-type").append(
             $("<option>", {
               value: roomtype.id, // Value attribute
-              text: roomtype.name, // Displayed text
+              text: roomtype.room_code, // Displayed text
             })
           );
         });
@@ -342,17 +340,19 @@ $(document).ready(function () {
     });
   }
 
-  function fetchRecord(productId) {
+  function fetchroomlistRecord(roomId) {
     $.ajax({
-      url: `../products/fetch-product.php?id=${productId}`, // URL for fetching categories
+      url: `../admin/roomlist/fetch-room.php?id=${roomId}`, // URL for fetching categories
       type: "POST", // Use GET request
       dataType: "json", // Expect JSON response
-      success: function (product) {
-        $("#code").val(product.code);
-        $("#name").val(product.name);
-        $("#category").val(product.category_id).trigger("change"); // Set the selected category
-        $("#price").val(product.price);
+      success: function (room) {
+        $("#room-name").val(room.room_name); // val(name of var initialized within fetch-room.php  .   refers to room.class.php public var)
+        $("#room-type").val(room.room_type); //
       },
     });
   }
+
+
+
+
 });

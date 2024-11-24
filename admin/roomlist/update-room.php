@@ -7,7 +7,7 @@ $roomid = $_GET['id'];
 $name = $category = $price = '';
 $nameErr = $categoryErr = $priceErr = '';
 
-$productObj = new Product();
+$roomObj = new Room();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $name = clean_input($_POST['name']);
@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (empty($name)) {
         $nameErr = 'Room name is required.';
-    } else if ($productObj->codeExists($name, $roomid)) { 
+    } else if ($roomObj->codeExists($name, $roomid)) { 
         $nameErr = 'Room name already exists';
     }
 
@@ -49,13 +49,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     if (empty($codeErr) && empty($nameErr) && empty($categoryErr) && empty($priceErr)) {
-        $productObj->id = $id;
-        $productObj->code = $code;
-        $productObj->name = $name;
-        $productObj->category_id = $category;
-        $productObj->price = $price;
+        $roomObj->id = $id;
+        $roomObj->code = $code;
+        $roomObj->name = $name;
+        $roomObj->category_id = $category;
+        $roomObj->price = $price;
 
-        if ($productObj->edit()) {
+        if ($roomObj->edit()) {
             echo json_encode(['status' => 'success']);
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Something went wrong when adding the new product.']);

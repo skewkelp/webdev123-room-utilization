@@ -22,7 +22,7 @@
                 <?php
                     require_once '../classes/room.class.php';
                     session_start();
-                    $roomObj = new Product();   
+                    $roomObj = new Room();   
                 ?>
                 <div class="d-flex justify-content-between align-items-center">
                     
