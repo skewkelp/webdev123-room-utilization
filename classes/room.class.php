@@ -59,7 +59,6 @@ class Room
         return $data;
     }
 
-
     function editRoom(){
         $sql = "UPDATE room_list SET room_name = :room_name, room_type = :room_type WHERE id = :room_id;";
         $query = $this->db->connect()->prepare($sql);   
