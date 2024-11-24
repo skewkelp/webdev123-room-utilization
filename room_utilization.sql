@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 17, 2024 at 09:32 PM
+-- Generation Time: Nov 24, 2024 at 10:09 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -33,7 +33,7 @@ CREATE TABLE `account` (
   `last_name` varchar(255) NOT NULL,
   `username` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `role` varchar(100) NOT NULL,
+  `role` enum('student','teacher','admin') NOT NULL,
   `is_staff` tinyint(1) NOT NULL DEFAULT 1,
   `is_admin` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -165,6 +165,7 @@ CREATE TABLE `room_availability` (
 
 CREATE TABLE `room_list` (
   `id` int(11) NOT NULL,
+  `room_name` varchar(50) NOT NULL,
   `room_type` varchar(255) NOT NULL,
   `room_no` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
@@ -175,9 +176,9 @@ CREATE TABLE `room_list` (
 -- Dumping data for table `room_list`
 --
 
-INSERT INTO `room_list` (`id`, `room_type`, `room_no`, `created_at`, `updated_at`) VALUES
-(1, 'LR', '1', '2024-11-17 14:09:21', '2024-11-17 14:09:21'),
-(2, 'LR', '2', '2024-11-17 14:09:56', '2024-11-17 14:09:56');
+INSERT INTO `room_list` (`id`, `room_name`, `room_type`, `room_no`, `created_at`, `updated_at`) VALUES
+(1, 'LR 1', 'LR', '1', '2024-11-17 14:09:21', '2024-11-17 14:09:21'),
+(2, 'LR 2', 'LR', '2', '2024-11-17 14:09:56', '2024-11-17 14:09:56');
 
 -- --------------------------------------------------------
 
@@ -317,6 +318,7 @@ ALTER TABLE `room_availability`
 ALTER TABLE `room_list`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `room_no` (`room_no`),
+  ADD UNIQUE KEY `room_name` (`room_name`),
   ADD KEY `roomtype_fk` (`room_type`);
 
 --
