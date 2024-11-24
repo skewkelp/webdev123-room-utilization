@@ -3,16 +3,16 @@
 require_once('../tools/functions.php');
 require_once('../classes/room.class.php');
 
+//room_list var
 $roomid = $_GET['id'];
-$name = $category = $price = '';
-$nameErr = $categoryErr = $priceErr = '';
+$name = $type = '';
+$nameErr = $typeErr = '';
 
 $roomObj = new Room();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $name = clean_input($_POST['name']);
     $category = clean_input($_POST['category']);
-    $price = clean_input($_POST['price']);
 
     if (empty($name)) {
         $nameErr = 'Room name is required.';
@@ -20,45 +20,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $nameErr = 'Room name already exists';
     }
 
-    if (empty($name)) {
-        $nameErr = 'Name is required.';
-    }
-
-    if (empty($category)) {
-        $categoryErr = 'Category is required.';
-    }
-
-    if (empty($price)) {
-        $priceErr = 'Price is required.';
-    } else if (!is_numeric($price)) {
-        $priceErr = 'Price should be a number.';
-    } else if ($price < 1) {
-        $priceErr = 'Price must be greater than 0.';
+    
+    if (empty($type)) {
+        $typeErr = 'Room type is required.';
     }
 
     // If there are validation errors, return them as JSON
-    if (!empty($codeErr) || !empty($nameErr) || !empty($categoryErr) || !empty($priceErr)) {
+    if (!empty($nameErr) || !empty($typeErr)) {
         echo json_encode([
             'status' => 'error',
-            'codeErr' => $codeErr,
             'nameErr' => $nameErr,
-            'categoryErr' => $categoryErr,
-            'priceErr' => $priceErr
+            'typeErr' => $typeErr
         ]);
         exit;
     }
 
-    if (empty($codeErr) && empty($nameErr) && empty($categoryErr) && empty($priceErr)) {
-        $roomObj->id = $id;
-        $roomObj->code = $code;
-        $roomObj->name = $name;
-        $roomObj->category_id = $category;
-        $roomObj->price = $price;
+    if (empty($nameErr) && empty($typeErr)) {
+        $roomObj->id = $roomid;
+        $roomObj->room_name = $name;
+        $roomObj->room_type = $type;
 
-        if ($roomObj->edit()) {
+        if ($roomObj->editRoom()) {
             echo json_encode(['status' => 'success']);
         } else {
-            echo json_encode(['status' => 'error', 'message' => 'Something went wrong when adding the new product.']);
+            echo json_encode(['status' => 'error', 'message' => 'Something went wrong when adding the new room.']);
         }
         exit;
     }

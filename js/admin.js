@@ -135,8 +135,48 @@ $(document).ready(function () {
     });
   }
 
-    // Function to save a new product
+  //updateRoom
   function updateRoom(roomId) {
+    $.ajax({
+      type: "POST", // Use POST request
+      url: `../products/update-room.php?id=${roomId}`, // URL for saving room
+      data: $("form").serialize(), // Serialize the form data for submission
+      dataType: "json", // Expect JSON response
+      success: function (response) {
+        if (response.status === "error") {
+          // Handle validation errors
+          if (response.nameErr) {
+            $("#room-name").addClass("is-invalid"); // Mark field as invalid
+            $("#room-name").next(".invalid-feedback").text(response.codeErr).show(); // Show error message
+          } else {
+            $("#room-name").removeClass("is-invalid"); // Remove invalid class if no error
+          }
+          
+          if (response.typeErr) {
+            $("#room-type").addClass("is-invalid");
+            $("#room-type")
+              .next(".invalid-feedback")
+              .text(response.categoryErr)
+              .show();
+          } else {
+            $("#room-type").removeClass("is-invalid");
+          }
+          
+        } else if (response.status === "success") {
+          // On success, hide modal and reset form
+          $("#staticBackdropedit").modal("hide");
+          $("form")[0].reset(); // Reset the form
+          // Optionally, reload products to show new entry
+          viewProducts();
+        }
+      },
+    });
+  }
+
+
+
+    // Function to save a new product
+  function updateProduct(productId) {
     $.ajax({
       type: "POST", // Use POST request
       url: `../products/update-product.php?id=${roomId}`, // URL for saving product

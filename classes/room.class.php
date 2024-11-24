@@ -125,17 +125,17 @@ INNER JOIN room_type rt ON r.room_type = rt.room_code;
 
     */
 
-    function edit()
-    {
-        $sql = "UPDATE product SET code = :code, name = :name, category_id = :category_id, price = :price WHERE id = :id;";
-        $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':code', $this->code);
-        $query->bindParam(':name', $this->name);
-        $query->bindParam(':category_id', $this->category_id);
-        $query->bindParam(':price', $this->price);
-        $query->bindParam(':id', $this->id);
-        return $query->execute();
-    }
+    // function edit()
+    // {
+    //     $sql = "UPDATE product SET code = :code, name = :name, category_id = :category_id, price = :price WHERE id = :id;";
+    //     $query = $this->db->connect()->prepare($sql);
+    //     $query->bindParam(':code', $this->code);
+    //     $query->bindParam(':name', $this->name);
+    //     $query->bindParam(':category_id', $this->category_id);
+    //     $query->bindParam(':price', $this->price);
+    //     $query->bindParam(':id', $this->id);
+    //     return $query->execute();
+    // }
     
     function editRoom()
     {
@@ -197,16 +197,16 @@ INNER JOIN room_type rt ON r.room_type = rt.room_code;
         return $count > 0;
     }
 
-    public function fetchCategory()
-    {
-        $sql = "SELECT * FROM category ORDER BY name ASC;";
-        $query = $this->db->connect()->prepare($sql);
-        $data = null;
-        if ($query->execute()) {
-            $data = $query->fetchAll(PDO::FETCH_ASSOC);
-        }
-        return $data;
-    }
+    // public function fetchCategory()
+    // {
+    //     $sql = "SELECT * FROM category ORDER BY name ASC;";
+    //     $query = $this->db->connect()->prepare($sql);
+    //     $data = null;
+    //     if ($query->execute()) {
+    //         $data = $query->fetchAll(PDO::FETCH_ASSOC);
+    //     }
+    //     return $data;
+    // }
 
     //fetch room type for dropdown
     public function fetchroomType()
