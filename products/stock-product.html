@@ -1,0 +1,80 @@
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Stock In/Out Product</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div> 
+        <form action="" method="post" id="form-stock-product">
+            <div class="modal-body">
+              
+                <div class="mb-2">
+                  <label for="quantity" class="form-label">Quantity</label>
+                  <input type="number" class="form-control" id="quantity" name="quantity">
+                  <div class="invalid-feedback"></div>
+                </div>              
+
+                <div class="mb-2">
+                  <label for="status">Status</label>
+                  <input type="radio" class="stocks" value="in" name="status" id="stockin"><label for="stockin">Stock In</label>
+                  <input type="radio" class="stocks" value="out" name="status" id="stockout"><label for="stockout">Stock Out</label>
+                  <div class="invalid-feedback"></div>
+                </div>   
+                          
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary brand-bg-color">Save Stock</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- <body>
+    <form action="?id=<?= $id ?>" method="post">
+        <h3>Stock In/Out for Product <?= $name ?></h3>
+      
+        <span class="error">* are required fields</span>
+        <br>
+
+        <label for="quantity">Quantity</label><span class="error">*</span>
+        <br>
+        <input type="number" name="quantity" id="quantity" value="<?= $quantity ?>">
+        <br>
+        <?php if (!empty($quantityErr)): ?>
+            <span class="error"><?= $quantityErr ?></span>
+            <br>
+        <?php endif; ?>
+
+        <label for="">Status</label><span class="error">*</span>
+        <input type="radio" class="stocks" value="in" name="status" id="stockin" <?= $status == 'in' ? 'checked' : '' ?>><label for="stockin">Stock In</label>
+        <input type="radio" class="stocks" value="out" name="status" id="stockout" <?= $status == 'out' ? 'checked' : '' ?>><label for="stockout">Stock Out</label>
+        <br>
+        <?php if (!empty($statusErr)): ?>
+            <span class="error"><?= $statusErr ?></span>
+            <br>
+        <?php endif; ?>
+
+        <div id="reason" class="<?= $status == 'out' ? '' : 'd-none' ?>">
+            <label for="reason">Reason</label><span class="error">*</span>
+            <br>
+            <textarea name="reason" id="reason" cols="30"><?= $reason ?></textarea>
+            <br>
+            <?php if (!empty($reasonErr)): ?>
+                <span class="error"><?= $reasonErr ?></span>
+                <br>
+            <?php endif; ?>
+        </div>
+
+        <input type="submit" value="Save Stocks">
+    </form>
+
+    <script src="./stocks.js"></script>
+</body> 
+
+-->

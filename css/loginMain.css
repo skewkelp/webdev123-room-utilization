@@ -1,0 +1,109 @@
+*{
+    margin: 0;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+a{
+    text-decoration: none;
+    color: black;
+}
+
+h1{
+    font-size: 24px;
+    color: rgba(44, 59, 20, 1);
+}h2{
+    font-size: 20px;
+}
+
+.blabel{
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.b2{
+    font-weight: bold;
+    font-size: 18px;
+}
+  
+.input-Container{
+    display: flex;
+    align-items: start;
+    flex-direction: column;
+}
+
+.text-danger{
+    color: red;
+}
+
+
+body{
+    background: url(img/bckg_login.png) center / cover no-repeat;
+    background-size: 80%;
+    background-color: rgba(44, 59, 20);
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    display: flex;
+}
+
+body::before{
+    content: ""; /* Necessary for the pseudo-element */
+    position: absolute; /* Cover the entire body */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(44, 59, 20, 1);
+    z-index: 1; 
+    opacity: 0.6; 
+}
+
+
+
+.form{
+    height: 520px;
+    width: 368px;
+    z-index: 2;
+    flex-direction: column;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 60px 20px 40px 20px;
+
+    background-color: #FCFAFA;
+    border-radius: 24px;
+}
+
+
+.input-container{
+    width: 100%;
+    display: flex;
+    align-items: start;
+    flex-direction: column; 
+}
+.input{
+    background-color: #EBE8E8;
+    border: 1px #BBBBBB solid;
+    border-radius: 4px;
+    height: 27px;
+    width: 100%;
+  }.input::placeholder{
+    color: #BBBBBB;
+  }
+
+.buttonContinue{
+    background-color: #2C3B14;
+    color: white;
+    padding: 10px 30px;
+    width: 100%;
+}.createAccount{
+    width: 60%;
+}
+
+.text-link{
+    color: black;
+    text-decoration: none;
+    font: 16px;
+}
