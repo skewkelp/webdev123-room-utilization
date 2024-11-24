@@ -329,7 +329,7 @@ $(document).ready(function () {
   // }
 
 
-  //test
+  //test, test1
 
   // Function to save a new room
   function saveRoom(){
