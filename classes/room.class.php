@@ -22,6 +22,18 @@ class Room
         $this->db = new Database();
     }
 
+
+    function addRoom()
+    {
+        $sql = "INSERT INTO room_list (room_name, room_type) VALUES (:room_name, :room_type);";
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':room_name', $this->room_name);
+        $query->bindParam(':room_type', $this->room_type);
+        
+        return $query->execute();
+    }
+
+
     function add()
     {
         $sql = "INSERT INTO product (code, name, category_id, price) VALUES (:code, :name, :category_id, :price);";
@@ -181,14 +193,14 @@ INNER JOIN room_type rt ON r.room_type = rt.room_code;
         return $query->execute();
     }
 
-    function codeExists($code, $excludeID = null)
+    function roomnameExists($room_name, $excludeID = null)
     {
-        $sql = "SELECT COUNT(*) FROM product WHERE code = :code";
+        $sql = "SELECT COUNT(*) FROM room_list WHERE room_name = :room_name";
         if ($excludeID) {
             $sql .= " AND id != :excludeID";
         }
         $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':code', $code);
+        $query->bindParam(':room_name', $room_name);
         if ($excludeID) {
             $query->bindParam(':excludeID', $excludeID);
         }
@@ -196,6 +208,22 @@ INNER JOIN room_type rt ON r.room_type = rt.room_code;
         $count = $query->fetchColumn();
         return $count > 0;
     }
+
+    // function codeExists($code, $excludeID = null)
+    // {
+    //     $sql = "SELECT COUNT(*) FROM product WHERE code = :code";
+    //     if ($excludeID) {
+    //         $sql .= " AND id != :excludeID";
+    //     }
+    //     $query = $this->db->connect()->prepare($sql);
+    //     $query->bindParam(':code', $code);
+    //     if ($excludeID) {
+    //         $query->bindParam(':excludeID', $excludeID);
+    //     }
+    //     $query->execute();
+    //     $count = $query->fetchColumn();
+    //     return $count > 0;
+    // }
 
     // public function fetchCategory()
     // {

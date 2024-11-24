@@ -16,12 +16,12 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
     if(empty($name)){
         $nameErr = 'Room name is required.';
-    } else if ($roomObj->codeExists($name)){
+    } else if ($roomObj->roomnameExists($name)){
         $nameErr = 'Room name already exists.';
     }
 
-    if(empty($room_type)){
-        $room_typeErr = 'Category is required.';
+    if(empty($type)){
+        $typeErr = 'Room type is required.';
     }
 
     // If there are validation errors, return them as JSON
@@ -34,12 +34,12 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
         exit;
     }
 
-    if(empty($room_nameErr) && empty($room_typeErr)){
+    if(empty($nameErr) && empty($typeErr)){
         $roomObj->room_name = $name;
         $roomObj->room_type = $type;
     
 
-        if($roomObj->add()){
+        if($roomObj->addRoom()){
             echo json_encode(['status' => 'success']);
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Something went wrong when adding the new room.']);

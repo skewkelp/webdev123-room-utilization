@@ -329,27 +329,27 @@ $(document).ready(function () {
   // }
 
   // Function to save a new room
-  function saveRoom() {
+  function saveRoom(){
     $.ajax({
       type: "POST", // Use POST request
-      url: "../products/save-room.php", // URL for saving room
+      url: "../admin/roomlist/save-room.php", // URL for saving room
       data: $("form").serialize(), // Serialize the form data for submission
       dataType: "json", // Expect JSON response
       success: function (response) {
         if (response.status === "error") {
           // Handle validation errors
-          if (response.codeErr) {
+          if (response.nameErr){
             $("#room-name").addClass("is-invalid"); // Mark field as invalid
-            $("#room-name").next(".invalid-feedback").text(response.codeErr).show(); // Show error message
+            $("#room-name").next(".invalid-feedback").text(response.nameErr).show(); // Show error message
           } else {
             $("#room-name").removeClass("is-invalid"); // Remove invalid class if no error
           }
           
-          if (response.categoryErr) {
+          if (response.typeErr) {
             $("#room-type").addClass("is-invalid");
             $("#room-type")
               .next(".invalid-feedback")
-              .text(response.categoryErr)
+              .text(response.typeErr)
               .show();
           } else {
             $("#room-type").removeClass("is-invalid");
@@ -363,6 +363,11 @@ $(document).ready(function () {
           viewroomList();
         }
       },
+      error: function (xhr, status, error) {
+        console.error("Error saving php room:", error);
+        alert('Failed to load save room.php.');
+      }
+
     });
   }
 
