@@ -208,8 +208,8 @@ $(document).ready(function () {
 				$.each(data, function (index, room) {
 				$("#room-type").append(
 					$("<option>", {
-					value: room.type_id, // Value attribute
-					text: room.room_type // Displayed text
+						value: room.type_id, // Value attribute
+						text: room.room_type // Displayed text
 					})
 				);
 				});
