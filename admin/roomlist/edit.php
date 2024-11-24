@@ -43,6 +43,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
       </div>
       <form action="" method="post" id="form-edit-room">
         <div class="modal-body">
+
+          <div class="mb-2">
+            <label for="room-name" class="form-label">Room name:</label>
+            <input type="text" class="form-control" id="room-name" name="room-name" />
+            <div class="invalid-feedback"></div>
+          </div>
+
           <div class="mb-2">
             <label for="room-type" class="form-label">Room type:</label>
             <select class="form-select" id="room-type" name="room-type">
@@ -51,11 +58,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             <div class="invalid-feedback"></div>
           </div>
 
-          <div class="mb-2">
-            <label for="room-code" class="form-label">Room code:</label>
-            <input type="text" class="form-control" id="room-code" name="room-code" />
-            <div class="invalid-feedback"></div>
-          </div>
         </div>
 
         <div class="modal-footer">

@@ -22,7 +22,7 @@
                 <?php
                     require_once '../classes/room.class.php';
                     session_start();
-                    $roomObj = new Product();
+                    $roomObj = new Product();   
                 ?>
                 <div class="d-flex justify-content-between align-items-center">
                     
@@ -107,6 +107,7 @@
                                             <a href="" class="btn edit-room" data-id="<?= $arr['id'] ?>">Edit</a>
                                             <!-- <a href="../admin/roomstatus.php?id=<= $arr['id'] ?>" class="btn room-status">Status</a>
                                             <a href="" class="btn edit-product" data-id="<= $arr['id'] ?>">Edit</a> -->
+                                            <!-- data-id="<= $arr['id'] ?>" -->
                                         </td>
                                     </tr>
                                 <?php

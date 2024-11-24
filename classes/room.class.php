@@ -10,6 +10,7 @@ class Product
     public $category_id = '';
     public $price = '';
 
+
     public $room_name = '';
     public $room_no = '';
     public $room_type = '';
@@ -58,7 +59,7 @@ class Product
 
     function showAllrooms(){
     $sql = "SELECT 
-            CONCAT(r.room_type, ' ', r.room_no) AS room_name,
+            r.id, room_name,
             CONCAT(rt.room_code, '-', rt.room_description) AS room_details
         FROM room_list r
         INNER JOIN room_type rt ON r.room_type = rt.room_code
@@ -66,6 +67,18 @@ class Product
         AND (:room_type = '' OR rt.room_code = :room_type);
     ";
     
+
+    /*//WITH ROOM TYPE ROOM NO
+    $sql = "SELECT 
+            CONCAT(r.room_type, ' ', r.room_no) AS room_name,
+            CONCAT(rt.room_code, '-', rt.room_description) AS room_details
+        FROM room_list r
+        INNER JOIN room_type rt ON r.room_type = rt.room_code
+        WHERE (CONCAT(r.room_type, ' ', r.room_no) LIKE CONCAT('%', :room_name, '%')) 
+        AND (:room_type = '' OR rt.room_code = :room_type);
+    ";
+
+    */
     $query = $this->db->connect()->prepare($sql);
     $query->bindParam(':room_name', $this->room_name);
     $query->bindParam(':room_type', $this->room_type);
@@ -126,7 +139,7 @@ INNER JOIN room_type rt ON r.room_type = rt.room_code;
 
     function fetchRoomName($recordID)
     {
-        $sql = "SELECT room_type, room_no FROM room_list WHERE id = :recordID;";
+        $sql = "SELECT room_name FROM room_list WHERE id = :recordID;";
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':recordID', $recordID);
         $data = null;

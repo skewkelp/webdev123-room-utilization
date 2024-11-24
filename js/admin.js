@@ -92,7 +92,7 @@ $(document).ready(function () {
 
          $(".edit-room").on("click", function (e) {
           e.preventDefault(); // Prevent default behavior
-          editRoom(); // Call the function to load products
+          editRoom(this.dataset.id); // Call the function to load products
         });
       
       },
@@ -106,17 +106,14 @@ $(document).ready(function () {
   });
 
   
-
-
-
   // Function to show the add product modal
   function editRoom(roomId) {
     $.ajax({
       type: "GET", // Use GET request
-      url: "../roomlist/edit.php", // URL to get product data
+      url: "../admin/roomlist/edit.php", // URL to get product data
       dataType: "html", // Expect JSON response
       success: function (view) {
-        fetchCategories(); // Load categories for the select input
+        
         fetchRecord(roomId);
         // Assuming 'view' contains the new content you want to display
         $(".modal-container").empty().html(view); // Load the modal view
