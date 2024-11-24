@@ -175,7 +175,7 @@ $(document).ready(function () {
 	function editRoom(roomId) {
 		$.ajax({
 			type: "GET", // Use GET request
-			url: "../admin/roomlist/edit.php", // URL to get product data
+			url: "../admin/roomlist/edit.html", // URL to get product data
 			dataType: "html", // Expect JSON response
 			success: function (view) {
 				fetchroomType();
