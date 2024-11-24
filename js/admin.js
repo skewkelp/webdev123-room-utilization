@@ -80,6 +80,11 @@ $(document).ready(function () {
         $(".content-page").html(response); // Load the response into the content area
          // Call function to load the chart
 
+        $("#add-room").on("click", function (e) {
+          e.preventDefault(); // Prevent default behavior
+          addRoom(); // Call function to add product
+        });
+
         $(".room-status").on("click", function (e) {
           e.preventDefault(); // Prevent default behavior
           editRoom(); // Call the function to load products
@@ -90,11 +95,12 @@ $(document).ready(function () {
           editRoom(); // Call the function to load products
         });
 
-         $(".edit-room").off("submit").on("click", function (e) {
+        $(".edit-room").off("submit").on("click", function (e) {
           e.preventDefault(); // Prevent default behavior
           editRoom(this.dataset.id); // Call the function to load products
         });
-      
+        
+
       },
     });
   }
@@ -243,104 +249,138 @@ $(document).ready(function () {
     });
   }
 
-
-
-
-  
-
-  // Function to show the add product modal
-  function addProduct() {
+  //function to show the add room modal
+  function addRoom() {
     $.ajax({
       type: "GET", // Use GET request
-      url: "../products/add-product.html", // URL for add product view
+      url: "../admin/roomlist/add.html", // URL for add product view
       dataType: "html", // Expect HTML response
       success: function (view) {
         $(".modal-container").html(view); // Load the modal view
         $("#staticBackdrop").modal("show"); // Show the modal
 
-        fetchCategories(); // Load categories for the select input
+        fetchroomType(); // Load room type for the select input
 
         // Event listener for the add product form submission
-        $("#form-add-product").on("submit", function (e) {
+        $("#form-add-room").on("submit", function (e) {
           e.preventDefault(); // Prevent default form submission
-          saveProduct(); // Call function to save product
+          saveRoom(); // Call function to save product
         });
       },
     });
   }
 
-  // Function to save a new product
-  function saveProduct() {
+
+  // Function to show the add product modal
+  // function addProduct() {
+  //   $.ajax({
+  //     type: "GET", // Use GET request
+  //     url: "../products/add-product.html", // URL for add product view
+  //     dataType: "html", // Expect HTML response
+  //     success: function (view) {
+  //       $(".modal-container").html(view); // Load the modal view
+  //       $("#staticBackdrop").modal("show"); // Show the modal
+
+  //       fetchCategories(); // Load categories for the select input
+
+  //       // Event listener for the add product form submission
+  //       $("#form-add-product").on("submit", function (e) {
+  //         e.preventDefault(); // Prevent default form submission
+  //         saveProduct(); // Call function to save product
+  //       });
+  //     },
+  //   });
+  // }
+
+  // Function to save a new room
+  function saveRoom() {
     $.ajax({
       type: "POST", // Use POST request
-      url: "../products/add-product.php", // URL for saving product
+      url: "../products/save-room.php", // URL for saving room
       data: $("form").serialize(), // Serialize the form data for submission
       dataType: "json", // Expect JSON response
       success: function (response) {
         if (response.status === "error") {
           // Handle validation errors
           if (response.codeErr) {
-            $("#code").addClass("is-invalid"); // Mark field as invalid
-            $("#code").next(".invalid-feedback").text(response.codeErr).show(); // Show error message
+            $("#room-name").addClass("is-invalid"); // Mark field as invalid
+            $("#room-name").next(".invalid-feedback").text(response.codeErr).show(); // Show error message
           } else {
-            $("#code").removeClass("is-invalid"); // Remove invalid class if no error
+            $("#room-name").removeClass("is-invalid"); // Remove invalid class if no error
           }
-          if (response.nameErr) {
-            $("#name").addClass("is-invalid");
-            $("#name").next(".invalid-feedback").text(response.nameErr).show();
-          } else {
-            $("#name").removeClass("is-invalid");
-          }
+          
           if (response.categoryErr) {
-            $("#category").addClass("is-invalid");
-            $("#category")
+            $("#room-type").addClass("is-invalid");
+            $("#room-type")
               .next(".invalid-feedback")
               .text(response.categoryErr)
               .show();
           } else {
-            $("#category").removeClass("is-invalid");
+            $("#room-type").removeClass("is-invalid");
           }
-          if (response.priceErr) {
-            $("#price").addClass("is-invalid");
-            $("#price")
-              .next(".invalid-feedback")
-              .text(response.priceErr)
-              .show();
-          } else {
-            $("#price").removeClass("is-invalid");
-          }
+          
         } else if (response.status === "success") {
           // On success, hide modal and reset form
           $("#staticBackdrop").modal("hide");
           $("form")[0].reset(); // Reset the form
-          // Optionally, reload products to show new entry
-          viewProducts();
+          // Optionally, reload roomlist to show new entry
+          viewroomList();
         }
       },
     });
   }
 
 
-
-  function fetchRoomType() {
-    $.ajax({
-      url: "../admin/roomlist/fetch-roomtype.php",
-      type: "GET",
-      dataType: "json",
-      success: function (data) {
-          $("#room-type").empty().append('<option value="">--Select--</option>');
-          $.each(data, function (index, roomType) {
-              $("#room-type").append(
-                  $("<option>", { value: roomType.id, text: roomType.name })
-              );
-          });
-      },
-      error: function (xhr, status, error) {
-          console.error("Failed to fetch room types:", error);
-          alert("Error fetching room types. Please try again.");
-      },
-    });
-  }
+  // Function to save a new product
+  // function saveProduct() {
+  //   $.ajax({
+  //     type: "POST", // Use POST request
+  //     url: "../products/add-product.php", // URL for saving product
+  //     data: $("form").serialize(), // Serialize the form data for submission
+  //     dataType: "json", // Expect JSON response
+  //     success: function (response) {
+  //       if (response.status === "error") {
+  //         // Handle validation errors
+  //         if (response.codeErr) {
+  //           $("#code").addClass("is-invalid"); // Mark field as invalid
+  //           $("#code").next(".invalid-feedback").text(response.codeErr).show(); // Show error message
+  //         } else {
+  //           $("#code").removeClass("is-invalid"); // Remove invalid class if no error
+  //         }
+  //         if (response.nameErr) {
+  //           $("#name").addClass("is-invalid");
+  //           $("#name").next(".invalid-feedback").text(response.nameErr).show();
+  //         } else {
+  //           $("#name").removeClass("is-invalid");
+  //         }
+  //         if (response.categoryErr) {
+  //           $("#category").addClass("is-invalid");
+  //           $("#category")
+  //             .next(".invalid-feedback")
+  //             .text(response.categoryErr)
+  //             .show();
+  //         } else {
+  //           $("#category").removeClass("is-invalid");
+  //         }
+  //         if (response.priceErr) {
+  //           $("#price").addClass("is-invalid");
+  //           $("#price")
+  //             .next(".invalid-feedback")
+  //             .text(response.priceErr)
+  //             .show();
+  //         } else {
+  //           $("#price").removeClass("is-invalid");
+  //         }
+  //       } else if (response.status === "success") {
+  //         // On success, hide modal and reset form
+  //         $("#staticBackdrop").modal("hide");
+  //         $("form")[0].reset(); // Reset the form
+  //         // Optionally, reload products to show new entry
+  //         viewProducts();
+  //       }
+  //     },
+  //   });
+  // }
 
   // Function to fetch room type
   function fetchroomType(){
@@ -357,7 +397,7 @@ $(document).ready(function () {
           $("#room-type").append(
             $("<option>", {
               value: room.type_id, // Value attribute
-              text: room.room_type, // Displayed text
+              text: room.room_type // Displayed text
             })
           );
         });

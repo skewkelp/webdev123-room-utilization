@@ -1,0 +1,41 @@
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Add Room</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div> 
+        <form action="" method="post" id="form-add-room">
+          <div class="modal-body">
+            <div class="mb-2">
+              <label for="room-name" class="form-label">Name</label>
+              <input type="text" class="form-control" id="room-name" name="room-name">
+              <div class="invalid-feedback"></div>
+            </div>
+        
+            <div class="mb-2">
+              <label for="room-type" class="form-label">Category</label>
+              <select class="form-select" id="room-type" name="room-type">
+                  <option value="">--Select--</option>
+                    <?php
+                        $roomTypeList = $roomObj->fetchroomType();
+                        foreach ($roomTypeList as $rmt) {
+                    ?>
+                    <option value="<?= $rmt['type_id'] ?>"><?= $rmt['room_type'] ?></option>
+                    <?php
+                    }
+                    ?>
+              </select>
+              <div class="invalid-feedback"></div>
+            </div>
+                      
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary brand-bg-color">Save Product</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>

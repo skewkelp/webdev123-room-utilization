@@ -1,7 +1,7 @@
 <?php
 
 require_once('../tools/functions.php');
-require_once('../classes/product.class.php');
+require_once('../classes/room.class.php');
 
 $roomid = $_GET['id'];
 $name = $category = $price = '';

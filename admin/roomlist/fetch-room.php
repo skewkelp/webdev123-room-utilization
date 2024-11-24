@@ -1,5 +1,5 @@
 <?php
-require_once('../classes/product.class.php');
+require_once('../classes/room.class.php');
 
 $roomObj = new Room();
 $room_id = $_GET['id'];
