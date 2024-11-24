@@ -126,10 +126,6 @@ $(document).ready(function () {
         $("#staticBackdropedit").modal("show"); // Show the modal
         $("#staticBackdropedit").attr("data-id", roomId);
 
-        $.when(fetchRoomType(), fetchroomlistRecord(roomId)).done(function () {
-          $("#staticBackdropedit").modal("show");
-        });
-
         // Event listener for the add product form submission
         $("#form-edit-room").on("submit", function (e) {
           e.preventDefault(); // Prevent default form submission
