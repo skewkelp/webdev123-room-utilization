@@ -501,7 +501,9 @@ a.nav-link{
 .card-header .dropdown-toggle::after {
   display: none !important; /* Hide the arrow */
 }
+/*
 
+*/
 .equal-height {
   display: flex;
   flex-direction: column;
