@@ -9,33 +9,33 @@ $(document).ready(function () {
 		window.history.pushState({ path: url }, "", url); // Update the browser's URL without reloading
 	});
 
-  //burger-sidebar Event Listener
-  $("#burger").on("click", function (e) {
-    e.preventDefault(); // Prevent default behavior
-		// Disable the button to prevent multiple clicks
-		$(this).prop('disabled', true);
+	//burger-sidebar Event Listener
+	$("#burger").on("click", function (e) {
+		e.preventDefault(); // Prevent default behavior
+			// Disable the button to prevent multiple clicks
+			$(this).prop('disabled', true);
 
-		// delay before logic
-		setTimeout(function() {
-			var sidebar = $("#sidebar");
-			var navLabel = $(".sidebar-button-text.ms-2");
-			var content = $(".content-page.px-3");
-	
-			if (sidebar.width() === 260) {
-				sidebar.addClass("collapsed");
-				navLabel.toggle();
-				content.css("margin-left", "70px");
-			} else {
-				sidebar.removeClass("collapsed");
-				navLabel.toggle();
-				content.css("margin-left", "260px");
-			}
-	
-			// Re-enable the button after the action
-			$("#burger").prop('disabled', false);
-		}, 300); //0.3 secs
+			// delay before logic
+			setTimeout(function() {
+				var sidebar = $("#sidebar");
+				var navLabel = $(".sidebar-button-text.ms-2");
+				var content = $(".content-page.px-3");
+		
+				if (sidebar.width() === 260) {
+					sidebar.addClass("collapsed");
+					navLabel.toggle();
+					content.css("margin-left", "70px");
+				} else {
+					sidebar.removeClass("collapsed");
+					navLabel.toggle();
+					content.css("margin-left", "260px");
+				}
+		
+				// Re-enable the button after the action
+				$("#burger").prop('disabled', false);
+			}, 300); //0.3 secs
 
-  });
+	});
 
 
   // Event listener for the dashboard link
