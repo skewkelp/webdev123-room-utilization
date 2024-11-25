@@ -11,8 +11,8 @@ $nameErr = $typeErr = '';
 $roomObj = new Room();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $name = clean_input($_POST['name']);
-    $category = clean_input($_POST['category']);
+    $name = clean_input($_POST['room-name']);
+    $type = clean_input($_POST['room-type']);
 
     if (empty($name)) {
         $nameErr = 'Room name is required.';
@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     if (empty($nameErr) && empty($typeErr)) {
-        $roomObj->id = $roomid;
+        $roomObj->room_id = $roomid;
         $roomObj->room_name = $name;
         $roomObj->room_type = $type;
 
