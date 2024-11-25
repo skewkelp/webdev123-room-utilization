@@ -1,7 +1,7 @@
 <?php
 
-require_once('../tools/functions.php');
-require_once('../classes/room.class.php');
+require_once('../../tools/functions.php');
+require_once('../../classes/room.class.php');
 
 //this var refers to room_
 $name = $type = '';
@@ -28,23 +28,34 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     if(!empty($nameErr) || !empty($typeErr)){
         echo json_encode([
             'status' => 'error',
-            'room_nameErr' => $Err,
-            'room_typeErr' => $typeErr
+            'nameErr' => $nameErr,
+            'typeErr' => $typeErr
         ]);
         exit;
     }
 
-    if(empty($nameErr) && empty($typeErr)){
-        $roomObj->room_name = $name;
-        $roomObj->room_type = $type;
+    $roomObj->room_name = $name;
+    $roomObj->room_type = $type;
     
-
-        if($roomObj->addRoom()){
-            echo json_encode(['status' => 'success']);
-        } else {
-            echo json_encode(['status' => 'error', 'message' => 'Something went wrong when adding the new room.']);
-        }
-        exit;
+    if($roomObj->addRoom()){
+        echo json_encode(['status' => 'success']);
+    } else {
+        echo json_encode(['status' => 'error', 'message' => 'Something went wrong when adding the new room.']);
     }
+    exit;
+
+    // if(empty($nameErr) && empty($typeErr)){
+    //     $roomObj->room_name = $name;
+    //     $roomObj->room_type = $type;
+
+    //     if($roomObj->addRoom()){
+    //         echo json_encode(['status' => 'success']);
+    //     } else {
+    //         echo json_encode(['status' => 'error', 'message' => 'Something went wrong when adding the new room.']);
+    //     }
+    //     exit;
+    // }
+    
 }
+
 ?>

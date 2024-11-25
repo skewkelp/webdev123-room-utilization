@@ -374,8 +374,8 @@ $(document).ready(function () {
         }
       },
       error: function (xhr, status, error) {
-        console.error("Error saving php room:", error);
         alert('Failed to load save room.php.');
+        console.error("Error saving php room:", status, error);
       }
 
     });

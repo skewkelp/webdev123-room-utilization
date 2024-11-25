@@ -70,7 +70,7 @@
                         </div>
                     </form>
                     <div class="page-title-right d-flex align-items-center">
-                        <a id="add-room" href="#" class="btn btn-primary brand-bg-color">Add Product</a>
+                        <a id="add-room" href="#" class="btn btn-primary brand-bg-color">Add Room</a>
                     </div>
                 </div>
                 

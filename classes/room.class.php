@@ -37,6 +37,7 @@ class Room
         $query->bindParam(':name', $this->name);
         $query->bindParam(':category_id', $this->category_id);
         $query->bindParam(':price', $this->price);
+        
         return $query->execute();
     }
 
