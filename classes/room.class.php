@@ -17,14 +17,11 @@ class Room
 
     protected $db;
 
-    function __construct()
-    {
+    function __construct(){
         $this->db = new Database();
     }
 
-
-    function addRoom()
-    {
+    function addRoom(){
         $sql = "INSERT INTO room_list (room_name, room_type) VALUES (:room_name, :room_type);";
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':room_name', $this->room_name);
@@ -33,9 +30,7 @@ class Room
         return $query->execute();
     }
 
-
-    function add()
-    {
+    function add(){
         $sql = "INSERT INTO product (code, name, category_id, price) VALUES (:code, :name, :category_id, :price);";
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':code', $this->code);
@@ -45,8 +40,7 @@ class Room
         return $query->execute();
     }
 
-    function showAll($keyword = '', $category = '')
-    {
+    function showAll($keyword = '', $category = ''){
         $sql = "SELECT p.code AS product_code, p.name AS product_name, c.name AS category_name, p.price, SUM(s.quantity) AS total_stocks, SUM(CASE WHEN s.status = 'IN' THEN s.quantity ELSE 0 END) AS available_stocks
                 FROM product p
                 INNER JOIN
@@ -68,7 +62,6 @@ class Room
         return $data;
     }
     
-
     function showAllrooms(){
     $sql = "SELECT 
             r.id, room_name,
@@ -78,8 +71,6 @@ class Room
         WHERE (CONCAT(r.room_type, ' ', r.room_no) LIKE CONCAT('%', :room_name, '%')) 
         AND (:room_type = '' OR rt.room_code = :room_type);
     ";
-    
-
     /*//WITH ROOM TYPE ROOM NO
     $sql = "SELECT 
             CONCAT(r.room_type, ' ', r.room_no) AS room_name,
@@ -96,7 +87,7 @@ class Room
     $query->bindParam(':room_type', $this->room_type);
     
     $data = null;
-    if ($query->execute()) {
+    if ($query->execute()){
         $data = $query->fetchAll();
     }
     
@@ -120,10 +111,8 @@ class Room
     INNER JOIN room_type rt ON r.room_type = rt.room_code;
     WHERE (r.room_no LIKE CONCAT('%', :keyword, '%') OR rt.room_description LIKE CONCAT('%', :keyword, '%'))
     AND (:category = '' OR rt.room_code = :category);
-    
     */
      
-
     /*
     roomname, roomtype
     SELECT CONCAT(room_type, room_no) as room_type 
@@ -149,8 +138,7 @@ INNER JOIN room_type rt ON r.room_type = rt.room_code;
     //     return $query->execute();
     // }
     
-    function editRoom()
-    {
+    function editRoom(){
         $sql = "UPDATE room_list SET room_name = :room_name, room_type = :room_type WHERE id = :room_id;";
         $query = $this->db->connect()->prepare($sql);   
         $query->bindParam(':room_name', $this->room_name);
@@ -160,8 +148,7 @@ INNER JOIN room_type rt ON r.room_type = rt.room_code;
     }
 
     //fetch room list record
-    function fetchroomlistRecord($recordID)
-    {
+    function fetchroomlistRecord($recordID){
         $sql = "SELECT * FROM room_list WHERE id = :recordID;";
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':recordID', $recordID);
@@ -173,8 +160,7 @@ INNER JOIN room_type rt ON r.room_type = rt.room_code;
     }
 
 
-    function fetchRoomName($recordID)
-    {
+    function fetchRoomName($recordID){
         $sql = "SELECT room_name FROM room_list WHERE id = :recordID;";
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':recordID', $recordID);
@@ -185,16 +171,14 @@ INNER JOIN room_type rt ON r.room_type = rt.room_code;
         return $data;
     }
 
-    function delete($recordID)
-    {
+    function delete($recordID){
         $sql = "DELETE FROM product WHERE id = :recordID;";
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':recordID', $recordID);
         return $query->execute();
     }
 
-    function roomnameExists($room_name, $excludeID = null)
-    {
+    function roomnameExists($room_name, $excludeID = null){
         $sql = "SELECT COUNT(*) FROM room_list WHERE room_name = :room_name";
         if ($excludeID) {
             $sql .= " AND id != :excludeID";
@@ -237,8 +221,7 @@ INNER JOIN room_type rt ON r.room_type = rt.room_code;
     // }
 
     //fetch room type for dropdown
-    public function fetchroomType()
-    {
+    public function fetchroomType(){
         $sql = " SELECT *, id as type_id, CONCAT(room_code,' ',room_description) as room_type FROM room_type;";
         $query = $this->db->connect()->prepare($sql);
         $data = null;
@@ -249,8 +232,7 @@ INNER JOIN room_type rt ON r.room_type = rt.room_code;
     }
 
     //for filter dropdown, room_name in room list
-    public function fetchroomList()
-    {
+    public function fetchroomList(){
         $sql = " SELECT * FROM room_list;";
         $query = $this->db->connect()->prepare($sql);
         $data = null;

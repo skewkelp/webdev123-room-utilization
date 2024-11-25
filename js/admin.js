@@ -17,7 +17,7 @@ $(document).ready(function () {
      $(this).prop('disabled', true);
 
      // delay before logic
-     setTimeout(function() {
+     setTimeout(function(){
          var sidebar = $("#sidebar");
          var navLabel = $(".sidebar-button-text.ms-2");
          var content = $(".content-page.px-3");
@@ -95,12 +95,19 @@ $(document).ready(function () {
           editRoom(); // Call the function to load products
         });
 
-        $(".edit-room").off("submit").on("click", function (e) {
+        $(".edit-room").on("click", function (e) {
           e.preventDefault(); // Prevent default behavior
-          editRoom(this.dataset.id); // Call the function to load products
+      
+          const button = $(this); // Reference to the clicked button
+          button.prop("disabled", true); // Disable the button
+      
+          // Call the AJAX function
+          editRoom(this.dataset.id).always(function() {
+              // Re-enable the button after the AJAX call completes
+              button.prop("disabled", false);
+          });
         });
         
-
       },
     });
   }
@@ -139,7 +146,7 @@ $(document).ready(function () {
   function updateRoom(roomId) {
     $.ajax({
       type: "POST", // Use POST request
-      url: `../products/update-room.php?id=${roomId}`, // URL for saving room
+      url: `../admin/roomlist/update-room.php?id=${roomId}`, // URL for saving room
       data: $("form").serialize(), // Serialize the form data for submission
       dataType: "json", // Expect JSON response
       success: function (response) {
@@ -440,7 +447,7 @@ $(document).ready(function () {
         $.each(data, function (index, room) {
           $("#room-type").append(
             $("<option>", {
-              value: room.room_co, // Value attribute
+              value: room.room_code, // Value attribute
               text: room.room_type // Displayed text
             })
           );
