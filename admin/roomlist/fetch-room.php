@@ -7,3 +7,4 @@ $room = $roomObj->fetchroomlistRecord($room_id);
 
 header('Content-Type: application/json');
 echo json_encode($room);
+?>
