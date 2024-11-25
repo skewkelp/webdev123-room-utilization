@@ -147,7 +147,7 @@ $(document).ready(function () {
           // Handle validation errors
           if (response.nameErr) {
             $("#room-name").addClass("is-invalid"); // Mark field as invalid
-            $("#room-name").next(".invalid-feedback").text(response.codeErr).show(); // Show error message
+            $("#room-name").next(".invalid-feedback").text(response.nameErr).show(); // Show error message
           } else {
             $("#room-name").removeClass("is-invalid"); // Remove invalid class if no error
           }
@@ -156,7 +156,7 @@ $(document).ready(function () {
             $("#room-type").addClass("is-invalid");
             $("#room-type")
               .next(".invalid-feedback")
-              .text(response.categoryErr)
+              .text(response.typeErr)
               .show();
           } else {
             $("#room-type").removeClass("is-invalid");
@@ -167,7 +167,7 @@ $(document).ready(function () {
           $("#staticBackdropedit").modal("hide");
           $("form")[0].reset(); // Reset the form
           // Optionally, reload products to show new entry
-          viewProducts();
+          viewroomList();
         }
       },
     });
@@ -440,7 +440,7 @@ $(document).ready(function () {
         $.each(data, function (index, room) {
           $("#room-type").append(
             $("<option>", {
-              value: room.type_id, // Value attribute
+              value: room.room_co, // Value attribute
               text: room.room_type // Displayed text
             })
           );
