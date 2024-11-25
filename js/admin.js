@@ -242,7 +242,7 @@ $(document).ready(function () {
 	function updateRoom(roomId) {
 		$.ajax({
 			type: "POST", // Use POST request
-			url: `../products/update-room.php?id=${roomId}`, // URL for saving room
+			url: `../admin/roomlist/update-room.php?id=${roomId}`, // URL for saving room
 			data: $("form").serialize(), // Serialize the form data for submission
 			dataType: "json", // Expect JSON response
 			success: function (response) {
