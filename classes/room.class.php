@@ -69,7 +69,8 @@ class Room
     }
 
     public function fetchroomType(){
-        $sql = " SELECT *, id as type_id, CONCAT(room_code,' ',room_description) as room_type FROM room_type;";
+        // $sql = " SELECT *, id as type_id, CONCAT(room_code,' ',room_description) as room_type FROM room_type;"; 
+        $sql = " SELECT * FROM room_type;"; 
         $query = $this->db->connect()->prepare($sql);
         $data = null;
         if ($query->execute()) {
