@@ -1,7 +1,7 @@
 <?php
 
-require_once('../tools/functions.php');
-require_once('../classes/room.class.php');
+require_once('../../tools/functions.php');
+require_once('../../classes/room.class.php');
 
 //room_list var
 $roomid = $_GET['id'];
@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (empty($name)) {
         $nameErr = 'Room name is required.';
-    } else if ($roomObj->codeExists($name, $roomid)) { 
+    } else if ($roomObj->roomnameExists($name, $roomid)) { 
         $nameErr = 'Room name already exists';
     }
 
