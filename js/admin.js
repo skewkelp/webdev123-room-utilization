@@ -94,7 +94,7 @@ $(document).ready(function () {
 					editRoom(); // Call the function to load products
 				});
 
-				$(".edit-room").off("submit").on("click", function (e) {
+				$(".edit-room").on("click", function (e) {
 					e.preventDefault(); // Prevent default behavior
 					editRoom(this.dataset.id); // Call the function to load products
 				});
