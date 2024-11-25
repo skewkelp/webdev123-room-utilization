@@ -208,8 +208,8 @@ $(document).ready(function () {
 				$.each(data, function (index, room) {
 				$("#room-type").append(
 					$("<option>", {
-						value: room.type_id, // Value attribute
-						text: room.room_type // Displayed text
+						value: room.room_code, // Value attribute
+						text: room.room_description // Displayed text
 					})
 				);
 				});
@@ -266,7 +266,6 @@ $(document).ready(function () {
 				}
 				
 				} else if (response.status === "success") {
-					alert('success');
 					// On success, hide modal and reset form
 					$("#staticBackdropedit").modal("hide");
 					$("form")[0].reset(); // Reset the form
