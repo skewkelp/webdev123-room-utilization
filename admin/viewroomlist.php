@@ -105,18 +105,16 @@
                                         <td class="text-nowrap">
                                             <a href="" class="btn room-schedule">Schedule</a>
                                             <a href="" class="btn room-status">Status</a>
-                                            <a href="" class="btn edit-room" data-id="<?= $arr['id'] ?>">Edit</a>
+                                            <a href="" class="btn admin edit-room" data-id="<?= $arr['id'] ?>">Edit</a>
                                             <!-- <a href="../admin/roomstatus.php?id=<= $arr['id'] ?>" class="btn room-status">Status</a>
                                             <a href="" class="btn edit-product" data-id="<= $arr['id'] ?>">Edit</a> -->
                                             <!-- data-id="<= $arr['id'] ?>" -->
                                         </td>
                                     </tr>
                                 <?php
-                                    $i++;
-                                    
+                                    $i++;  
                                 }
                                 ?>
-
                 
                             </tbody>
                         </table>

@@ -80,6 +80,17 @@ $(document).ready(function () {
         $(".content-page").html(response); // Load the response into the content area
          // Call function to load the chart
 
+        var table = $("#table-room-list").DataTable({
+          dom: "rtp", // Set DataTable options
+          pageLength: 10, // Default page length
+          ordering: false, // Disable ordering
+        });
+
+        // Bind custom input to DataTable search
+        $("#custom-search").on("keyup", function () {
+          table.search(this.value).draw(); // Search products based on input
+        });
+
         $("#add-room").on("click", function (e) {
           e.preventDefault(); // Prevent default behavior
           addRoom(); // Call function to add product
@@ -120,15 +131,10 @@ $(document).ready(function () {
       success: function (response) {
         $(".content-page").html(response); // Load the response into the content area
 
-        var table = $("#table-room-list").DataTable({
+        var table = $("#table-room-status").DataTable({
           dom: "rtp", // Set DataTable options
           pageLength: 10, // Default page length
           ordering: false, // Disable ordering
-        });
-
-        // Bind custom input to DataTable search
-        $("#custom-search").on("keyup", function () {
-          table.search(this.value).draw(); // Search products based on input
         });
 
         // Bind change event for category filter
@@ -138,23 +144,20 @@ $(document).ready(function () {
           }
         });
 
-
-
-
          // Call function to load the chart
          $("#add-room-status").on("click", function (e) {
            e.preventDefault(); // Prevent default behavior
-           // addRoom(); // Call function to add status
+           // addstatus(); // Call function to add status
          });
          
-         $(".room-schedule").on("click", function (e) {
-           e.preventDefault(); // Prevent default behavior
-          //  editRoom(); // Call the function to load schedule
-         });
+        $(".room-schedule").on("click", function (e) {
+          e.preventDefault(); // Prevent default behavior
+          //viewschedule(); // Call the function to view class schedule
+        });
 
         $(".room-status").on("click", function (e) {
           e.preventDefault(); // Prevent default behavior
-          // editRoom(); // Call the function to occupy or unoccupy a room
+          // statusChange(); // Call the function to occupy or unoccupy a room
         });
 
         $(".edit-room-status").on("click", function (e) {
@@ -164,7 +167,7 @@ $(document).ready(function () {
           button.prop("disabled", true); // Disable the button
       
           // Call the AJAX function
-          // editRoom(this.dataset.id).always(function() {
+          // editroomStatus(this.dataset.id).always(function() {
           //     // Re-enable the button after the AJAX call completes
           //     button.prop("disabled", false);
           // });

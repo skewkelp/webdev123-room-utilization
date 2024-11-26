@@ -59,17 +59,14 @@ class Room
     }
 
     function showAll($keyword = '', $category = ''){
-        $sql = "SELECT p.code AS product_code, p.name AS product_name, c.name AS category_name, p.price, SUM(s.quantity) AS total_stocks, SUM(CASE WHEN s.status = 'IN' THEN s.quantity ELSE 0 END) AS available_stocks
-                FROM product p
-                INNER JOIN
-                category c ON p.category_id = c.id
-                LEFT JOIN
-                stocks s ON p.id = s.product_id
-                GROUP BY
-                p.id, p.code, p.name, c.name, p.price
-                ORDER BY
-                p.name ASC;
-        ";
+        $sql = 
+            "SELECT p.*, c.name as category_name, SUM(IF(s.status='in', quantity, 0)) as stock_in, SUM(IF(s.status='out', quantity, 0)) as stock_out 
+            FROM product p INNER JOIN category c ON p.category_id = c.id LEFT JOIN stocks s ON p.id = s.product_id 
+            WHERE (p.code LIKE CONCAT('%', :keyword, '%') OR 
+            p.name LIKE CONCAT('%', :keyword, '%')) AND 
+            (c.id LIKE CONCAT('%', :category, '%')) 
+            GROUP BY p.id ORDER BY p.name ASC;"
+        ;
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':keyword', $keyword);    
         $query->bindParam(':category', $category);
@@ -80,19 +77,19 @@ class Room
         return $data;
     }
     
-    function showAllRooms() {
-
+    function showAllStatus($keyword = '', $fweek_day = '', $froom_name = '', $froom_type = '', $fsubject_code = '', $fsubject_type = '', $fsection_name = '', $fstart_time = '', $fend_time = '', $fteacher_name = '', $fstatus = '') {
         $sql = 
-            "SELECT 
+            "SELECT
+                cdt.id,
                 cda.week_day, 
                 rl.room_name, 
                 rl.room_type,
                 sd.subject_code, 
                 sd.subject_type,
-                cl.section_name, 
+                sec.section_name, 
                 ct.start_time, 
                 ct.end_time,
-                fl.fname,
+                CONCAT(fl.fname, ' ',fl.lname) AS faculty_name,
                 rs._status
             FROM 
                 class_day cda 
@@ -105,30 +102,61 @@ class Room
             LEFT JOIN 
                 subject_details sd ON cdt.subject_id = sd.id  
             LEFT JOIN 
-                class_list cl ON cdt.class_name = cl.section_name
+                section_details sec ON cdt.section_id = sec.id
             LEFT JOIN 
                 faculty_list fl ON cdt.teacher_assigned = fl.id
             RIGHT JOIN 
                 room_status rs ON rs.class_id = cdt.id 
                 AND rs.room_id = cdt.room_id 
 
-            WHERE cda.week_day LIKE 
+            WHERE
+            (
+                rl.room_name LIKE CONCAT('%', :keyword, '%') OR
+                rl.room_type LIKE CONCAT('%', :keyword, '%') OR
+                sd.subject_code LIKE CONCAT('%', :keyword, '%') OR
+                sd.subject_type LIKE CONCAT('%', :keyword, '%') OR
+                sec.section_name LIKE CONCAT('%', :keyword, '%') OR
+                ct.start_time LIKE CONCAT('%', :keyword, '%') OR
+                ct.end_time LIKE CONCAT('%', :keyword, '%') OR
+                fl.fname LIKE CONCAT('%', :keyword, '%') OR
+                rs._status LIKE CONCAT('%', :keyword, '%')
+            )AND(
+                cda.week_day LIKE CONCAT('%', :fweek_day, '%') AND
+                rl.room_name LIKE CONCAT('%', :froom_name, '%') AND
+                rl.room_type LIKE CONCAT('%', :froom_type, '%') AND
+                sd.subject_code LIKE CONCAT('%', :fsubject_code, '%') AND
+                sd.subject_type LIKE CONCAT('%', :fsubject_type, '%') AND
+                sec.section_name LIKE CONCAT('%', :fsection_name, '%') AND
+                ct.start_time LIKE CONCAT('%', :fstart_time, '%') AND
+                ct.end_time LIKE CONCAT('%', :fend_time, '%') AND
+                CONCAT(fl.fname, ' ',fl.lname) LIKE CONCAT('%', :fteacher_name, '%') AND
+                rs._status LIKE CONCAT('%', :fstatus, '%')
+            )
+    
         ;";
     
         // Prepare and execute the statement with PDO
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(':room_name', $this->room_name);
-        $stmt->bindParam(':room_type', $this->room_type);
-        $stmt->bindParam(':subject_code', $this->subject_code);
-        $stmt->bindParam(':section_name', $this->section_name);
-        $stmt->bindParam(':start_time', $this->start_time);
-        $stmt->bindParam(':end_time', $this->end_time);
-        $stmt->bindParam(':teacher_name', $this->teacher_assigned);
-        $stmt->execute();
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':keyword', $keyword);
+        $query->bindParam(':fweek_day', $fweek_day);
+        $query->bindParam(':froom_name', $froom_name);
+        $query->bindParam(':froom_type', $froom_type);
+        $query->bindParam(':fsubject_code', $fsubject_code);
+        $query->bindParam(':fsubject_type', $fsubject_type);
+        $query->bindParam(':fsection_name', $fsection_name);
+        $query->bindParam(':fstart_time', $fstart_time);
+        $query->bindParam(':fend_time', $fend_time);
+        $query->bindParam(':fteacher_name', $fteacher_name);
+        $query->bindParam(':fstatus', $fstatus);
     
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $data = null;
+        if ($query->execute()){
+            $data = $query->fetchAll();
+        }
+        return $data;
     }
 
+    
     // function showAllrooms(){
     // $sql = "SELECT ;
     // ";

@@ -207,7 +207,7 @@ body{
   font-size: var(--btn-font-size) !important;
 }
 
-.btn.edit-room{
+.btn.admin{
   background-color: var(--admin-btn-background-color);
 }
 
@@ -244,7 +244,7 @@ h1{
 
 th{
   color: var(--ct-table-color-state, var(--ct-table-color-type, var(--ct-table-color)));
-  text-align: center;
+  text-align: center !important;
   font-size: var(--th-font-size);
   font-weight: var(--th-font-weight);
   margin-top: var(--th-margin-top)!important;
@@ -252,7 +252,7 @@ th{
 }
 
 td{
-  text-align: center;
+  text-align: center !important;
   color: var(--ct-table-color-state, var(--ct-table-color-type, var(--ct-table-color)));
 }
 

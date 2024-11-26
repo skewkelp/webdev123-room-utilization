@@ -80,13 +80,15 @@
 
                 <div class="card-body p-1 pt-2">
                     <div class="table-responsive">
-                        <table class="table table-centered table-nowrap table-hover mb-0">
+                        <table id="table-room-status" class="table table-centered table-nowrap table-hover mb-0">
                             <thead>
                                 <tr>
                                     <th>ID</th>
                                     <th>Room Name</th>
                                     <th>Room Type</th>
                                     <th>Subject Code</th>
+                                    <th>Subject Type</th>
+                                    <th>Section Name</th>
                                     <th>Start Time</th>
                                     <th>End Time</th>
                                     <th>Teacher</th>
@@ -99,18 +101,25 @@
                                 
                             <?php
                                 $i = 1;
-                                $array = $roomObj->showAllrooms();
+                                $array = $roomObj->showAllStatus();
 
                                 foreach ($array as $arr) {
                                 ?>
                                     <tr>
                                         <td><?= $i ?></td>
                                         <td><?= $arr['room_name'] ?></td>
-                                        <td><?= $arr['room_details'] ?></td>
+                                        <td><?= $arr['room_type'] ?></td>
+                                        <td><?= $arr['subject_code'] ?></td>
+                                        <td><?= $arr['subject_type'] ?></td>
+                                        <td><?= $arr['section_name'] ?></td>
+                                        <td><?= $arr['start_time'] ?></td>
+                                        <td><?= $arr['end_time'] ?></td>
+                                        <td><?= $arr['faculty_name'] ?></td>
+                                        <td><?= $arr['_status'] ?></td>
                                         <td class="text-nowrap">
                                             <a href="" class="btn room-schedule">Schedule</a>
                                             <a href="" class="btn room-status">Occupy</a>
-                                            <a href="" class="btn edit-room-status" data-id="<?= $arr['id'] ?>">Edit</a>
+                                            <a href="" class="btn admin edit-room-status" data-id="<?= $arr['id'] ?>">Edit</a>
                                             <!-- <a href="../admin/roomstatus.php?id=<= $arr['id'] ?>" class="btn room-status">Status</a>
                                             <a href="" class="btn edit-product" data-id="<= $arr['id'] ?>">Edit</a> -->
                                             <!-- data-id="<= $arr['id'] ?>" -->

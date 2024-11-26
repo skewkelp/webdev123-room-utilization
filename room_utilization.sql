@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 26, 2024 at 03:05 PM
+-- Generation Time: Nov 27, 2024 at 12:39 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -95,7 +95,7 @@ INSERT INTO `class_day` (`id`, `week_day`, `class_id`) VALUES
 
 CREATE TABLE `class_details` (
   `id` int(11) NOT NULL,
-  `class_name` varchar(255) NOT NULL,
+  `section_id` int(11) NOT NULL,
   `room_id` int(11) NOT NULL,
   `subject_id` int(11) NOT NULL,
   `teacher_assigned` int(11) NOT NULL
@@ -105,35 +105,9 @@ CREATE TABLE `class_details` (
 -- Dumping data for table `class_details`
 --
 
-INSERT INTO `class_details` (`id`, `class_name`, `room_id`, `subject_id`, `teacher_assigned`) VALUES
-(8, 'CS1A', 1, 1, 1),
-(9, 'CS1A', 1, 2, 2);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `class_list`
---
-
-CREATE TABLE `class_list` (
-  `id` int(11) NOT NULL,
-  `section_name` varchar(255) NOT NULL,
-  `course` enum('BSCS','BSIT','ACT') NOT NULL,
-  `year_level` enum('1','2','3','4','5') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `class_list`
---
-
-INSERT INTO `class_list` (`id`, `section_name`, `course`, `year_level`) VALUES
-(1, 'CS1A', 'BSCS', '1'),
-(2, 'CS1B', 'BSCS', '1'),
-(3, 'CS1C', 'BSCS', '1'),
-(4, 'IT1A', 'BSIT', '1'),
-(5, 'IT1B', 'BSIT', '1'),
-(6, 'IT1C', 'BSIT', '1'),
-(7, 'ACT1A', 'ACT', '1');
+INSERT INTO `class_details` (`id`, `section_id`, `room_id`, `subject_id`, `teacher_assigned`) VALUES
+(8, 1, 1, 1, 1),
+(9, 1, 1, 2, 2);
 
 -- --------------------------------------------------------
 
@@ -270,6 +244,32 @@ INSERT INTO `room_type` (`id`, `room_description`, `room_code`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `section_details`
+--
+
+CREATE TABLE `section_details` (
+  `id` int(11) NOT NULL,
+  `section_name` varchar(255) NOT NULL,
+  `course` enum('BSCS','BSIT','ACT') NOT NULL,
+  `year_level` enum('1','2','3','4','5') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `section_details`
+--
+
+INSERT INTO `section_details` (`id`, `section_name`, `course`, `year_level`) VALUES
+(1, 'CS1A', 'BSCS', '1'),
+(2, 'CS1B', 'BSCS', '1'),
+(3, 'CS1C', 'BSCS', '1'),
+(4, 'IT1A', 'BSIT', '1'),
+(5, 'IT1B', 'BSIT', '1'),
+(6, 'IT1C', 'BSIT', '1'),
+(7, 'ACT1A', 'ACT', '1');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `status`
 --
 
@@ -367,15 +367,8 @@ ALTER TABLE `class_details`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `subject_id` (`subject_id`),
   ADD KEY `facultyid_fk` (`teacher_assigned`),
-  ADD KEY `classname_fk` (`class_name`),
-  ADD KEY `classroomid_fk` (`room_id`);
-
---
--- Indexes for table `class_list`
---
-ALTER TABLE `class_list`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `class_name` (`section_name`);
+  ADD KEY `classroomid_fk` (`room_id`),
+  ADD KEY `sectionid_fk` (`section_id`);
 
 --
 -- Indexes for table `class_time`
@@ -424,6 +417,13 @@ ALTER TABLE `room_status`
 ALTER TABLE `room_type`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `room_type` (`room_code`);
+
+--
+-- Indexes for table `section_details`
+--
+ALTER TABLE `section_details`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `class_name` (`section_name`);
 
 --
 -- Indexes for table `status`
@@ -475,12 +475,6 @@ ALTER TABLE `class_details`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
--- AUTO_INCREMENT for table `class_list`
---
-ALTER TABLE `class_list`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
-
---
 -- AUTO_INCREMENT for table `class_time`
 --
 ALTER TABLE `class_time`
@@ -517,6 +511,12 @@ ALTER TABLE `room_type`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT for table `section_details`
+--
+ALTER TABLE `section_details`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
 -- AUTO_INCREMENT for table `stocks`
 --
 ALTER TABLE `stocks`
@@ -536,15 +536,15 @@ ALTER TABLE `subject_details`
 -- Constraints for table `class_day`
 --
 ALTER TABLE `class_day`
-  ADD CONSTRAINT `classtimeid_fk` FOREIGN KEY (`class_id`) REFERENCES `class_time` (`id`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `classtimeid_fk` FOREIGN KEY (`class_id`) REFERENCES `class_time` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `class_details`
 --
 ALTER TABLE `class_details`
-  ADD CONSTRAINT `classname_fk` FOREIGN KEY (`class_name`) REFERENCES `class_list` (`section_name`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `classroomid_fk` FOREIGN KEY (`room_id`) REFERENCES `room_list` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `facultyid_fk` FOREIGN KEY (`teacher_assigned`) REFERENCES `faculty_list` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `sectionid_fk` FOREIGN KEY (`section_id`) REFERENCES `section_details` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `subjectid_fk` FOREIGN KEY (`subject_id`) REFERENCES `subject_details` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
