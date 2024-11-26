@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 26, 2024 at 11:57 AM
+-- Generation Time: Nov 26, 2024 at 03:05 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -233,10 +233,19 @@ INSERT INTO `room_list` (`id`, `room_name`, `room_type`, `room_no`, `created_at`
 
 CREATE TABLE `room_status` (
   `id` int(11) NOT NULL,
+  `class_id` int(11) NOT NULL,
   `room_id` int(11) NOT NULL,
-  `status` varchar(255) NOT NULL,
+  `_status` varchar(255) NOT NULL,
   `time_modified` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `room_status`
+--
+
+INSERT INTO `room_status` (`id`, `class_id`, `room_id`, `_status`, `time_modified`) VALUES
+(2, 8, 1, 'OCCUPIED', '2024-11-26 11:54:39'),
+(3, 9, 1, 'OCCUPIED', '2024-11-26 12:11:00');
 
 -- --------------------------------------------------------
 
@@ -405,7 +414,8 @@ ALTER TABLE `room_list`
 --
 ALTER TABLE `room_status`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `status_fk` (`status`),
+  ADD UNIQUE KEY `class_id` (`class_id`),
+  ADD KEY `status_fk` (`_status`),
   ADD KEY `status_roomid_fk` (`room_id`);
 
 --
@@ -498,7 +508,7 @@ ALTER TABLE `room_list`
 -- AUTO_INCREMENT for table `room_status`
 --
 ALTER TABLE `room_status`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `room_type`
@@ -566,8 +576,9 @@ ALTER TABLE `room_list`
 -- Constraints for table `room_status`
 --
 ALTER TABLE `room_status`
-  ADD CONSTRAINT `status_fk` FOREIGN KEY (`status`) REFERENCES `status` (`status`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `status_roomid_fk` FOREIGN KEY (`room_id`) REFERENCES `class_details` (`room_id`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `status_classid_fk` FOREIGN KEY (`class_id`) REFERENCES `class_details` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `status_fk` FOREIGN KEY (`_status`) REFERENCES `status` (`status`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `status_roomid_fk` FOREIGN KEY (`room_id`) REFERENCES `class_details` (`room_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `stocks`
