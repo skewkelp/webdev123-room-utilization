@@ -3,7 +3,7 @@
     <ul class="nav nav-pills flex-column mb-auto">
         <li class="side-nav-title">Home</li>
         <li class="nav-item">
-            <a href="dashboard" id="roomlist-link" class="nav-link">
+            <a href="room-list" id="roomlist-link" class="nav-link">
                 <i class="bi status-icon">
                     <img src="../img/sidebar-icon/roomlist-icon.png" alt="" width="27.5px" height="27.5px">
                 </i>

@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(document).ready(function () { 
   // Event listener for navigation links
   $(".nav-link").on("click", function (e) {
     e.preventDefault(); // Prevent default anchor click behavior
@@ -60,10 +60,10 @@ $(document).ready(function () {
 
   // Determine which page to load based on the current URL
   let url = window.location.href;
-  if (url.endsWith("dashboard")) {
+  if (url.endsWith("room-list")) {
     $("#roomlist-link").trigger("click"); // Trigger the dashboard click event
   } else if (url.endsWith("room-status")) {
-    $("#roomstatus-link").trigger("click"); // Trigger the products click 
+    $("#roomstatus-link").trigger("click"); // Trigger the roomstatus click 
   } else if (url.endsWith("products")) {
     $("#products-link").trigger("click"); // Trigger the products click event
   } else {
@@ -74,7 +74,7 @@ $(document).ready(function () {
   function viewroomList() {
     $.ajax({
       type: "GET", // Use GET request
-      url: "roomlist.php", // URL for the analytics view
+      url: "viewroomlist.php", // URL for the analytics view
       dataType: "html", // Expect HTML response
       success: function (response) {
         $(".content-page").html(response); // Load the response into the content area
@@ -115,7 +115,7 @@ $(document).ready(function () {
   function viewroomStatus() {
     $.ajax({
       type: "GET", // Use GET request
-      url: "/templateprog/room-status/status-list.php", // URL for the analytics view
+      url: "../class-room-status/viewclass-status.php", // URL for the analytics view
       dataType: "html", // Expect HTML response
       success: function (response) {
         $(".content-page").html(response); // Load the response into the content area
