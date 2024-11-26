@@ -39,7 +39,7 @@ $(document).ready(function () {
   });
 
 
-
+  //SIDE BAR NAVIGATION LINK BUTTON
   // Event listener for the dashboard link
   $("#roomlist-link").on("click", function (e) {
     e.preventDefault(); // Prevent default behavior
@@ -106,6 +106,46 @@ $(document).ready(function () {
               // Re-enable the button after the AJAX call completes
               button.prop("disabled", false);
           });
+        });
+        
+      },
+    });
+  }
+
+  function viewroomStatus() {
+    $.ajax({
+      type: "GET", // Use GET request
+      url: "/templateprog/room-status/status-list.php", // URL for the analytics view
+      dataType: "html", // Expect HTML response
+      success: function (response) {
+        $(".content-page").html(response); // Load the response into the content area
+         // Call function to load the chart
+         $("#add-room-status").on("click", function (e) {
+           e.preventDefault(); // Prevent default behavior
+           // addRoom(); // Call function to add status
+         });
+         
+         $(".room-schedule").on("click", function (e) {
+           e.preventDefault(); // Prevent default behavior
+          //  editRoom(); // Call the function to load schedule
+         });
+
+        $(".room-status").on("click", function (e) {
+          e.preventDefault(); // Prevent default behavior
+          // editRoom(); // Call the function to occupy or unoccupy a room
+        });
+
+        $(".edit-room-status").on("click", function (e) {
+          e.preventDefault(); // Prevent default behavior
+      
+          const button = $(this); // Reference to the clicked button
+          button.prop("disabled", true); // Disable the button
+      
+          // Call the AJAX function
+          // editRoom(this.dataset.id).always(function() {
+          //     // Re-enable the button after the AJAX call completes
+          //     button.prop("disabled", false);
+          // });
         });
         
       },

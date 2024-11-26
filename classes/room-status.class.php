@@ -5,15 +5,20 @@ require_once 'database.class.php';
 class Room
 {
     public $id = '';
-
     public $room_code = '';
-
-
     //room_list
     public $room_id = '';
     public $room_name = '';
     public $room_type = '';
-    public $room_no = '';
+
+    //room_list
+    public $class_id = '';
+    public $subject_code = '';
+    public $class_name = '';
+    public $start_time = '';
+    public $end_time = '';
+    public $teacher_assigned = '';
+    public $status = '';
 
     protected $db;
 
@@ -63,39 +68,73 @@ class Room
         return $data;
     }
     
-    function showAllrooms(){
-        $sql = "SELECT 
-                r.id, room_name,
-                CONCAT(rt.room_code, '-', rt.room_description) AS room_details
-            FROM room_list r
-            INNER JOIN room_type rt ON r.room_type = rt.room_code
-            WHERE (CONCAT(rt.room_code, '-', rt.room_description) LIKE CONCAT('%', :room_name, '%')) 
-            AND (:room_type = '' OR rt.room_code = :room_type);
-        ";
-        /*//WITH ROOM TYPE ROOM NO
-        $sql = "SELECT 
-                CONCAT(r.room_type, ' ', r.room_no) AS room_name,
-                CONCAT(rt.room_code, '-', rt.room_description) AS room_details
-            FROM room_list r
-            INNER JOIN room_type rt ON r.room_type = rt.room_code
-            WHERE (CONCAT(r.room_type, ' ', r.room_no) LIKE CONCAT('%', :room_name, '%')) 
-            AND (:room_type = '' OR rt.room_code = :room_type);
-        ";
-
-        */
-        $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':room_name', $this->room_name);
-        $query->bindParam(':room_type', $this->room_type);
+    function showAllRooms() {
+        $sql = 
+        "SELECT r.id, 
+               r.room_name, 
+               CONCAT(rt.room_code, '-', rt.room_description) AS room_details,
+               (SELECT sl.subject_code 
+                FROM class c 
+                LEFT JOIN subject_list sl ON c.subject_id = sl.id 
+                WHERE c.room_id = r.id LIMIT 1) AS subject_code,
+               (SELECT cl.section_name 
+                FROM class c 
+                LEFT JOIN class_list cl ON c.class_name = cl.section_name 
+                WHERE c.room_id = r.id LIMIT 1) AS section,  
+               (SELECT cs.start_time 
+                FROM class_schedule cs 
+                LEFT JOIN class c ON cs.class_id = c.id 
+                WHERE c.room_id = r.id LIMIT 1) AS start_time,
+               (SELECT cs.end_time 
+                FROM class_schedule cs 
+                LEFT JOIN class c ON cs.class_id = c.id 
+                WHERE c.room_id = r.id LIMIT 1) AS end_time,
+               (SELECT CONCAT(fl.fname, ' ', fl.lname) AS teacher_name 
+                FROM class c 
+                LEFT JOIN faculty_list fl ON fl.teacher_assigned = c.id 
+                WHERE c.room_id = r.id LIMIT 1) AS assigned,
+               (SELECT a.status 
+                FROM room_availability a 
+                LEFT JOIN room_list r ON a.room_id = r.id 
+                WHERE r.id = r.id LIMIT 1) AS status
+    
+        FROM room_list r
+        LEFT JOIN room_type rt ON r.room_type = rt.room_code
         
-        $data = null;
-        if ($query->execute()){
-            $data = $query->fetchAll();
-        }
-        
-        return $data;
+        WHERE (CONCAT(r.room_type, ' ', r.room_no) LIKE CONCAT('%', :room_name, '%')) 
+        AND (:room_type = '' OR rt.room_code = :room_type);
+        ";
+    
+        // Prepare and execute the statement with PDO
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(':room_name', $this->room_name);
+        $stmt->bindParam(':room_type', $this->room_type);
+        $stmt->bindParam(':subject_code', $this->room_type);
+        $stmt->bindParam(':section_name', $this->room_type);
+        $stmt->bindParam(':start_time', $this->room_type);
+        $stmt->bindParam(':end_time', $this->room_type);
+        $stmt->bindParam(':teacher_name', $this->);
+        $stmt->execute();
+    
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // function showAllrooms(){
+    // $sql = "SELECT ;
+    // ";
 
+    /*//WITH ROOM TYPE ROOM NO
+    $sql = "SELECT 
+            CONCAT(r.room_type, ' ', r.room_no) AS room_name,
+            CONCAT(rt.room_code, '-', rt.room_description) AS room_details
+        FROM room_list r
+        INNER JOIN room_type rt ON r.room_type = rt.room_code
+        WHERE (CONCAT(r.room_type, ' ', r.room_no) LIKE CONCAT('%', :room_name, '%')) 
+        AND (:room_type = '' OR rt.room_code = :room_type);
+    ";
+
+    */
+   
     //     $sql = "SELECT 
     //         CONCAT(r.room_type, ' ', r.room_no) AS room_name,
     //         CONCAT(rt.room_code, '-', rt.room_description) AS room_details
@@ -103,7 +142,8 @@ class Room
     //         INNER JOIN room_type rt ON r.room_type = rt.room_code
     //         WHERE (r.room_no LIKE CONCAT('%', :keyword, '%') OR rt.room_description LIKE CONCAT('%', :keyword, '%'))
     //         AND (:category = '' OR rt.room_code = :category);
-    //     ";
+    //     ";    $sql =
+        
     /*
     SELECT
     CONCAT(r.room_type, r.room_no) AS room_name,

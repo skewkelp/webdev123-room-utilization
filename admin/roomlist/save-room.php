@@ -11,8 +11,8 @@ $roomObj = new Room();
 
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
     
-    $name = clean_input($_POST['room_name']);
-    $type = clean_input($_POST['room_type']);
+    $name = clean_input($_POST['room-name']);
+    $type = clean_input($_POST['room-type']);
 
     if(empty($name)){
         $nameErr = 'Room name is required.';
