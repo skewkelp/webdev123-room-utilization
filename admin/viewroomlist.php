@@ -63,7 +63,7 @@
                     
                     <form class="d-flex me-2">
                         <div class="input-group w-100">
-                            <input type="text" class="form-control form-control-light" id="custom-search" placeholder="Search products...">
+                            <input type="text" class="form-control form-control-light" id="custom-search" placeholder="Search room...">
                             <span class="input-group-text bg-primary border-primary text-white brand-bg-color">
                                 <i class="bi bi-search"></i>
                             </span>
@@ -80,7 +80,7 @@
 
                 <div class="card-body p-1 pt-2">
                     <div class="table-responsive">
-                        <table class="table table-centered table-nowrap table-hover mb-0">
+                        <table id="table-room-list" class="table table-centered table-nowrap mb-0">
                             <thead>
                                 <tr>
                                     <th>ID</th>
