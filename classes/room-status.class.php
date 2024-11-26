@@ -76,27 +76,27 @@ class Room
                (SELECT sl.subject_code 
                 FROM class c 
                 LEFT JOIN subject_list sl ON c.subject_id = sl.id 
-                WHERE c.room_id = r.id LIMIT 1) AS subject_code,
+                WHERE c.room_id = r.id) AS subject_code,
                (SELECT cl.section_name 
                 FROM class c 
                 LEFT JOIN class_list cl ON c.class_name = cl.section_name 
-                WHERE c.room_id = r.id LIMIT 1) AS section,  
+                WHERE c.room_id = r.id) AS section,  
                (SELECT cs.start_time 
                 FROM class_schedule cs 
                 LEFT JOIN class c ON cs.class_id = c.id 
-                WHERE c.room_id = r.id LIMIT 1) AS start_time,
+                WHERE c.room_id = r.id) AS start_time,
                (SELECT cs.end_time 
                 FROM class_schedule cs 
                 LEFT JOIN class c ON cs.class_id = c.id 
-                WHERE c.room_id = r.id LIMIT 1) AS end_time,
+                WHERE c.room_id = r.id) AS end_time,
                (SELECT CONCAT(fl.fname, ' ', fl.lname) AS teacher_name 
                 FROM class c 
                 LEFT JOIN faculty_list fl ON fl.teacher_assigned = c.id 
-                WHERE c.room_id = r.id LIMIT 1) AS assigned,
+                WHERE c.room_id = r.id) AS assigned,
                (SELECT a.status 
                 FROM room_availability a 
                 LEFT JOIN room_list r ON a.room_id = r.id 
-                WHERE r.id = r.id LIMIT 1) AS status
+                WHERE r.id = r.id) AS status
     
         FROM room_list r
         LEFT JOIN room_type rt ON r.room_type = rt.room_code
@@ -109,11 +109,11 @@ class Room
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(':room_name', $this->room_name);
         $stmt->bindParam(':room_type', $this->room_type);
-        $stmt->bindParam(':subject_code', $this->room_type);
-        $stmt->bindParam(':section_name', $this->room_type);
-        $stmt->bindParam(':start_time', $this->room_type);
-        $stmt->bindParam(':end_time', $this->room_type);
-        $stmt->bindParam(':teacher_name', $this->);
+        $stmt->bindParam(':subject_code', $this->subject_code);
+        $stmt->bindParam(':section_name', $this->section_name);
+        $stmt->bindParam(':start_time', $this->start_time);
+        $stmt->bindParam(':end_time', $this->end_time);
+        $stmt->bindParam(':teacher_name', $this->teacher_assigned);
         $stmt->execute();
     
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
