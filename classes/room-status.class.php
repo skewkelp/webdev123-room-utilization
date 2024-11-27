@@ -27,7 +27,7 @@ class Room
     // rl.room_type,
     // sd.subject_code, 
     // sd.subject_type,
-    // cl.section_name, 
+    // sec.section_name, 
     // ct.start_time, 
     // ct.end_time,
     // fl.fname,
@@ -135,7 +135,6 @@ class Room
     
         ;";
     
-        // Prepare and execute the statement with PDO
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':keyword', $keyword);
         $query->bindParam(':fweek_day', $fweek_day);
@@ -155,67 +154,6 @@ class Room
         }
         return $data;
     }
-
-    
-    // function showAllrooms(){
-    // $sql = "SELECT ;
-    // ";
-
-    /*//WITH ROOM TYPE ROOM NO
-    $sql = "SELECT 
-            CONCAT(r.room_type, ' ', r.room_no) AS room_name,
-            CONCAT(rt.room_code, '-', rt.room_description) AS room_details
-        FROM room_list r
-        INNER JOIN room_type rt ON r.room_type = rt.room_code
-        WHERE (CONCAT(r.room_type, ' ', r.room_no) LIKE CONCAT('%', :room_name, '%')) 
-        AND (:room_type = '' OR rt.room_code = :room_type);
-    ";
-
-    */
-   
-    //     $sql = "SELECT 
-    //         CONCAT(r.room_type, ' ', r.room_no) AS room_name,
-    //         CONCAT(rt.room_code, '-', rt.room_description) AS room_details
-    //         FROM room_list r
-    //         INNER JOIN room_type rt ON r.room_type = rt.room_code
-    //         WHERE (r.room_no LIKE CONCAT('%', :keyword, '%') OR rt.room_description LIKE CONCAT('%', :keyword, '%'))
-    //         AND (:category = '' OR rt.room_code = :category);
-    //     ";    $sql =
-        
-    /*
-    SELECT
-    CONCAT(r.room_type, r.room_no) AS room_name,
-    CONCAT(rt.room_code, '-', rt.room_description) AS room_details
-    FROM room_list r
-    INNER JOIN room_type rt ON r.room_type = rt.room_code;
-    WHERE (r.room_no LIKE CONCAT('%', :keyword, '%') OR rt.room_description LIKE CONCAT('%', :keyword, '%'))
-    AND (:category = '' OR rt.room_code = :category);
-    */
-     
-    /*
-    roomname, roomtype
-    SELECT CONCAT(room_type, room_no) as room_type 
-    FROM room_list rl 
-    
-SELECT
-    CONCAT(r.room_type, r.room_no) AS room_type,
-    CONCAT(rt.room_code, '-', rt.room_description) AS room_details
-FROM room_list r
-INNER JOIN room_type rt ON r.room_type = rt.room_code;
-
-    */
-
-    // function edit()
-    // {
-    //     $sql = "UPDATE product SET code = :code, name = :name, category_id = :category_id, price = :price WHERE id = :id;";
-    //     $query = $this->db->connect()->prepare($sql);
-    //     $query->bindParam(':code', $this->code);
-    //     $query->bindParam(':name', $this->name);
-    //     $query->bindParam(':category_id', $this->category_id);
-    //     $query->bindParam(':price', $this->price);
-    //     $query->bindParam(':id', $this->id);
-    //     return $query->execute();
-    // }
     
     function editRoom(){
         $sql = "UPDATE room_list SET room_name = :room_name, room_type = :room_type WHERE id = :room_id;";
@@ -271,33 +209,6 @@ INNER JOIN room_type rt ON r.room_type = rt.room_code;
         $count = $query->fetchColumn();
         return $count > 0;
     }
-
-    // function codeExists($code, $excludeID = null)
-    // {
-    //     $sql = "SELECT COUNT(*) FROM product WHERE code = :code";
-    //     if ($excludeID) {
-    //         $sql .= " AND id != :excludeID";
-    //     }
-    //     $query = $this->db->connect()->prepare($sql);
-    //     $query->bindParam(':code', $code);
-    //     if ($excludeID) {
-    //         $query->bindParam(':excludeID', $excludeID);
-    //     }
-    //     $query->execute();
-    //     $count = $query->fetchColumn();
-    //     return $count > 0;
-    // }
-
-    // public function fetchCategory()
-    // {
-    //     $sql = "SELECT * FROM category ORDER BY name ASC;";
-    //     $query = $this->db->connect()->prepare($sql);
-    //     $data = null;
-    //     if ($query->execute()) {
-    //         $data = $query->fetchAll(PDO::FETCH_ASSOC);
-    //     }
-    //     return $data;
-    // }
 
     //fetch room type for dropdown
     public function fetchroomType(){

@@ -31,7 +31,7 @@ update test
   --b2-font-size: 18px; 
   --b2-font-weight: 500;
 
-  --label-text1-font-size: 18px; 
+  --label-text1-font-size: 16px; 
   --label-text1-font-weight: 600;
 
   --sidebar-text-font-size: 16px; 
@@ -191,7 +191,7 @@ update test
   --th-font-weight: 600;
   --th-margin-top: 0.25rem;
   --th-margin-bottom: 0.25rem;
-
+  --ct-width: 100%;
   
 }
 
@@ -218,6 +218,11 @@ h1{
 }
 
 .label-text{
+  font-size: var(--label-text1-font-size) !important;
+  font-weight: var(--label-text1-font-weight) !important;
+}
+
+input::placeholder{
   font-size: var(--label-text1-font-size) !important;
   font-weight: var(--label-text1-font-weight) !important;
 }
@@ -537,6 +542,20 @@ div.dt-container div.dt-paging ul.pagination {
   display: flex;
   justify-content: flex-end;
 }
+
+.width{
+  width: var(--ct-width);
+}
+
+.ct1{
+  flex-grow: 3;
+}.ct2{
+  flex-grow: 2;
+}.ct3{
+  flex-grow: 2;
+}
+
+
 
 #category-filter {
   width: 200px;
