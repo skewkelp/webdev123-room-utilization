@@ -186,8 +186,6 @@ INNER JOIN room_type rt ON r.room_type = rt.room_code;
         $count = $query->fetchColumn();
         return $count > 0;
     }
-
-    $sql = "INSERT INTO room_list (room_name, type_id) VALUES (:room_name, :room_type);";
         
     function roomnameType(){
         $sql = "SELECT * FROM room_list 
