@@ -90,9 +90,12 @@ class Room
                 ct.start_time, 
                 ct.end_time,
                 CONCAT(fl.fname, ' ',fl.lname) AS faculty_name,
-                rs._status
-            FROM 
-                class_day cda 
+                s.status AS room_status
+
+            FROM
+                _status s
+            LEFT JOIN
+                class_day cda ON s.class_day_id = cda.id
             LEFT JOIN 
                 class_time ct ON cda.class_id = ct.id
             LEFT JOIN 
@@ -105,10 +108,8 @@ class Room
                 section_details sec ON cdt.section_id = sec.id
             LEFT JOIN 
                 faculty_list fl ON cdt.teacher_assigned = fl.id
-            RIGHT JOIN 
-                room_status rs ON rs.class_id = cdt.id 
-                AND rs.room_id = cdt.room_id 
-
+             
+            
             WHERE
             (
                 rl.room_name LIKE CONCAT('%', :keyword, '%') OR
@@ -119,7 +120,7 @@ class Room
                 ct.start_time LIKE CONCAT('%', :keyword, '%') OR
                 ct.end_time LIKE CONCAT('%', :keyword, '%') OR
                 fl.fname LIKE CONCAT('%', :keyword, '%') OR
-                rs._status LIKE CONCAT('%', :keyword, '%')
+                s.status LIKE CONCAT('%', :keyword, '%')
             )AND(
                 cda.week_day LIKE CONCAT('%', :fweek_day, '%') AND
                 rl.room_name LIKE CONCAT('%', :froom_name, '%') AND
@@ -130,7 +131,7 @@ class Room
                 ct.start_time LIKE CONCAT('%', :fstart_time, '%') AND
                 ct.end_time LIKE CONCAT('%', :fend_time, '%') AND
                 CONCAT(fl.fname, ' ',fl.lname) LIKE CONCAT('%', :fteacher_name, '%') AND
-                rs._status LIKE CONCAT('%', :fstatus, '%')
+                s.status LIKE CONCAT('%', :fstatus, '%')
             )
     
         ;";
@@ -232,5 +233,15 @@ class Room
         return $data;
     }
 
+
+    public function fetchstatusOption(){
+        $sql = " SELECT *, id as type_id, CONCAT(room_code,' ',room_description) as room_type FROM room_type;";
+        $query = $this->db->connect()->prepare($sql);
+        $data = null;
+        if ($query->execute()) {
+            $data = $query->fetchAll(PDO::FETCH_ASSOC);
+        }
+        return $data;
+    }
     
 }

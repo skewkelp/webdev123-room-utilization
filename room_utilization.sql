@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 27, 2024 at 12:39 AM
+-- Generation Time: Nov 27, 2024 at 12:18 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -84,8 +84,8 @@ CREATE TABLE `class_day` (
 --
 
 INSERT INTO `class_day` (`id`, `week_day`, `class_id`) VALUES
-(1, 'Monday', 5),
-(2, 'Monday', 6);
+(3, 'Monday', 7),
+(4, 'Monday', 8);
 
 -- --------------------------------------------------------
 
@@ -106,8 +106,8 @@ CREATE TABLE `class_details` (
 --
 
 INSERT INTO `class_details` (`id`, `section_id`, `room_id`, `subject_id`, `teacher_assigned`) VALUES
-(8, 1, 1, 1, 1),
-(9, 1, 1, 2, 2);
+(10, 1, 1, 1, 1),
+(11, 1, 2, 4, 2);
 
 -- --------------------------------------------------------
 
@@ -128,8 +128,8 @@ CREATE TABLE `class_time` (
 --
 
 INSERT INTO `class_time` (`id`, `class_id`, `start_time`, `end_time`, `time_modified`) VALUES
-(5, 8, '07:00:00', '09:00:00', '2024-11-26 10:32:46'),
-(6, 9, '09:00:00', '12:00:00', '2024-11-26 10:32:46');
+(7, 10, '07:00:00', '09:00:00', '2024-11-27 10:57:00'),
+(8, 11, '09:00:00', '12:00:00', '2024-11-27 10:57:00');
 
 -- --------------------------------------------------------
 
@@ -202,28 +202,6 @@ INSERT INTO `room_list` (`id`, `room_name`, `room_type`, `room_no`, `created_at`
 -- --------------------------------------------------------
 
 --
--- Table structure for table `room_status`
---
-
-CREATE TABLE `room_status` (
-  `id` int(11) NOT NULL,
-  `class_id` int(11) NOT NULL,
-  `room_id` int(11) NOT NULL,
-  `_status` varchar(255) NOT NULL,
-  `time_modified` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `room_status`
---
-
-INSERT INTO `room_status` (`id`, `class_id`, `room_id`, `_status`, `time_modified`) VALUES
-(2, 8, 1, 'OCCUPIED', '2024-11-26 11:54:39'),
-(3, 9, 1, 'OCCUPIED', '2024-11-26 12:11:00');
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `room_type`
 --
 
@@ -266,25 +244,6 @@ INSERT INTO `section_details` (`id`, `section_name`, `course`, `year_level`) VAL
 (5, 'IT1B', 'BSIT', '1'),
 (6, 'IT1C', 'BSIT', '1'),
 (7, 'ACT1A', 'ACT', '1');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `status`
---
-
-CREATE TABLE `status` (
-  `id` enum('0','1') NOT NULL,
-  `status` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `status`
---
-
-INSERT INTO `status` (`id`, `status`) VALUES
-('1', 'AVAILABLE'),
-('0', 'OCCUPIED');
 
 -- --------------------------------------------------------
 
@@ -334,6 +293,26 @@ INSERT INTO `subject_details` (`id`, `subject_code`, `description`, `subject_typ
 (2, 'CC103', 'Data Structures and Algorithm', 'LAB', '2024-11-26 09:57:51'),
 (3, 'CC100', 'Introduction to Computing Studies', 'LEC', '2024-11-26 09:58:26'),
 (4, 'CC100', 'Introduction to Computing Studies', 'LAB', '2024-11-26 09:58:26');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `_status`
+--
+
+CREATE TABLE `_status` (
+  `class_day_id` int(11) NOT NULL,
+  `status` enum('AVAILABLE','OCCUPIED') NOT NULL,
+  `time_modified` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `_status`
+--
+
+INSERT INTO `_status` (`class_day_id`, `status`, `time_modified`) VALUES
+(3, 'OCCUPIED', '2024-11-27 11:15:14'),
+(4, 'OCCUPIED', '2024-11-27 11:15:14');
 
 --
 -- Indexes for dumped tables
@@ -403,15 +382,6 @@ ALTER TABLE `room_list`
   ADD KEY `roomtype_fk` (`room_type`);
 
 --
--- Indexes for table `room_status`
---
-ALTER TABLE `room_status`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `class_id` (`class_id`),
-  ADD KEY `status_fk` (`_status`),
-  ADD KEY `status_roomid_fk` (`room_id`);
-
---
 -- Indexes for table `room_type`
 --
 ALTER TABLE `room_type`
@@ -426,13 +396,6 @@ ALTER TABLE `section_details`
   ADD UNIQUE KEY `class_name` (`section_name`);
 
 --
--- Indexes for table `status`
---
-ALTER TABLE `status`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `status` (`status`);
-
---
 -- Indexes for table `stocks`
 --
 ALTER TABLE `stocks`
@@ -445,6 +408,12 @@ ALTER TABLE `stocks`
 ALTER TABLE `subject_details`
   ADD PRIMARY KEY (`id`),
   ADD KEY `subject_details` (`subject_code`,`subject_type`);
+
+--
+-- Indexes for table `_status`
+--
+ALTER TABLE `_status`
+  ADD PRIMARY KEY (`class_day_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -466,19 +435,19 @@ ALTER TABLE `category`
 -- AUTO_INCREMENT for table `class_day`
 --
 ALTER TABLE `class_day`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `class_details`
 --
 ALTER TABLE `class_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `class_time`
 --
 ALTER TABLE `class_time`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `faculty_list`
@@ -497,12 +466,6 @@ ALTER TABLE `product`
 --
 ALTER TABLE `room_list`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT for table `room_status`
---
-ALTER TABLE `room_status`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `room_type`
@@ -573,18 +536,16 @@ ALTER TABLE `room_list`
   ADD CONSTRAINT `roomtype_fk` FOREIGN KEY (`room_type`) REFERENCES `room_type` (`room_code`) ON UPDATE CASCADE;
 
 --
--- Constraints for table `room_status`
---
-ALTER TABLE `room_status`
-  ADD CONSTRAINT `status_classid_fk` FOREIGN KEY (`class_id`) REFERENCES `class_details` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `status_fk` FOREIGN KEY (`_status`) REFERENCES `status` (`status`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `status_roomid_fk` FOREIGN KEY (`room_id`) REFERENCES `class_details` (`room_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
 -- Constraints for table `stocks`
 --
 ALTER TABLE `stocks`
   ADD CONSTRAINT `productid_fk` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`);
+
+--
+-- Constraints for table `_status`
+--
+ALTER TABLE `_status`
+  ADD CONSTRAINT `class_dayid_fk` FOREIGN KEY (`class_day_id`) REFERENCES `class_day` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

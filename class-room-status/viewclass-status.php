@@ -243,7 +243,7 @@
                                         <td><?= $arr['start_time'] ?></td>
                                         <td><?= $arr['end_time'] ?></td>
                                         <td><?= $arr['faculty_name'] ?></td>
-                                        <td><?= $arr['_status'] ?></td>
+                                        <td><?= $arr['room_status'] ?></td>
                                         <td class="text-nowrap">
                                             <a href="" class="btn room-schedule">Schedule</a>
                                             <a href="" class="btn room-status">Occupy</a>
