@@ -22,7 +22,7 @@ class Room
     }
 
     function addRoom(){
-        $sql = "INSERT INTO room_list (room_name, room_type) VALUES (:room_name, :room_type);";
+        $sql = "INSERT INTO room_list (room_name, type_id) VALUES (:room_name, :room_type);";
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':room_name', $this->room_name);
         $query->bindParam(':room_type', $this->room_type);
@@ -187,20 +187,26 @@ INNER JOIN room_type rt ON r.room_type = rt.room_code;
         return $count > 0;
     }
 
-    // public function fetchCategory()
-    // {
-    //     $sql = "SELECT * FROM category ORDER BY name ASC;";
-    //     $query = $this->db->connect()->prepare($sql);
-    //     $data = null;
-    //     if ($query->execute()) {
-    //         $data = $query->fetchAll(PDO::FETCH_ASSOC);
-    //     }
-    //     return $data;
-    // }
+    $sql = "INSERT INTO room_list (room_name, type_id) VALUES (:room_name, :room_type);";
+        
+    function roomnameType(){
+        $sql = "SELECT * FROM room_list 
+        WHERE (
+        
+          
+        ;";
+        
+    }
+    
 
     //fetch room type for dropdown
     public function fetchroomType(){
-        $sql = " SELECT id as type_id, CONCAT(room_code,' ',room_description) AS r_type FROM room_type;";
+        $sql = 
+            "SELECT id as type_id, CONCAT(room_code,' ',room_description) AS r_type 
+            FROM room_type
+            ORDER BY r_type ASC;
+        
+        ;";
         $query = $this->db->connect()->prepare($sql);
         $data = null;
         if ($query->execute()) {
