@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 27, 2024 at 02:26 PM
+-- Generation Time: Nov 27, 2024 at 04:02 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -186,7 +186,6 @@ CREATE TABLE `room_list` (
   `id` int(11) NOT NULL,
   `room_name` varchar(50) NOT NULL,
   `type_id` int(11) NOT NULL,
-  `room_no` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -195,9 +194,10 @@ CREATE TABLE `room_list` (
 -- Dumping data for table `room_list`
 --
 
-INSERT INTO `room_list` (`id`, `room_name`, `type_id`, `room_no`, `created_at`, `updated_at`) VALUES
-(1, 'LR 1', 1, '1', '2024-11-17 14:09:21', '2024-11-17 14:09:21'),
-(2, 'LR 2', 1, '2', '2024-11-17 14:09:56', '2024-11-17 14:09:56');
+INSERT INTO `room_list` (`id`, `room_name`, `type_id`, `created_at`, `updated_at`) VALUES
+(1, 'LR 1', 1, '2024-11-17 14:09:21', '2024-11-17 14:09:21'),
+(2, 'LR 2', 1, '2024-11-17 14:09:56', '2024-11-17 14:09:56'),
+(3, 'LAB 1', 2, '2024-11-27 14:29:55', '2024-11-27 14:29:55');
 
 -- --------------------------------------------------------
 
@@ -388,7 +388,6 @@ ALTER TABLE `product`
 --
 ALTER TABLE `room_list`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `room_no` (`room_no`),
   ADD UNIQUE KEY `room_name` (`room_name`),
   ADD KEY `typeid_fk` (`type_id`);
 
@@ -482,7 +481,7 @@ ALTER TABLE `product`
 -- AUTO_INCREMENT for table `room_list`
 --
 ALTER TABLE `room_list`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `room_type`
