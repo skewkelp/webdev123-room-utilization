@@ -83,7 +83,7 @@ class Room
                 cdt.id,
                 cda.week_day, 
                 rl.room_name, 
-                rl.room_type,
+                rt.room_description AS room_type,
                 sd.subject_code, 
                 sd.subject_type,
                 sec.section_name, 
@@ -102,6 +102,8 @@ class Room
                 class_details cdt ON ct.class_id = cdt.id
             LEFT JOIN 
                 room_list rl ON cdt.room_id = rl.id
+            LEFT JOIN
+                room_type rt ON rl.type_id = rt.id
             LEFT JOIN 
                 subject_details sd ON cdt.subject_id = sd.id  
             LEFT JOIN 
@@ -113,7 +115,7 @@ class Room
             WHERE
             (
                 rl.room_name LIKE CONCAT('%', :keyword, '%') OR
-                rl.room_type LIKE CONCAT('%', :keyword, '%') OR
+                rt.room_description LIKE CONCAT('%', :keyword, '%') OR
                 sd.subject_code LIKE CONCAT('%', :keyword, '%') OR
                 sd.subject_type LIKE CONCAT('%', :keyword, '%') OR
                 sec.section_name LIKE CONCAT('%', :keyword, '%') OR
@@ -124,7 +126,7 @@ class Room
             )AND(
                 cda.week_day LIKE CONCAT('%', :fweek_day, '%') AND
                 rl.room_name LIKE CONCAT('%', :froom_name, '%') AND
-                rl.room_type LIKE CONCAT('%', :froom_type, '%') AND
+                rt.room_description LIKE CONCAT('%', :froom_type, '%') AND
                 sd.subject_code LIKE CONCAT('%', :fsubject_code, '%') AND
                 sd.subject_type LIKE CONCAT('%', :fsubject_type, '%') AND
                 sec.section_name LIKE CONCAT('%', :fsection_name, '%') AND
@@ -213,7 +215,7 @@ class Room
 
     //fetch room type for dropdown
     public function fetchroomType(){
-        $sql = " SELECT *, id as type_id, CONCAT(room_code,' ',room_description) as room_type FROM room_type;";
+        $sql = " SELECT id as type_id, CONCAT(room_code,' ',room_description) AS r_type FROM room_type;";
         $query = $this->db->connect()->prepare($sql);
         $data = null;
         if ($query->execute()) {
