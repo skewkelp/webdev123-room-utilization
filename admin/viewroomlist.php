@@ -29,34 +29,34 @@
                     
                     <form class="d-flex flex-column align-items-start gap-1">
                         <div class="d-flex align-items-center">
-                            <label for="category-filter" class="label-text">Room Name:</label>
-                                <select id="category-filter" class="form-select">
-                                    <option value="choose">Choose...</option>
-                                    <option value="">All</option>
-                                    <?php
-                                        $roomList = $roomObj->fetchroomList();
-                                        foreach ($roomList as $rmlst) {
-                                    ?>
-                                    <option value="<?= $rmlst['room_type'] . ' ' . $rmlst['room_no'] ?>"><?= $rmlst['room_type'] . ' ' . $rmlst['room_no']  ?></option>
-                                    <?php
-                                    }
+                            <label for="roomname-filter" class="label-text">Room Name:</label>
+                            <select id="roomname-filter" class="form-select">
+                                <option value="choose">Choose...</option>
+                                <option value="">All</option>
+                                <?php
+                                $roomList = $roomObj->fetchroomList();
+                                foreach ($roomList as $rmlst) {
+                                ?>
+                                    <option value="<?= $rmlst['room_name'] ?>"><?= $rmlst['room_name']?></option>
+                                <?php
+                                }
                                 ?>
                             </select>
                         </div>
                         
                         <div class="d-flex align-items-center">
-                            <label for="category-filter" class="me-2 label-text">Room Type:</label>
-                                <select id="category-filter" class="form-select">
-                                    <option value="choose">Choose...</option>
-                                    <option value="">All</option>
-                                    <?php
-                                        $roomTypeList = $roomObj->fetchroomType();
-                                        foreach ($roomTypeList as $rmt) {
-                                    ?>
-                                    <option value="<?= $rmt['type_id'] ?>"><?= $rmt['room_type'] ?></option>
-                                    <?php
-                                    }
-                                    ?>
+                            <label for="roomtype-filter" class="me-2 label-text">Room Type:</label>
+                            <select id="roomtype-filter" class="form-select">
+                                <option value="choose">Choose...</option>
+                                <option value="">All</option>
+                                <?php
+                                $roomTypeList = $roomObj->fetchroomType();
+                                foreach ($roomTypeList as $rmt) {
+                                ?>
+                                    <option value="<?= $rmt['r_type'] ?>"><?= $rmt['r_type'] ?></option>
+                                <?php
+                                }
+                                ?>
                             </select>
                         </div>
                     </form>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 27, 2024 at 12:18 PM
+-- Generation Time: Nov 27, 2024 at 02:26 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -185,7 +185,7 @@ INSERT INTO `product` (`id`, `code`, `name`, `category_id`, `price`, `created_at
 CREATE TABLE `room_list` (
   `id` int(11) NOT NULL,
   `room_name` varchar(50) NOT NULL,
-  `room_type` varchar(255) NOT NULL,
+  `type_id` int(11) NOT NULL,
   `room_no` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
@@ -195,9 +195,9 @@ CREATE TABLE `room_list` (
 -- Dumping data for table `room_list`
 --
 
-INSERT INTO `room_list` (`id`, `room_name`, `room_type`, `room_no`, `created_at`, `updated_at`) VALUES
-(1, 'LR 1', 'LR', '1', '2024-11-17 14:09:21', '2024-11-17 14:09:21'),
-(2, 'LR 2', 'LR', '2', '2024-11-17 14:09:56', '2024-11-17 14:09:56');
+INSERT INTO `room_list` (`id`, `room_name`, `type_id`, `room_no`, `created_at`, `updated_at`) VALUES
+(1, 'LR 1', 1, '1', '2024-11-17 14:09:21', '2024-11-17 14:09:21'),
+(2, 'LR 2', 1, '2', '2024-11-17 14:09:56', '2024-11-17 14:09:56');
 
 -- --------------------------------------------------------
 
@@ -244,6 +244,17 @@ INSERT INTO `section_details` (`id`, `section_name`, `course`, `year_level`) VAL
 (5, 'IT1B', 'BSIT', '1'),
 (6, 'IT1C', 'BSIT', '1'),
 (7, 'ACT1A', 'ACT', '1');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `status_details`
+--
+
+CREATE TABLE `status_details` (
+  `id` enum('0','1') NOT NULL,
+  `description` enum('OCCUPIED','AVAILABLE') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -379,7 +390,7 @@ ALTER TABLE `room_list`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `room_no` (`room_no`),
   ADD UNIQUE KEY `room_name` (`room_name`),
-  ADD KEY `roomtype_fk` (`room_type`);
+  ADD KEY `typeid_fk` (`type_id`);
 
 --
 -- Indexes for table `room_type`
@@ -394,6 +405,12 @@ ALTER TABLE `room_type`
 ALTER TABLE `section_details`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `class_name` (`section_name`);
+
+--
+-- Indexes for table `status_details`
+--
+ALTER TABLE `status_details`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `stocks`
@@ -533,7 +550,7 @@ ALTER TABLE `product`
 -- Constraints for table `room_list`
 --
 ALTER TABLE `room_list`
-  ADD CONSTRAINT `roomtype_fk` FOREIGN KEY (`room_type`) REFERENCES `room_type` (`room_code`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `typeid_fk` FOREIGN KEY (`type_id`) REFERENCES `room_type` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `stocks`

@@ -235,7 +235,7 @@ class Room
 
 
     public function fetchstatusOption(){
-        $sql = " SELECT *, id as type_id, CONCAT(room_code,' ',room_description) as room_type FROM room_type;";
+        $sql = " SELECT s.status as status_description FROM _status s;";
         $query = $this->db->connect()->prepare($sql);
         $data = null;
         if ($query->execute()) {

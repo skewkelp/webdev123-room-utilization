@@ -86,6 +86,20 @@ $(document).ready(function () {
           ordering: false, // Disable ordering
         });
 
+        // Bind change event for category filter
+        $("#roomname-filter").on("change", function () {
+          if (this.value !== "choose"){
+            table.column(3).search(this.value).draw(); // Filter products by selected category
+          }
+        });
+
+        // Bind change event for category filter
+        $("#roomtype-filter").on("change", function () {
+          if (this.value !== "choose") {
+            table.column(3).search(this.value).draw(); // Filter products by selected category
+          }
+        });
+
         // Bind custom input to DataTable search
         $("#custom-search").on("keyup", function () {
           table.search(this.value).draw(); // Search products based on input
@@ -513,7 +527,7 @@ $(document).ready(function () {
           $("#room-type").append(
             $("<option>", {
               value: room.room_code, // Value attribute
-              text: room.room_type // Displayed text
+              text: room.r_type // Displayed text
             })
           );
         });
