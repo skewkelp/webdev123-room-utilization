@@ -8,7 +8,7 @@
         </div> 
         <form action="" method="post" id="form-add">
           <div class="modal-body">
-            <P class="form-label">Class Details:</P>
+            <P class="form-label h1-label">Class Details:</P>
             <div style="padding-left: 8px;">
                 <div class="mb-2">
                     <P class="form-label">Room Name</P>
@@ -54,26 +54,43 @@
                     <div class="invalid-feedback"></div>
                 </div>
             </div>
+
             <br><br>
-            <P class="form-label">Class Schedule:</P>
+            <P class="form-label h1-label">Class Schedule:</P>
             <div style="padding-left: 8px;">
                 <div class="mb-2">
                     <label for="start-time" class="form-label">Start-Time</label>
                     <input type="time" class="form-control" id="start-time" name="start-time">
                     <div class="invalid-feedback"></div>
-                    </div>
+                </div>
                 <br>
 
                 <div class="mb-2">
                     <label for="end-time" class="form-label">End-Time</label>
                     <input type="time" class="form-control" id="end-time" name="end-time">
                     <div class="invalid-feedback"></div>
-                    </div>
+                </div>
                 <br>
-
-                <div class="mb-2">
-                    <label for="Monday">
-                        <input type="radio" name="options" id="Monday" value="Monday">Monday
+                
+                <P class="form-label">Day</P>
+                <div class="mb-2 d-flex gap-3">
+                    <label for="Monday" class="form-label">
+                        <input type="checkbox" id="Monday" value="Monday" name="day">M
+                    </label>
+                    <label for="Tuesday" class="form-label">
+                        <input type="checkbox" id="Tuesday" value="Tuesday" name="day">T
+                    </label>
+                    <label for="Wednesday" class="form-label">
+                        <input type="checkbox" id="Wednesday" value="Wednesday" name="day">W
+                    </label>
+                    <label for="Thursday" class="form-label">
+                        <input type="checkbox" id="Thursday" value="Thursday" name="day">Th
+                    </label>
+                    <label for="Friday" class="form-label">
+                        <input type="checkbox" id="Friday" value="Friday" name="day">F
+                    </label>
+                    <label for="Saturday" class="form-label">
+                        <input type="checkbox" id="Saturday" value="Saturday" name="day">Sa
                     </label>
 
                     <div class="invalid-feedback"></div>
