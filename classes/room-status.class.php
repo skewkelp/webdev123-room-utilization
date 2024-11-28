@@ -218,7 +218,7 @@ class Room
     //fetch room type for dropdown
     public function fetchroomType(){
         $sql = 
-            "SELECT id as type_id, CONCAT(room_code,' ',room_description) AS r_type 
+            "SELECT id as type_id, room_description AS r_type 
             FROM room_type
             ORDER BY r_type ASC;
         

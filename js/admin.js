@@ -175,17 +175,18 @@ $(document).ready(function () {
             if (action === "filter") {
                 // Apply filters based on selected values
                 if (roomName && roomName !== "choose") {
-                    table.column(1).search(roomName).draw(); // Filter by room name (column 1)
+                    table.column(1).search(roomName); // Filter by room name (column 1)
                 }
     
                 if (roomType && roomType !== "choose") {
-                    table.column(2).search(roomType).draw(); // Filter by room type (column 2)
+                    table.column(2).search(roomType); // Filter by room type (column 2)
                 }
     
                 if (status && status !== "choose") {
-                    table.column(3).search(status).draw(); // Filter by status (column 3)
+                    table.column(9).search(status); // Filter by status (column 3)
                 }
-    
+                // Redraw the table after setting the filters
+                table.draw();
             } else if (action === "all") {
                 // Logic to show all records or reset filters
                 table.search('').columns().search('').draw(); // Clear all filters
@@ -444,28 +445,6 @@ $(document).ready(function () {
       },
     });
   }
-
-
-  // Function to show the add product modal
-  // function addProduct() {
-  //   $.ajax({
-  //     type: "GET", // Use GET request
-  //     url: "../products/add-product.html", // URL for add product view
-  //     dataType: "html", // Expect HTML response
-  //     success: function (view) {
-  //       $(".modal-container").html(view); // Load the modal view
-  //       $("#staticBackdrop").modal("show"); // Show the modal
-
-  //       fetchCategories(); // Load categories for the select input
-
-  //       // Event listener for the add product form submission
-  //       $("#form-add-product").on("submit", function (e) {
-  //         e.preventDefault(); // Prevent default form submission
-  //         saveProduct(); // Call function to save product
-  //       });
-  //     },
-  //   });
-  // }
 
 
   //test, test1

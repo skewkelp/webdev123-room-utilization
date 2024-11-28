@@ -34,7 +34,7 @@
                                     <label for="room-name-filter" class="label-text">Room Name:</label>
                                     <select id="room-name-filter" class="form-select">
                                         <option value="choose">Choose...</option>
-                                        <option value="">All</option>
+                                        <!-- <option value="">All</option> -->
                                         <?php
                                         $roomList = $roomObj->fetchroomList();
                                         foreach ($roomList as $rmlst) {
@@ -50,7 +50,7 @@
                                     <label for="room-type-filter" class="me-2 label-text">Room Type:</label>
                                     <select id="room-type-filter" class="form-select">
                                         <option value="choose">Choose...</option>
-                                        <option value="">All</option>
+                                        <!-- <option value="">All</option> -->
                                         <?php
                                         $roomTypeList = $roomObj->fetchroomType();
                                         foreach ($roomTypeList as $rmt) {
@@ -66,7 +66,7 @@
                                     <label for="room-status-filter" class="me-2 label-text">Status:</label>
                                     <select id="room-status-filter" class="form-select">
                                         <option value="choose">Choose...</option>
-                                        <option value="">All</option>
+                                        <!-- <option value="">All</option> -->
                                         <?php
                                         $statusList = $roomObj->fetchstatusOption();
                                         foreach ($statusList as $sl) {
@@ -82,8 +82,8 @@
                             <div class="d-flex flex-row justify-content-between align-items-center" style="width: 60%;">
                                 <label class="me-2 label-text">Filter: </label>
                                 <div class="d-flex width flex-row justify-content-end align-items-center gap-3">
-                                    <button id="add-room-status" class="btn admin btn-primary">All</button>
-                                    <button id="add-room-status" class="btn admin btn-primary">Filter</button>
+                                    <button class="btn admin btn-primary" value="all">All</button>
+                                    <button  class="btn admin btn-primary" value="filter">Filter</button>
                                 </div>
                             </div>
                         </form>
