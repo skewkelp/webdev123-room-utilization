@@ -125,22 +125,25 @@
                                     <label for="section-filter" class="me-2 label-text">Section:</label>
                                     <select id="section-filter" class="form-select">
                                         <option value="choose">Choose...</option>
-                                        <option value="">All</option>
-                                        <?php
-                                        $sections = $roomObj->fetchsectionOption();
-                                        foreach ($sections as $sec) {
-                                        ?>
-                                            <option value="<?= $sec['section_name'] ?>"><?= $sec['section_name'] ?></option>                                        <?php
-                                        }
-                                        ?>
+                                        <!-- Options will be populated dynamically -->
                                     </select>
                                 </div>
-
+                                
                                 <div class="d-flex width align-items-center gap-2" style="padding-left: 20px;">
                                     <label class="me-2 label-text">Option Filter:</label>
-                                    <label for="BSCS"><input type="radio" name="options" id="BSCS" value="BSCS">BSCS</label>
-                                    <label for="BSIT"><input type="radio" name="options" id="BSIT" value="BSIT">BSIT</label>
-                                    <label for="ACT"><input type="radio" name="options" id="ACT" value="ACT">ACT</label>
+                                    <label for="ALL">
+                                        <input type="radio" name="options" id="ALL" value="ALL" checked onclick="updateSelectOptions()"> ALL
+                                    </label>
+                                    <?php
+                                    $courses = $roomObj->fetchCourse(); // Fetch courses for radio buttons
+                                    foreach ($courses as $crs) {
+                                    ?>
+                                        <label for="<?= $crs['_name'] ?>">
+                                            <input type="radio" name="options" id="<?= $crs['_name'] ?>" value="<?= $crs['id'] ?>" onclick="updateSelectOptions()"> <?= $crs['_name'] ?>
+                                        </label>
+                                    <?php
+                                    }
+                                    ?>
                                 </div>
                             </div>
                                 

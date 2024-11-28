@@ -280,8 +280,32 @@ class Room
 
     //for filter dropdown section
     public function fetchsectionOption(){
-        $sql = " SELECT section_name FROM section_details;";
+        $sql = "SELECT section_name FROM section_details 
+        ;";
         $query = $this->db->connect()->prepare($sql);
+        $data = null;
+        if ($query->execute()) {
+            $data = $query->fetchAll(PDO::FETCH_ASSOC);
+        }
+        return $data;
+    }
+
+    //fetch course for radio button
+    public function fetchCourse(){
+        $sql = "SELECT id, _name FROM course_details;";
+        $query = $this->db->connect()->prepare($sql);
+        $data = null;
+        if ($query->execute()) {
+            $data = $query->fetchAll(PDO::FETCH_ASSOC);
+        }
+        return $data;
+    }
+
+    // Method to fetch sections based on the selected course ID
+    public function fetchSectionsByCourseId($courseId) {
+        $sql = "SELECT section_name FROM section_details WHERE course_id = :course_id";
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':course_id', $courseId);
         $data = null;
         if ($query->execute()) {
             $data = $query->fetchAll(PDO::FETCH_ASSOC);

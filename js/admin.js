@@ -193,25 +193,6 @@ $(document).ready(function () {
             }
         });
         
-        // // Bind change event for filter
-        // $("#room-name-filter").on("change", function () {
-        //   if (this.value !== "choose") {
-        //     table.column(1).search(this.value).draw(); // Filter by room name (column 1)
-        //   } else {
-        //     // Clear the filter for the room name column if "choose" is selected
-        //     table.column(1).search('').draw();
-        //   }
-        // });
-
-        // $("#room-type-filter").on("change", function () {
-        //   if (this.value !== "choose") {
-        //     table.column(2).search(this.value).draw(); // Filter by room name (column 1)
-        //   } else {
-        //     // Clear the filter for the room name column if "choose" is selected
-        //     table.column(2).search('').draw();
-        //   }
-        // });
-
          // Call function to load the chart
          $("#add-room-status").on("click", function (e) {
            e.preventDefault(); // Prevent default behavior
