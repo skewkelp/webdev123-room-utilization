@@ -28,7 +28,7 @@
                 <div class="d-flex justify-content-between align-items-center gap-4">
                     
                     <div class="d-flex ct1 flex-row align-items-start gap-5">
-                        <form id ="room-form" class="d-flex flex-column align-items-start gap-3">
+                        <form id ="room-form" class="d-flex flex-column justify-content-between align-items-start gap-5">
                             <div class="d-flex width flex-column align-items-start gap-1">
                                 <div class="d-flex width justify-content-between">
                                     <label for="room-name-filter" class="label-text">Room Name:</label>
@@ -82,13 +82,13 @@
                             <div class="d-flex flex-row justify-content-between align-items-center" style="width: 60%;">
                                 <label class="me-2 label-text">Filter: </label>
                                 <div class="d-flex width flex-row justify-content-end align-items-center gap-3">
-                                    <button class="btn admin btn-primary" value="all">All</button>
-                                    <button  class="btn admin btn-primary" value="filter">Filter</button>
+                                    <button class="btn user btn-primary" value="all">All</button>
+                                    <button  class="btn user btn-primary" value="filter">Filter</button>
                                 </div>
                             </div>
                         </form>
 
-                        <form id="class-form" class="d-flex flex-column align-items-start gap-3">
+                        <form id="class-form" class="d-flex flex-column justify-content-between align-items-start gap-3">
                             <div class="d-flex width flex-column align-items-start gap-1">
                                 <div class="d-flex width align-items-center">
                                     <label for="subject-code-filter" class="label-text">Subject Code:</label>
@@ -96,7 +96,7 @@
                                         <option value="choose">Choose...</option>
                                         <!-- <option value="">All</option> -->
                                         <?php
-                                        $subjectCode = $roomObj->fetchsubjectOption();
+                                        $subjectCode = $roomObj->fetchsubjectnameOption();
                                         foreach ($subjectCode as $subco){
                                         ?>
                                             <option value="<?= $subco['subject_code'] ?>"><?= $subco['subject_code']?></option>
@@ -150,14 +150,14 @@
                             <div class="d-flex flex-row justify-content-between align-items-center" style="width: 60%;">
                                 <label class="me-2 label-text">Filter: </label>
                                 <div class="d-flex width flex-row justify-content-end align-items-center gap-3">
-                                    <button type="submit" class="btn admin btn-primary" value="all">All</button>
-                                    <button type="submit" class="btn admin btn-primary" value="filter">Filter</button>
+                                    <button type="submit" class="btn user btn-primary" value="all">All</button>
+                                    <button type="submit" class="btn user btn-primary" value="filter">Filter</button>
                                 </div>
                             </div>
                         </form>
                     </div>
                     
-                    <form class="d-flex ct2 me-2">
+                    <!-- <form class="d-flex ct2 me-2">
                         <div class="d-flex width flex-column align-content-between align-items-start gap-5 ">
                             <div class="d-flex width flex-column align-content-between align-items-start gap-1">
                                 <div class="d-flex width justify-content-between">
@@ -165,14 +165,7 @@
                                     <select id="start-time" class="form-select">
                                         <option value="choose">Choose...</option>
                                         <option value="">All</option>
-                                        <?php
-                                        $roomList = $roomObj->fetchroomList();
-                                        foreach ($roomList as $rmlst){
-                                        ?>
-                                            <option value="<?= $rmlst['room_name'] ?>"><?= $rmlst['room_name']?></option>
-                                        <?php
-                                        }
-                                        ?>
+                                        
                                     </select>
                                 </div>
                                     
@@ -181,32 +174,21 @@
                                     <select id="end-time" class="form-select">
                                         <option value="choose">Choose...</option>
                                         <option value="">All</option>
-                                        <?php
-                                        $roomList = $roomObj->fetchroomList();
-                                        foreach ($roomList as $rmlst){
-                                        ?>
-                                            <option value="<?= $rmlst['room_name'] ?>"><?= $rmlst['room_name']?></option>
-                                        <?php
-                                        }
-                                        ?>
                                     </select>
                                 </div> 
                             </div>  
-                            
-                            <div class="input-group w-100">
-                                <input type="text" class="form-control form-control-light" id="custom-search" placeholder="Search products...">
-                                <span class="input-group-text bg-primary border-primary text-white brand-bg-color">
-                                    <i class="bi bi-search"></i>
-                                </span>
-                            </div>
                         </div>
-                            
-                            
-                        
-                    </form>
+                    </form> -->
 
                     <form class="d-flex ct3 flex-column align-items-start gap-1">
-                        <a id="add-room-status" href="#" class="btn admin btn-primary">Add Room Status</a>
+                        <div class="d-flex width align-items-center justify-content-between">
+                            <label for="day" class="label-text text-center">Day:</label>
+                            <select id="day" class="form-select">
+                                <option value="choose">Choose...</option>
+                                <option value="">All</option>
+                            </select>
+                        </div>
+                        
                     </form>
                 </div>
                 
@@ -215,6 +197,15 @@
                 </form> -->
 
                 <div class="card-body p-1 pt-2">
+                    <div class="d-flex ct1 flex-row align-items-start gap-5">
+                        <div class="input-group w-100">
+                            <input type="text" class="form-control form-control-light" id="custom-search" placeholder="Search ...">
+                            <span class="input-group-text bg-primary border-primary text-white brand-bg-color">
+                                <i class="bi bi-search"></i>
+                            </span>
+                        </div>
+                        <a id="add-room-status" href="#" class="btn admin btn-primary">Add Room Status</a>
+                    </div>
                     <div class="table-responsive">
                         <table id="table-room-status" class="table table-centered table-nowrap table-hover mb-0">
                             <thead>

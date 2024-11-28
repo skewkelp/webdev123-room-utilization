@@ -1,0 +1,95 @@
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Add Status Room</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div> 
+        <form action="" method="post" id="form-add">
+          <div class="modal-body">
+            <P class="form-label">Class Details:</P>
+            <div style="padding-left: 8px;">
+                <div class="mb-2">
+                    <P class="form-label">Room Name</P>
+                    <div class="dropdown">
+                        <input type="text" class="form-control dropdown-input" placeholder="Select or search..." id="dropdown-room">
+                        <div class="dropdown-list" id="dropdown-list-name">
+                            <!-- Options will be populated here by JavaScript -->
+                        </div>
+                    </div>
+                    <div class="invalid-feedback"></div>
+                </div>
+                <br>
+                <div class="mb-2">
+                    <P class="form-label">Subject Code</P>
+                    <div class="dropdown">
+                        <input type="text" class="form-control dropdown-input" placeholder="Select or search..." id="dropdown-subject">
+                        <div class="dropdown-list" id="dropdown-list-subject">
+                            <!-- Options will be populated here by JavaScript -->
+                        </div>
+                    </div>
+                    <div class="invalid-feedback"></div>
+                </div>
+                <br>
+                <div class="mb-2">
+                    <P class="form-label">Section</P>
+                    <div class="dropdown">
+                        <input type="text" class="form-control dropdown-input" placeholder="Select or search..." id="dropdown-section">
+                        <div class="dropdown-list" id="dropdown-list-section">
+                            <!-- Options will be populated here by JavaScript -->
+                        </div>
+                    </div>
+                    <div class="invalid-feedback"></div>
+                </div>
+                <br>
+                <div class="mb-2">
+                    <P class="form-label">Teacher Assigned</P>
+                    <div class="dropdown">
+                        <input type="text" class="form-control dropdown-input" placeholder="Select or search..." id="dropdown-teacher">
+                        <div class="dropdown-list" id="dropdown-list-teacher">
+                            <!-- Options will be populated here by JavaScript -->
+                        </div>
+                    </div>
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+            <br><br>
+            <P class="form-label">Class Schedule:</P>
+            <div style="padding-left: 8px;">
+                <div class="mb-2">
+                    <label for="start-time" class="form-label">Start-Time</label>
+                    <input type="time" class="form-control" id="start-time" name="start-time">
+                    <div class="invalid-feedback"></div>
+                    </div>
+                <br>
+
+                <div class="mb-2">
+                    <label for="end-time" class="form-label">End-Time</label>
+                    <input type="time" class="form-control" id="end-time" name="end-time">
+                    <div class="invalid-feedback"></div>
+                    </div>
+                <br>
+
+                <div class="mb-2">
+                    <label for="Monday">
+                        <input type="radio" name="options" id="Monday" value="Monday">Monday
+                    </label>
+
+                    <div class="invalid-feedback"></div>
+                </div>
+                <br>
+
+                
+
+            </div>
+
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary brand-bg-color">Add Room</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>

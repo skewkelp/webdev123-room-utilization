@@ -39,7 +39,16 @@ class Room
     }
 
     function addRoom(){
-        $sql = "INSERT INTO room_list (room_name, room_type) VALUES (:room_name, :room_type);";
+        $sql = "INSERT INTO room_list (room_name, type_id) VALUES (:room_name, :room_type);";
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':room_name', $this->room_name);
+        $query->bindParam(':room_type', $this->room_type);
+        
+        return $query->execute();
+    }
+
+    function addstatusRoom(){
+        $sql = "INSERT INTO room_list (room_name, type_id) VALUES (:room_name, :room_type);";
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':room_name', $this->room_name);
         $query->bindParam(':room_type', $this->room_type);
@@ -256,8 +265,43 @@ class Room
         return $data;
     }
 
-    //for filter dropdown subject code
+    //for filter dropdown search subject code
     public function fetchsubjectOption(){
+        $sql = 
+        " SELECT sub.id AS subject_id, CONCAT(sub.subject_code,' ', _desc.type) AS subject_option
+        FROM subject_details sub LEFT JOIN subject_type_description _desc ON sub.type_id = _desc.id;";
+        $query = $this->db->connect()->prepare($sql);
+        $data = null;
+        if ($query->execute()) {
+            $data = $query->fetchAll(PDO::FETCH_ASSOC);
+        }
+        return $data;
+    }
+
+    //for filter dropdown search section
+    public function fetchsectOption(){
+        $sql = "SELECT id AS section_name, section_name FROM section_details;";
+        $query = $this->db->connect()->prepare($sql);
+        $data = null;
+        if ($query->execute()) {
+            $data = $query->fetchAll(PDO::FETCH_ASSOC);
+        }
+        return $data;
+    }
+
+     //for filter dropdown search Teacher
+    public function fetchteacherOption(){
+        $sql = "SELECT id, CONCAT(lname,', ',fname) AS teacher_assigned FROM faculty_list;";
+        $query = $this->db->connect()->prepare($sql);
+        $data = null;
+        if ($query->execute()) {
+            $data = $query->fetchAll(PDO::FETCH_ASSOC);
+        }
+        return $data;
+    }
+
+    //for filter dropdown subject code
+    public function fetchsubjectnameOption(){
         $sql = " SELECT DISTINCT subject_code FROM subject_details;";
         $query = $this->db->connect()->prepare($sql);
         $data = null;
@@ -290,6 +334,7 @@ class Room
         return $data;
     }
 
+    
     //fetch course for radio button
     public function fetchCourse(){
         $sql = "SELECT id, _name FROM course_details;";
@@ -312,4 +357,6 @@ class Room
         }
         return $data;
     }
+
+    
 }

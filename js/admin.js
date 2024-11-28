@@ -157,7 +157,7 @@ $(document).ready(function () {
             ordering: false, // Disable ordering
         });
     
-        // Form event listener
+        // Form room field event listener
         $("#room-form").on("submit", function (e) {
             e.preventDefault(); // Prevent default behavior
     
@@ -193,10 +193,46 @@ $(document).ready(function () {
             }
         });
         
+        // Form subject-section field event listener
+        $("#class-form").on("submit", function (e) {
+          e.preventDefault(); // Prevent default behavior
+  
+          // Get values from the dropdowns
+          const subjectCode = $('#subject-code-filter').val();
+          const subjectType = $('#subject-type-filter').val();
+          const section = $('#section-filter').val();
+          const action = e.originalEvent.submitter.value; // Get the value of the button that triggered the submit
+
+          // Debugging: Log the retrieved values
+          console.log("Subject Code:", subjectCode, "Subject Type:", subjectType, "Section:", section, "Action:", action);
+          // Clear previous filters
+          table.search('').columns().search('').draw();
+  
+          if (action === "filter") {
+              // Apply filters based on selected values
+              if (subjectCode && subjectCode !== "choose") {
+                  table.column(3).search(subjectCode); // Filter by subject code (column 1)
+              }
+  
+              if (subjectType && subjectType !== "choose") {
+                  table.column(4).search(subjectType); // Filter by subject type (column 2)
+              }
+  
+              if (section && section !== "choose") {
+                  table.column(5).search(section); // Filter by section (column 3)
+              }
+              // Redraw the table after setting the filters
+              table.draw();
+          } else if (action === "all") {
+              // Logic to show all records or reset filters
+              table.search('').columns().search('').draw(); // Clear all filters
+          }
+        });
+
          // Call function to load the chart
          $("#add-room-status").on("click", function (e) {
            e.preventDefault(); // Prevent default behavior
-           // addstatus(); // Call function to add status
+          addroomStatus(); // Call function to add status
          });
          
         $(".room-schedule").on("click", function (e) {
@@ -294,58 +330,6 @@ $(document).ready(function () {
     });
   }
 
-
-
-    // Function to save a new product
-  function updateProduct(productId) {
-    $.ajax({
-      type: "POST", // Use POST request
-      url: `../products/update-product.php?id=${roomId}`, // URL for saving product
-      data: $("form").serialize(), // Serialize the form data for submission
-      dataType: "json", // Expect JSON response
-      success: function (response) {
-        if (response.status === "error") {
-          // Handle validation errors
-          if (response.codeErr) {
-            $("#code").addClass("is-invalid"); // Mark field as invalid
-            $("#code").next(".invalid-feedback").text(response.codeErr).show(); // Show error message
-          } else {
-            $("#code").removeClass("is-invalid"); // Remove invalid class if no error
-          }
-          if (response.nameErr) {
-            $("#name").addClass("is-invalid");
-            $("#name").next(".invalid-feedback").text(response.nameErr).show();
-          } else {
-            $("#name").removeClass("is-invalid");
-          }
-          if (response.categoryErr) {
-            $("#category").addClass("is-invalid");
-            $("#category")
-              .next(".invalid-feedback")
-              .text(response.categoryErr)
-              .show();
-          } else {
-            $("#category").removeClass("is-invalid");
-          }
-          if (response.priceErr) {
-            $("#price").addClass("is-invalid");
-            $("#price")
-              .next(".invalid-feedback")
-              .text(response.priceErr)
-              .show();
-          } else {
-            $("#price").removeClass("is-invalid");
-          }
-        } else if (response.status === "success") {
-          // On success, hide modal and reset form
-          $("#staticBackdropedit").modal("hide");
-          $("form")[0].reset(); // Reset the form
-          // Optionally, reload products to show new entry
-          viewProducts();
-        }
-      },
-    });
-  }
     
   function stockProduct(){
     $.ajax({
@@ -427,8 +411,29 @@ $(document).ready(function () {
     });
   }
 
+  //add room status
+  function addroomStatus() {
+    $.ajax({
+      type: "GET", // Use GET request
+      url: "../class-room-status/add-status.html?v=" + new Date().getTime(), // URL for add product view
+      dataType: "html", // Expect HTML response
+      success: function (view) {
+        $(".modal-container").html(view); // Load the modal view
+        $("#staticBackdrop").modal("show"); // Show the modal
 
-  //test, test1
+        fetchroomName();//fetchroomname list
+        fetchSubject();//fetchsubject
+        fetchSection();//fetchsection
+        fetchTeacher();
+        
+        // Event listener for the add product form submission
+        $("#form-add").on("submit", function (e) {
+          e.preventDefault(); // Prevent default form submission
+          //saveRoom(); // Call function to save product
+        });
+      },
+    });
+  }
 
   // Function to save a new room
   function saveRoom(){
@@ -501,10 +506,10 @@ $(document).ready(function () {
     });
   }
 
+  //function to fetch record list of room
   function fetchroomlistRecord(roomId) {
     $.ajax({
-      url: `../admin/roomlist/fetch-room.php?id=${roomId}`, // URL for fetching categories
-      type: "GET", // Use GET request
+      url: `../admin/roomlist/fetch-room.php?id=${roomId}`, // URL for fetching room
       dataType: "json", // Expect JSON response
       success: function (room) {
         $("#room-name").val(room.room_name); // val(name of var initialized within fetch-room.php  .   refers to room.class.php public var)
@@ -518,7 +523,293 @@ $(document).ready(function () {
     });
   }
 
+  //function to fetch room name, goes to roomlist folder, fetch-room-name
+  function fetchroomName() {
+    $.ajax({
+        url: "../fetch-data/fetch-room-name.php", // URL for fetching categories
+        type: "GET", // Use GET request
+        dataType: "json", // Expect JSON response
+        success: function (data) {
+            const dropdownList = $('#dropdown-list-name');
+            dropdownList.empty(); // Clear existing options
+            
+            // Append each category to the dropdown list
+            $.each(data, function (index, room) {
+              dropdownList.append(
+                  $("<div>", {
+                      text: room.room_name, // Displayed text
+                      'data-value': room.room_name // Value attribute
+                  })
+              );
+            });
+            
+            // Show dropdown when input is focused
+            $('#dropdown-room').on('focus', function() {
+              // Close other dropdowns
+              $('.dropdown-list').not(dropdownList).hide(); 
+              dropdownList.show();
+              filterItems(); // Reset display based on current input
+            });
 
 
+            // Filter items based on input
+            $('#dropdown-room').on('input', function() {
+              filterItems();
+            });
 
+            // Select an item and update the input value
+            dropdownList.on('click', 'div', function() {
+              $('#dropdown-room').val($(this).data('value')); // Set input value to selected item
+              dropdownList.hide(); // Close dropdown
+              $('#dropdown-room').focus(); // Keep focus for further searching
+            });
+
+            // Function to filter items
+            function filterItems() {
+              const filter = $('#dropdown-room').val().toLowerCase();
+              let hasVisibleItems = false;
+
+              dropdownList.children('div').each(function() {
+                const item = $(this);
+                if (item.text().toLowerCase().includes(filter)) {
+                    item.show(); // Show item
+                    hasVisibleItems = true;
+                } else {
+                    item.hide(); // Hide item
+                }
+              });
+
+              // Show or hide the dropdown if there are visible items
+              dropdownList.toggle(hasVisibleItems); 
+            }
+
+            // Close dropdown when clicking outside
+            $(document).on('click', function(event) {
+              if (!$(event.target).closest('.dropdown').length) {
+                  dropdownList.hide();
+              }
+            });
+        },
+        error: function (xhr, status, error) {
+          console.error("Error fetching room:", error);
+          alert('Failed to fetch room.');
+        }
+    });
+  }
+
+  function fetchSubject() {
+    $.ajax({
+        url: "../fetch-data/fetch-subject.php", // URL for fetching categories
+        type: "GET", // Use GET request
+        dataType: "json", // Expect JSON response
+        success: function (data) {
+          const dropdownList = $('#dropdown-list-subject');
+          dropdownList.empty(); // Clear existing options
+          
+          // Append each category to the dropdown list
+          $.each(data, function (index, subject) {
+            dropdownList.append(
+              $("<div>", {
+                text: subject.subject_option, // Displayed text
+                'data-value': subject.subject_option // Value attribute
+              })
+            );
+          });
+          
+          // Show dropdown when input is focused
+          $('#dropdown-subject').on('focus', function() {
+            // Close other dropdowns
+            $('.dropdown-list').not(dropdownList).hide(); 
+            dropdownList.show();
+            filterItems(); // Reset display based on current input
+          });
+
+          // Filter items based on input
+          $('#dropdown-subject').on('input', function() {
+            filterItems();
+          });
+
+          // Select an item and update the input value
+          dropdownList.on('click', 'div', function() {
+            $('#dropdown-subject').val($(this).data('value')); // Set input value to selected item
+            dropdownList.hide(); // Close dropdown
+            $('#dropdown-subject').focus(); // Keep focus for further searching
+          });
+
+          // Function to filter items
+          function filterItems() {
+            const filter = $('#dropdown-subject').val().toLowerCase();
+            let hasVisibleItems = false;
+
+            dropdownList.children('div').each(function() {
+              const item = $(this);
+              if (item.text().toLowerCase().includes(filter)) {
+                  item.show(); // Show item
+                  hasVisibleItems = true;
+              } else {
+                  item.hide(); // Hide item
+              }
+            });
+
+            // Show or hide the dropdown if there are visible items
+            dropdownList.toggle(hasVisibleItems); 
+          }
+
+          // Close dropdown when clicking outside
+          $(document).on('click', function(event) {
+            if (!$(event.target).closest('.dropdown').length) {
+              dropdownList.hide();
+            }
+          });
+      },
+      error: function (xhr, status, error) {
+        console.error("Error fetching subject:", error);
+        alert('Failed to fetch subject.');
+      }
+    });
+  }
+  
+  function fetchSection() {
+    $.ajax({
+      url: "../fetch-data/fetch-section.php", // URL for fetching categories
+      type: "GET", // Use GET request
+      dataType: "json", // Expect JSON response
+      success: function (data) {
+        const dropdownList = $('#dropdown-list-section');
+        dropdownList.empty(); // Clear existing options
+        
+        // Append each category to the dropdown list
+        $.each(data, function (index, section) {
+          dropdownList.append(
+            $("<div>", {
+              text: section.section_name, // Displayed text
+              'data-value': section.section_name // Value attribute
+            })
+          );
+        });
+        
+        // Show dropdown when input is focused
+        $('#dropdown-section').on('focus', function() {
+          // Close other dropdowns
+          $('.dropdown-list').not(dropdownList).hide(); 
+          dropdownList.show();
+          filterItems(); // Reset display based on current input
+        });
+
+        // Filter items based on input
+        $('#dropdown-section').on('input', function() {
+          filterItems();
+        });
+
+        // Select an item and update the input value
+        dropdownList.on('click', 'div', function() {
+          $('#dropdown-section').val($(this).data('value')); // Set input value to selected item
+          dropdownList.hide(); // Close dropdown
+          $('#dropdown-section').focus(); // Keep focus for further searching
+        });
+
+        // Function to filter items
+        function filterItems() {
+          const filter = $('#dropdown-section').val().toLowerCase();
+          let hasVisibleItems = false;
+
+          dropdownList.children('div').each(function() {
+            const item = $(this);
+            if (item.text().toLowerCase().includes(filter)) {
+              item.show(); // Show item
+              hasVisibleItems = true;
+            } else {
+              item.hide(); // Hide item
+            }
+          });
+
+          // Show or hide the dropdown if there are visible items
+          dropdownList.toggle(hasVisibleItems); 
+        }
+
+        // Close dropdown when clicking outside
+        $(document).on('click', function(event) {
+          if (!$(event.target).closest('.dropdown').length) {
+            dropdownList.hide();
+          }
+        });
+      },
+      error: function (xhr, status, error) {
+        console.error("Error fetching subject:", error);
+        alert('Failed to fetch subject.');
+      }
+    });
+  }
+
+  function fetchTeacher() {
+    $.ajax({
+        url: "../fetch-data/fetch-teacher.php", // URL for fetching categories
+        type: "GET", // Use GET request
+        dataType: "json", // Expect JSON response
+        success: function (data) {
+          const dropdownList = $('#dropdown-list-teacher');
+          dropdownList.empty(); // Clear existing options
+          
+          // Append each category to the dropdown list
+          $.each(data, function (index, teacher) {
+            dropdownList.append(
+              $("<div>", {
+                text: teacher.teacher_assigned, // Displayed text
+                'data-value': teacher.teacher_assigned // Value attribute
+              })
+            );
+          });
+          
+          // Show dropdown when input is focused
+          $('#dropdown-teacher').on('focus', function() {
+            // Close other dropdowns
+            $('.dropdown-list').not(dropdownList).hide(); 
+            dropdownList.show();
+            filterItems(); // Reset display based on current input
+          });
+
+          // Filter items based on input
+          $('#dropdown-teacher').on('input', function() {
+            filterItems();
+          });
+
+          // Select an item and update the input value
+          dropdownList.on('click', 'div', function() {
+            $('#dropdown-teacher').val($(this).data('value')); // Set input value to selected item
+            dropdownList.hide(); // Close dropdown
+            $('#dropdown-teacher').focus(); // Keep focus for further searching
+          });
+
+          // Function to filter items
+          function filterItems() {
+            const filter = $('#dropdown-teacher').val().toLowerCase();
+            let hasVisibleItems = false;
+
+            dropdownList.children('div').each(function() {
+              const item = $(this);
+              if (item.text().toLowerCase().includes(filter)) {
+                item.show(); // Show item
+                hasVisibleItems = true;
+              } else {
+                item.hide(); // Hide item
+              }
+            });
+
+            // Show or hide the dropdown if there are visible items
+            dropdownList.toggle(hasVisibleItems); 
+          }
+
+          // Close dropdown when clicking outside
+          $(document).on('click', function(event) {
+            if (!$(event.target).closest('.dropdown').length) {
+              dropdownList.hide();
+            }
+          });
+        },
+        error: function (xhr, status, error) {
+          console.error("Error fetching subject:", error);
+          alert('Failed to fetch subject.');
+        }
+    });
+  }
 });

@@ -43,6 +43,12 @@ update test
   --btn-padding-y: 0.25rem;
   --btn-padding-x: 0.5rem;
   --btn-border-radius-sm: 0.25rem;
+  --btn-inactive-background-color: #fff;
+  --btn-hover-background-color: #a1a9b1;
+  
+  --user-btn-background-color: rgba(44, 59, 20);
+  --user-btn-color:#fff;
+  --user-btn-hover-background-color: rgba(60, 79, 30, 0.8);
 
   --admin-btn-background-color: #FFC107;
 
@@ -52,6 +58,7 @@ update test
   --sidebar-menu-active-color: #fff;
   --sidebar-width: 260px;
   --topbar-height: 70px;
+
   --body-color: #f7f8fb;
   --ct-blue: #2c8ef8;
   --ct-indigo: #727cf5;
@@ -200,11 +207,21 @@ body{
 }
 
 .btn{
+  text-wrap: nowrap;
   color: var(--btn-color);
   border-color: var(--btn-border-color);
   border-radius: var(--btn-border-radius-sm)!important;
   padding: var(--btn-padding-y) var(--btn-padding-x)!important;
   font-size: var(--btn-font-size) !important;
+}.btn:hover{
+  background-color: var(--btn-hover-background-color);
+}
+
+.user{
+  background-color: var(--user-btn-background-color)!important;
+  color: var(--user-btn-color) !important;
+}.user:hover{
+  background-color: var(--user-btn-hover-background-color)!important;
 }
 
 .btn.admin{
@@ -443,6 +460,8 @@ a.nav-link{
   font-weight: 700;
 }
 
+
+
 .card {
   --ct-card-spacer-y: 1.5rem;
   --ct-card-spacer-x: 1.5rem;
@@ -509,6 +528,36 @@ a.nav-link{
 
 .card-header .dropdown-toggle::after {
   display: none !important; /* Hide the arrow */
+}
+
+.dropdown {
+  position: relative;
+  width: 100%;
+}
+.dropdown-input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+}
+.dropdown-list {
+  display: none;
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  max-height: 150px;
+  overflow-y: auto;
+  z-index: 1;
+}
+.dropdown-list div {
+  padding: 10px;
+  cursor: pointer;
+}
+.dropdown-list div:hover {
+  background-color: #f0f0f0;
 }
 /*
 
