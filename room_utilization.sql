@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 28, 2024 at 07:47 AM
+-- Generation Time: Nov 28, 2024 at 11:36 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -134,6 +134,27 @@ INSERT INTO `class_time` (`id`, `class_id`, `start_time`, `end_time`, `time_modi
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `course_details`
+--
+
+CREATE TABLE `course_details` (
+  `id` int(11) NOT NULL,
+  `_name` varchar(20) NOT NULL,
+  `_description` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `course_details`
+--
+
+INSERT INTO `course_details` (`id`, `_name`, `_description`) VALUES
+(1, 'BSCS', 'Bachelor of Science in Computing Studies'),
+(2, 'BSIT', 'Bachelor of Science in Information Technology'),
+(3, 'ACT', 'Associate in Computer Technology');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `faculty_list`
 --
 
@@ -229,7 +250,7 @@ INSERT INTO `room_type` (`id`, `room_description`, `room_code`) VALUES
 CREATE TABLE `section_details` (
   `id` int(11) NOT NULL,
   `section_name` varchar(255) NOT NULL,
-  `course` enum('BSCS','BSIT','ACT') NOT NULL,
+  `course_id` int(11) NOT NULL,
   `year_level` enum('1','2','3','4','5') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -237,22 +258,22 @@ CREATE TABLE `section_details` (
 -- Dumping data for table `section_details`
 --
 
-INSERT INTO `section_details` (`id`, `section_name`, `course`, `year_level`) VALUES
-(1, 'CS1A', 'BSCS', '1'),
-(2, 'CS1B', 'BSCS', '1'),
-(3, 'CS1C', 'BSCS', '1'),
-(4, 'IT1A', 'BSIT', '1'),
-(5, 'IT1B', 'BSIT', '1'),
-(6, 'IT1C', 'BSIT', '1'),
-(7, 'ACT1A', 'ACT', '1'),
-(8, 'CS2A', 'BSCS', '2'),
-(9, 'CS2B', 'BSCS', '2'),
-(10, 'CS2C', 'BSCS', '2'),
-(11, 'IT2A', 'BSIT', '2'),
-(12, 'IT2B', 'BSIT', '2'),
-(13, 'IT2C', 'BSIT', '2'),
-(14, 'ACT2A', 'ACT', '2'),
-(15, 'ACT2B', 'ACT', '2');
+INSERT INTO `section_details` (`id`, `section_name`, `course_id`, `year_level`) VALUES
+(1, 'CS1A', 1, '1'),
+(2, 'CS1B', 1, '1'),
+(3, 'CS1C', 1, '1'),
+(4, 'IT1A', 2, '1'),
+(5, 'IT1B', 2, '1'),
+(6, 'IT1C', 2, '1'),
+(7, 'ACT1A', 3, '1'),
+(8, 'CS2A', 1, '2'),
+(9, 'CS2B', 1, '2'),
+(10, 'CS2C', 1, '2'),
+(11, 'IT2A', 2, '2'),
+(12, 'IT2B', 2, '2'),
+(13, 'IT2C', 2, '2'),
+(14, 'ACT2A', 3, '2'),
+(15, 'ACT2B', 3, '2');
 
 -- --------------------------------------------------------
 
@@ -404,6 +425,12 @@ ALTER TABLE `class_time`
   ADD KEY `classid_fk` (`class_id`);
 
 --
+-- Indexes for table `course_details`
+--
+ALTER TABLE `course_details`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `faculty_list`
 --
 ALTER TABLE `faculty_list`
@@ -439,7 +466,8 @@ ALTER TABLE `room_type`
 --
 ALTER TABLE `section_details`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `class_name` (`section_name`);
+  ADD UNIQUE KEY `class_name` (`section_name`),
+  ADD KEY `course_id_fk` (`course_id`);
 
 --
 -- Indexes for table `status_description`
@@ -508,6 +536,12 @@ ALTER TABLE `class_details`
 --
 ALTER TABLE `class_time`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT for table `course_details`
+--
+ALTER TABLE `course_details`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `faculty_list`
@@ -606,6 +640,12 @@ ALTER TABLE `product`
 --
 ALTER TABLE `room_list`
   ADD CONSTRAINT `typeid_fk` FOREIGN KEY (`type_id`) REFERENCES `room_type` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `section_details`
+--
+ALTER TABLE `section_details`
+  ADD CONSTRAINT `course_id_fk` FOREIGN KEY (`course_id`) REFERENCES `course_details` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `stocks`
