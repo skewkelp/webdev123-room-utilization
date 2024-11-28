@@ -85,7 +85,7 @@ class Room
                 rl.room_name, 
                 rt.room_description AS room_type,
                 sd.subject_code, 
-                sd.subject_type,
+                subtype.type AS subject_type,
                 sec.section_name, 
                 ct.start_time, 
                 ct.end_time,
@@ -107,7 +107,9 @@ class Room
             LEFT JOIN
                 room_type rt ON rl.type_id = rt.id
             LEFT JOIN 
-                subject_details sd ON cdt.subject_id = sd.id  
+                subject_details sd ON cdt.subject_id = sd.id 
+            LEFT JOIN
+                subject_type_description subtype ON sd.type_id = subtype.id 
             LEFT JOIN 
                 section_details sec ON cdt.section_id = sec.id
             LEFT JOIN 
@@ -119,7 +121,7 @@ class Room
                 rl.room_name LIKE CONCAT('%', :keyword, '%') OR
                 rt.room_description LIKE CONCAT('%', :keyword, '%') OR
                 sd.subject_code LIKE CONCAT('%', :keyword, '%') OR
-                sd.subject_type LIKE CONCAT('%', :keyword, '%') OR
+                subtype.type LIKE CONCAT('%', :keyword, '%') OR
                 sec.section_name LIKE CONCAT('%', :keyword, '%') OR
                 ct.start_time LIKE CONCAT('%', :keyword, '%') OR
                 ct.end_time LIKE CONCAT('%', :keyword, '%') OR
@@ -130,7 +132,7 @@ class Room
                 rl.room_name LIKE CONCAT('%', :froom_name, '%') AND
                 rt.room_description LIKE CONCAT('%', :froom_type, '%') AND
                 sd.subject_code LIKE CONCAT('%', :fsubject_code, '%') AND
-                sd.subject_type LIKE CONCAT('%', :fsubject_type, '%') AND
+                subtype.type LIKE CONCAT('%', :fsubject_type, '%') AND
                 sec.section_name LIKE CONCAT('%', :fsection_name, '%') AND
                 ct.start_time LIKE CONCAT('%', :fstart_time, '%') AND
                 ct.end_time LIKE CONCAT('%', :fend_time, '%') AND
@@ -243,6 +245,7 @@ class Room
     }
 
 
+    //for filter dropdown status list
     public function fetchstatusOption(){
         $sql = " SELECT sd.description AS status_desc FROM status_description sd;";
         $query = $this->db->connect()->prepare($sql);
@@ -252,5 +255,37 @@ class Room
         }
         return $data;
     }
+
+    //for filter dropdown subject code
+    public function fetchsubjectOption(){
+        $sql = " SELECT DISTINCT subject_code FROM subject_details;";
+        $query = $this->db->connect()->prepare($sql);
+        $data = null;
+        if ($query->execute()) {
+            $data = $query->fetchAll(PDO::FETCH_ASSOC);
+        }
+        return $data;
+    }
     
+    //for filter dropdown subject type
+    public function fetchsubtypeOption(){
+        $sql = " SELECT std.type AS subject_type FROM subject_type_description std;";
+        $query = $this->db->connect()->prepare($sql);
+        $data = null;
+        if ($query->execute()) {
+            $data = $query->fetchAll(PDO::FETCH_ASSOC);
+        }
+        return $data;
+    }
+
+    //for filter dropdown section
+    public function fetchsectionOption(){
+        $sql = " SELECT section_name FROM section_details;";
+        $query = $this->db->connect()->prepare($sql);
+        $data = null;
+        if ($query->execute()) {
+            $data = $query->fetchAll(PDO::FETCH_ASSOC);
+        }
+        return $data;
+    }
 }

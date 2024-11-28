@@ -94,12 +94,12 @@
                                     <label for="subject-code-filter" class="label-text">Subject Code:</label>
                                     <select id="subject-code-filter" class="form-select">
                                         <option value="choose">Choose...</option>
-                                        <option value="">All</option>
+                                        <!-- <option value="">All</option> -->
                                         <?php
-                                        $roomList = $roomObj->fetchroomList();
-                                        foreach ($roomList as $rmlst){
+                                        $subjectCode = $roomObj->fetchsubjectOption();
+                                        foreach ($subjectCode as $subco){
                                         ?>
-                                            <option value="<?= $rmlst['room_name'] ?>"><?= $rmlst['room_name']?></option>
+                                            <option value="<?= $subco['subject_code'] ?>"><?= $subco['subject_code']?></option>
                                         <?php
                                         }
                                         ?>
@@ -110,12 +110,12 @@
                                     <label for="subject-type-filter" class="me-2 label-text">Subject Type:</label>
                                     <select id="subject-type-filter" class="form-select">
                                         <option value="choose">Choose...</option>
-                                        <option value="">All</option>
+                                        <!-- <option value="">All</option> -->
                                         <?php
-                                        $roomTypeList = $roomObj->fetchroomType();
-                                        foreach ($roomTypeList as $rmt) {
+                                        $subjectType = $roomObj->fetchsubtypeOption();
+                                        foreach ($subjectType as $stype) {
                                         ?>
-                                            <option value="<?= $rmt['r_type'] ?>"><?= $rmt['r_type'] ?></option>                                        <?php
+                                            <option value="<?= $stype['subject_type'] ?>"><?= $stype['subject_type'] ?></option>                                        <?php
                                         }
                                         ?>
                                     </select>
@@ -127,13 +127,20 @@
                                         <option value="choose">Choose...</option>
                                         <option value="">All</option>
                                         <?php
-                                        $roomTypeList = $roomObj->fetchroomType();
-                                        foreach ($roomTypeList as $rmt) {
+                                        $sections = $roomObj->fetchsectionOption();
+                                        foreach ($sections as $sec) {
                                         ?>
-                                            <option value="<?= $rmt['r_type'] ?>"><?= $rmt['r_type'] ?></option>                                        <?php
+                                            <option value="<?= $sec['section_name'] ?>"><?= $sec['section_name'] ?></option>                                        <?php
                                         }
                                         ?>
                                     </select>
+                                </div>
+
+                                <div class="d-flex width align-items-center gap-2" style="padding-left: 20px;">
+                                    <label class="me-2 label-text">Option Filter:</label>
+                                    <label for="BSCS"><input type="radio" name="options" id="BSCS" value="BSCS">BSCS</label>
+                                    <label for="BSIT"><input type="radio" name="options" id="BSIT" value="BSIT">BSIT</label>
+                                    <label for="ACT"><input type="radio" name="options" id="ACT" value="ACT">ACT</label>
                                 </div>
                             </div>
                                 

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 28, 2024 at 01:40 AM
+-- Generation Time: Nov 28, 2024 at 07:47 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -244,7 +244,15 @@ INSERT INTO `section_details` (`id`, `section_name`, `course`, `year_level`) VAL
 (4, 'IT1A', 'BSIT', '1'),
 (5, 'IT1B', 'BSIT', '1'),
 (6, 'IT1C', 'BSIT', '1'),
-(7, 'ACT1A', 'ACT', '1');
+(7, 'ACT1A', 'ACT', '1'),
+(8, 'CS2A', 'BSCS', '2'),
+(9, 'CS2B', 'BSCS', '2'),
+(10, 'CS2C', 'BSCS', '2'),
+(11, 'IT2A', 'BSIT', '2'),
+(12, 'IT2B', 'BSIT', '2'),
+(13, 'IT2C', 'BSIT', '2'),
+(14, 'ACT2A', 'ACT', '2'),
+(15, 'ACT2B', 'ACT', '2');
 
 -- --------------------------------------------------------
 
@@ -300,7 +308,7 @@ CREATE TABLE `subject_details` (
   `id` int(11) NOT NULL,
   `subject_code` varchar(50) NOT NULL,
   `description` varchar(100) NOT NULL,
-  `subject_type` enum('LEC','LAB') NOT NULL,
+  `type_id` int(11) NOT NULL,
   `time_modified` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -308,11 +316,30 @@ CREATE TABLE `subject_details` (
 -- Dumping data for table `subject_details`
 --
 
-INSERT INTO `subject_details` (`id`, `subject_code`, `description`, `subject_type`, `time_modified`) VALUES
-(1, 'CC103', 'Data Structures and Algorithm', 'LEC', '2024-11-26 09:57:51'),
-(2, 'CC103', 'Data Structures and Algorithm', 'LAB', '2024-11-26 09:57:51'),
-(3, 'CC100', 'Introduction to Computing Studies', 'LEC', '2024-11-26 09:58:26'),
-(4, 'CC100', 'Introduction to Computing Studies', 'LAB', '2024-11-26 09:58:26');
+INSERT INTO `subject_details` (`id`, `subject_code`, `description`, `type_id`, `time_modified`) VALUES
+(1, 'CC103', 'Data Structures and Algorithm', 1, '2024-11-28 01:39:00'),
+(2, 'CC103', 'Data Structures and Algorithm', 2, '2024-11-28 01:39:00'),
+(3, 'CC100', 'Introduction to Computing Studies', 1, '2024-11-28 01:39:00'),
+(4, 'CC100', 'Introduction to Computing Studies', 2, '2024-11-28 01:39:00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `subject_type_description`
+--
+
+CREATE TABLE `subject_type_description` (
+  `id` int(11) NOT NULL,
+  `type` enum('LEC','LAB','','') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `subject_type_description`
+--
+
+INSERT INTO `subject_type_description` (`id`, `type`) VALUES
+(1, 'LEC'),
+(2, 'LAB');
 
 -- --------------------------------------------------------
 
@@ -432,7 +459,14 @@ ALTER TABLE `stocks`
 --
 ALTER TABLE `subject_details`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `subject_details` (`subject_code`,`subject_type`);
+  ADD KEY `subject_details` (`subject_code`),
+  ADD KEY `stypeid_fk` (`type_id`);
+
+--
+-- Indexes for table `subject_type_description`
+--
+ALTER TABLE `subject_type_description`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `_status`
@@ -503,7 +537,7 @@ ALTER TABLE `room_type`
 -- AUTO_INCREMENT for table `section_details`
 --
 ALTER TABLE `section_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `status_description`
@@ -522,6 +556,12 @@ ALTER TABLE `stocks`
 --
 ALTER TABLE `subject_details`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `subject_type_description`
+--
+ALTER TABLE `subject_type_description`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables
@@ -572,6 +612,12 @@ ALTER TABLE `room_list`
 --
 ALTER TABLE `stocks`
   ADD CONSTRAINT `productid_fk` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`);
+
+--
+-- Constraints for table `subject_details`
+--
+ALTER TABLE `subject_details`
+  ADD CONSTRAINT `stypeid_fk` FOREIGN KEY (`type_id`) REFERENCES `subject_type_description` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `_status`
