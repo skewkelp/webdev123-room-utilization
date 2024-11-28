@@ -152,17 +152,64 @@ $(document).ready(function () {
         $(".content-page").html(response); // Load the response into the content area
 
         var table = $("#table-room-status").DataTable({
-          dom: "rtp", // Set DataTable options
-          pageLength: 10, // Default page length
-          ordering: false, // Disable ordering
+            dom: "rtp", // Set DataTable options
+            pageLength: 10, // Default page length
+            ordering: false, // Disable ordering
         });
+    
+        // Form event listener
+        $("#room-form").on("submit", function (e) {
+            e.preventDefault(); // Prevent default behavior
+    
+            // Get values from the dropdowns
+            const roomName = $('#room-name-filter').val();
+            const roomType = $('#room-type-filter').val();
+            const status = $('#room-status-filter').val();
+            const action = e.originalEvent.submitter.value; // Get the value of the button that triggered the submit
 
-        // Bind change event for category filter
-        $("#category-filter").on("change", function () {
-          if (this.value !== "choose") {
-            table.column(3).search(this.value).draw(); // Filter products by selected category
-          }
+            // Debugging: Log the retrieved values
+            console.log("Room Name:", roomName, "Room Type:", roomType, "Status:", status, "Action:", action);
+            // Clear previous filters
+            table.search('').columns().search('').draw();
+    
+            if (action === "filter") {
+                // Apply filters based on selected values
+                if (roomName && roomName !== "choose") {
+                    table.column(1).search(roomName).draw(); // Filter by room name (column 1)
+                }
+    
+                if (roomType && roomType !== "choose") {
+                    table.column(2).search(roomType).draw(); // Filter by room type (column 2)
+                }
+    
+                if (status && status !== "choose") {
+                    table.column(3).search(status).draw(); // Filter by status (column 3)
+                }
+    
+            } else if (action === "all") {
+                // Logic to show all records or reset filters
+                table.search('').columns().search('').draw(); // Clear all filters
+            }
         });
+        
+        // // Bind change event for filter
+        // $("#room-name-filter").on("change", function () {
+        //   if (this.value !== "choose") {
+        //     table.column(1).search(this.value).draw(); // Filter by room name (column 1)
+        //   } else {
+        //     // Clear the filter for the room name column if "choose" is selected
+        //     table.column(1).search('').draw();
+        //   }
+        // });
+
+        // $("#room-type-filter").on("change", function () {
+        //   if (this.value !== "choose") {
+        //     table.column(2).search(this.value).draw(); // Filter by room name (column 1)
+        //   } else {
+        //     // Clear the filter for the room name column if "choose" is selected
+        //     table.column(2).search('').draw();
+        //   }
+        // });
 
          // Call function to load the chart
          $("#add-room-status").on("click", function (e) {

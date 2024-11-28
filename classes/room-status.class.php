@@ -90,10 +90,12 @@ class Room
                 ct.start_time, 
                 ct.end_time,
                 CONCAT(fl.fname, ' ',fl.lname) AS faculty_name,
-                s.status AS room_status
+                std.description AS room_status
 
             FROM
                 _status s
+            LEFT JOIN
+                status_description std ON s.status_desc_id = std.id
             LEFT JOIN
                 class_day cda ON s.class_day_id = cda.id
             LEFT JOIN 
@@ -122,7 +124,7 @@ class Room
                 ct.start_time LIKE CONCAT('%', :keyword, '%') OR
                 ct.end_time LIKE CONCAT('%', :keyword, '%') OR
                 fl.fname LIKE CONCAT('%', :keyword, '%') OR
-                s.status LIKE CONCAT('%', :keyword, '%')
+                std.description LIKE CONCAT('%', :keyword, '%')
             )AND(
                 cda.week_day LIKE CONCAT('%', :fweek_day, '%') AND
                 rl.room_name LIKE CONCAT('%', :froom_name, '%') AND
@@ -133,7 +135,7 @@ class Room
                 ct.start_time LIKE CONCAT('%', :fstart_time, '%') AND
                 ct.end_time LIKE CONCAT('%', :fend_time, '%') AND
                 CONCAT(fl.fname, ' ',fl.lname) LIKE CONCAT('%', :fteacher_name, '%') AND
-                s.status LIKE CONCAT('%', :fstatus, '%')
+                std.description LIKE CONCAT('%', :fstatus, '%')
             )
     
         ;";
@@ -215,7 +217,12 @@ class Room
 
     //fetch room type for dropdown
     public function fetchroomType(){
-        $sql = " SELECT id as type_id, CONCAT(room_code,' ',room_description) AS r_type FROM room_type;";
+        $sql = 
+            "SELECT id as type_id, CONCAT(room_code,' ',room_description) AS r_type 
+            FROM room_type
+            ORDER BY r_type ASC;
+        
+        ;";
         $query = $this->db->connect()->prepare($sql);
         $data = null;
         if ($query->execute()) {
@@ -237,7 +244,7 @@ class Room
 
 
     public function fetchstatusOption(){
-        $sql = " SELECT s.status as status_description FROM _status s;";
+        $sql = " SELECT sd.description AS status_desc FROM status_description sd;";
         $query = $this->db->connect()->prepare($sql);
         $data = null;
         if ($query->execute()) {

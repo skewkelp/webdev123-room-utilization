@@ -190,9 +190,10 @@ INNER JOIN room_type rt ON r.room_type = rt.room_code;
     function roomnameType(){
         $sql = "SELECT * FROM room_list 
         WHERE (
-        
+            (type_id = 1 AND room_name LIKE 'LR%') OR 
+            (type_id = 2 AND room_name LIKE 'LAB%')
           
-        ;";
+        );";
         
     }
     

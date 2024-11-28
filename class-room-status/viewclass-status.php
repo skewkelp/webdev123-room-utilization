@@ -28,7 +28,7 @@
                 <div class="d-flex justify-content-between align-items-center gap-4">
                     
                     <div class="d-flex ct1 flex-row align-items-start gap-5">
-                        <form class="d-flex flex-column align-items-start gap-3">
+                        <form id ="room-form" class="d-flex flex-column align-items-start gap-3">
                             <div class="d-flex width flex-column align-items-start gap-1">
                                 <div class="d-flex width justify-content-between">
                                     <label for="room-name-filter" class="label-text">Room Name:</label>
@@ -68,10 +68,10 @@
                                         <option value="choose">Choose...</option>
                                         <option value="">All</option>
                                         <?php
-                                        $roomTypeList = $roomObj->fetchroomType();
-                                        foreach ($roomTypeList as $rmt) {
+                                        $statusList = $roomObj->fetchstatusOption();
+                                        foreach ($statusList as $sl) {
                                         ?>
-                                            <option value="<?= $rmt['r_type'] ?>"><?= $rmt['r_type'] ?></option>
+                                            <option value="<?= $sl['status_desc'] ?>"><?= $sl['status_desc'] ?></option>
                                         <?php
                                         }
                                         ?>
@@ -88,7 +88,7 @@
                             </div>
                         </form>
 
-                        <form class="d-flex flex-column align-items-start gap-3">
+                        <form id="class-form" class="d-flex flex-column align-items-start gap-3">
                             <div class="d-flex width flex-column align-items-start gap-1">
                                 <div class="d-flex width align-items-center">
                                     <label for="subject-code-filter" class="label-text">Subject Code:</label>
@@ -140,8 +140,8 @@
                             <div class="d-flex flex-row justify-content-between align-items-center" style="width: 60%;">
                                 <label class="me-2 label-text">Filter: </label>
                                 <div class="d-flex width flex-row justify-content-end align-items-center gap-3">
-                                    <button id="add-room-status" class="btn admin btn-primary">All</button>
-                                    <button id="add-room-status" class="btn admin btn-primary">Filter</button>
+                                    <button type="submit" class="btn admin btn-primary" value="all">All</button>
+                                    <button type="submit" class="btn admin btn-primary" value="filter">Filter</button>
                                 </div>
                             </div>
                         </form>

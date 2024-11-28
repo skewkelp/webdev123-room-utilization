@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 27, 2024 at 04:02 PM
+-- Generation Time: Nov 28, 2024 at 01:40 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -197,7 +197,8 @@ CREATE TABLE `room_list` (
 INSERT INTO `room_list` (`id`, `room_name`, `type_id`, `created_at`, `updated_at`) VALUES
 (1, 'LR 1', 1, '2024-11-17 14:09:21', '2024-11-17 14:09:21'),
 (2, 'LR 2', 1, '2024-11-17 14:09:56', '2024-11-17 14:09:56'),
-(3, 'LAB 1', 2, '2024-11-27 14:29:55', '2024-11-27 14:29:55');
+(3, 'LAB 1', 2, '2024-11-27 14:29:55', '2024-11-27 14:29:55'),
+(4, 'LR 3', 1, '2024-11-27 22:27:59', '2024-11-27 22:27:59');
 
 -- --------------------------------------------------------
 
@@ -248,13 +249,21 @@ INSERT INTO `section_details` (`id`, `section_name`, `course`, `year_level`) VAL
 -- --------------------------------------------------------
 
 --
--- Table structure for table `status_details`
+-- Table structure for table `status_description`
 --
 
-CREATE TABLE `status_details` (
-  `id` enum('0','1') NOT NULL,
-  `description` enum('OCCUPIED','AVAILABLE') NOT NULL
+CREATE TABLE `status_description` (
+  `id` int(11) NOT NULL,
+  `description` enum('AVAILABLE','OCCUPIED') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `status_description`
+--
+
+INSERT INTO `status_description` (`id`, `description`) VALUES
+(1, 'AVAILABLE'),
+(2, 'OCCUPIED');
 
 -- --------------------------------------------------------
 
@@ -313,7 +322,7 @@ INSERT INTO `subject_details` (`id`, `subject_code`, `description`, `subject_typ
 
 CREATE TABLE `_status` (
   `class_day_id` int(11) NOT NULL,
-  `status` enum('AVAILABLE','OCCUPIED') NOT NULL,
+  `status_desc_id` int(11) NOT NULL,
   `time_modified` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -321,9 +330,9 @@ CREATE TABLE `_status` (
 -- Dumping data for table `_status`
 --
 
-INSERT INTO `_status` (`class_day_id`, `status`, `time_modified`) VALUES
-(3, 'OCCUPIED', '2024-11-27 11:15:14'),
-(4, 'OCCUPIED', '2024-11-27 11:15:14');
+INSERT INTO `_status` (`class_day_id`, `status_desc_id`, `time_modified`) VALUES
+(3, 2, '2024-11-28 00:25:28'),
+(4, 2, '2024-11-28 00:25:28');
 
 --
 -- Indexes for dumped tables
@@ -406,9 +415,9 @@ ALTER TABLE `section_details`
   ADD UNIQUE KEY `class_name` (`section_name`);
 
 --
--- Indexes for table `status_details`
+-- Indexes for table `status_description`
 --
-ALTER TABLE `status_details`
+ALTER TABLE `status_description`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -429,7 +438,8 @@ ALTER TABLE `subject_details`
 -- Indexes for table `_status`
 --
 ALTER TABLE `_status`
-  ADD PRIMARY KEY (`class_day_id`);
+  ADD PRIMARY KEY (`class_day_id`),
+  ADD KEY `statusdescid_fk` (`status_desc_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -481,7 +491,7 @@ ALTER TABLE `product`
 -- AUTO_INCREMENT for table `room_list`
 --
 ALTER TABLE `room_list`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `room_type`
@@ -494,6 +504,12 @@ ALTER TABLE `room_type`
 --
 ALTER TABLE `section_details`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `status_description`
+--
+ALTER TABLE `status_description`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `stocks`
@@ -561,7 +577,8 @@ ALTER TABLE `stocks`
 -- Constraints for table `_status`
 --
 ALTER TABLE `_status`
-  ADD CONSTRAINT `class_dayid_fk` FOREIGN KEY (`class_day_id`) REFERENCES `class_day` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `class_dayid_fk` FOREIGN KEY (`class_day_id`) REFERENCES `class_day` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `statusdescid_fk` FOREIGN KEY (`status_desc_id`) REFERENCES `status_description` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
