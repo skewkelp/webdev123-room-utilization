@@ -564,6 +564,12 @@ a.nav-link{
 .dropdown-list div:hover {
   background-color: #f0f0f0;
 }
+
+.form-select{
+  max-height: 150px!important;
+  overflow-y: auto;
+} 
+
 /*
 
 */

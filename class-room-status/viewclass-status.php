@@ -181,14 +181,19 @@
                     </form> -->
 
                     <form class="d-flex ct3 flex-column align-items-start gap-1">
+                        
                         <div class="d-flex width align-items-center justify-content-between">
                             <label for="day" class="label-text text-center">Day:</label>
-                            <select id="day" class="form-select">
-                                <option value="choose">Choose...</option>
-                                <option value="">All</option>
+                            <select id="day" class="form-select" >
+                                <option value=" ">Choose...</option>
+                                <option value="Monday">Monday</option>
+                                <option value="Tuesday">Tuesday</option>
+                                <option value="Wednesdayy">Wednesday</option>
+                                <option value="Thursday">Thursday</option>
+                                <option value="Friday">Friday</option>
+                                <option value="Saturday">Saturday</option>
                             </select>
                         </div>
-                        
                     </form>
                 </div>
                 
@@ -225,12 +230,11 @@
                             </thead>
 
                             <tbody>
-                                
-                            <?php
-                                $i = 1;
-                                $array = $roomObj->showAllStatus();
-
-                                foreach ($array as $arr) {
+                                <?php
+                                    $i = 1;
+                                    $array = $roomObj->showAllStatus();
+                                    
+                                    foreach ($array as $arr) {
                                 ?>
                                     <tr>
                                         <td><?= $i ?></td>
@@ -246,7 +250,7 @@
                                         <td class="text-nowrap">
                                             <a href="" class="btn room-schedule">Schedule</a>
                                             <a href="" class="btn room-status">Occupy</a>
-                                            <a href="" class="btn admin edit-room-status" data-id="<?= $arr['id'] ?>">Edit</a>
+                                            <a href="" class="btn admin edit-room-status" data-id="<?= $arr['cday_id'] ?>">Edit</a>
                                             <a href="" class="btn admin display-status">Display</a> <!-- hidden or displayed  -->
                                             <!-- <a href="../admin/roomstatus.php?id=<= $arr['id'] ?>" class="btn room-status">Status</a>
                                             <a href="" class="btn edit-product" data-id="<= $arr['id'] ?>">Edit</a> -->
@@ -258,8 +262,6 @@
                                     
                                 }
                                 ?>
-
-                
                             </tbody>
                         </table>
                     </div> <!-- end table-responsive-->

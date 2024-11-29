@@ -133,9 +133,16 @@ $(document).ready(function () {
           button.prop("disabled", true); // Disable the button
       
           // Call the AJAX function
-          editRoom(this.dataset.id).always(function() {
+          editRoom(this.dataset.id)
+            .done(function(data) {
+            // Optionally handle successful response data if needed
+          })
+          .fail(function(jqXHR, textStatus, errorThrown) {
+              console.error("Error occurred: " + textStatus, errorThrown);
+          })
+          .always(function() {
               // Re-enable the button after the AJAX call completes
-              button.prop("disabled", false);
+              button.prop("disabled", false); // Re-enable button regardless of success or failure
           });
         });
         
@@ -150,6 +157,42 @@ $(document).ready(function () {
       dataType: "html", // Expect HTML response
       success: function (response) {
         $(".content-page").html(response); // Load the response into the content area
+
+        // Get the select element
+        const selectDay = document.getElementById("day");
+
+        // Function to set the current day in the dropdown, real time
+        function setCurrentDay() {
+          const options = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+          const currentDayIndex = new Date().getDay(); // Get current day index (0-6)
+          const currentDay = options[currentDayIndex]; // Get current day name
+
+          // Set the dropdown value to the current day
+          selectDay.value = currentDay;
+          fetchDayData(); // Fetch data for the current day
+        }
+
+        function fetchDayData() {
+          const selectedDay = selectDay.value;
+          console.log("Selected option:", selectedDay);
+
+          // Make an AJAX call to fetch data based on the selected day
+          $.ajax({
+              type: "POST", // Use POST request
+              url: "../fetch-data/fetch-scheduled-classday.php", // URL to your PHP script that handles the request
+              data: { fweek_day: selectedDay }, // Send selected day as data
+              success: function(response) {
+                  // Update the table body with the fetched data
+                  $("#table-room-status tbody").html(response);
+              },
+              error: function(xhr, status, error) {
+                  console.error("Error fetching data:", error);
+              }
+          });
+        }
+        setCurrentDay();
+
+        selectDay.addEventListener("change", fetchDayData);
 
         var table = $("#table-room-status").DataTable({
             dom: "rtp", // Set DataTable options
@@ -394,7 +437,7 @@ $(document).ready(function () {
   function addRoom() {
     $.ajax({
       type: "GET", // Use GET request
-      url: "../admin/roomlist/add.html", // URL for add product view
+      url: "../admin/roomlist/add.html?v=" + new Date().getTime(), // URL for add product view
       dataType: "html", // Expect HTML response
       success: function (view) {
         $(".modal-container").html(view); // Load the modal view
@@ -406,30 +449,6 @@ $(document).ready(function () {
         $("#form-add-room").on("submit", function (e) {
           e.preventDefault(); // Prevent default form submission
           saveRoom(); // Call function to save product
-        });
-      },
-    });
-  }
-
-  //add room status
-  function addroomStatus() {
-    $.ajax({
-      type: "GET", // Use GET request
-      url: "../class-room-status/add-status.html?v=" + new Date().getTime(), // URL for add product view
-      dataType: "html", // Expect HTML response
-      success: function (view) {
-        $(".modal-container").html(view); // Load the modal view
-        $("#staticBackdrop").modal("show"); // Show the modal
-
-        fetchroomName();//fetchroomname list
-        fetchSubject();//fetchsubject
-        fetchSection();//fetchsection
-        fetchTeacher();
-        
-        // Event listener for the add product form submission
-        $("#form-add").on("submit", function (e) {
-          e.preventDefault(); // Prevent default form submission
-          //saveRoom(); // Call function to save product
         });
       },
     });
@@ -478,11 +497,76 @@ $(document).ready(function () {
     });
   }
 
+  //add room status
+  function addroomStatus() {
+    $.ajax({
+      type: "GET", // Use GET request
+      url: "../class-room-status/add-status.html?v=" + new Date().getTime(), // URL for add product view
+      dataType: "html", // Expect HTML response
+      success: function (view) {
+        $(".modal-container").html(view); // Load the modal view
+        $("#staticBackdrop").modal("show"); // Show the modal
+
+        fetchroomName();//fetchroomname list
+        fetchSubject();//fetchsubject
+        fetchSection();//fetchsection
+        fetchTeacher();
+        
+        // Event listener for the add product form submission
+        $("#form-add").on("submit", function (e) {
+          e.preventDefault(); // Prevent default form submission
+          //saveroomStatus(); // Call function to save product
+        });
+      },
+    });
+  }
+
+  function saveroomStatus(){
+    $.ajax({
+      type: "POST", // Use POST request
+      url: "../admin/roomlist/save-room.php", // URL for saving room
+      data: $("form").serialize(), // Serialize the form data for submission
+      dataType: "json", // Expect JSON response
+      success: function (response) {
+        if (response.status === "error") {
+          // Handle validation errors
+          if (response.nameErr){
+            $("#room-name").addClass("is-invalid"); // Mark field as invalid
+            $("#room-name").next(".invalid-feedback").text(response.nameErr).show(); // Show error message
+          } else {
+            $("#room-name").removeClass("is-invalid"); // Remove invalid class if no error
+          }
+          
+          if (response.typeErr) {
+            $("#room-type").addClass("is-invalid");
+            $("#room-type")
+              .next(".invalid-feedback")
+              .text(response.typeErr)
+              .show();
+          } else {
+            $("#room-type").removeClass("is-invalid");
+          }
+          
+        } else if (response.status === "success") {
+          // On success, hide modal and reset form
+          $("#staticBackdrop").modal("hide");
+          $("form")[0].reset(); // Reset the form
+          // Optionally, reload roomlist to show new entry
+          viewroomList();
+        }
+      },
+      error: function (xhr, status, error) {
+        alert('Failed to load save room.php.');
+        console.error("Error saving php room:", status, error);
+      }
+
+    });
+  }
 
   // Function to fetch room type
   function fetchroomType(){
     $.ajax({
-      url: "../admin/roomlist/fetch-roomtype.php", // URL for fetching categories
+      url: "../fetch-data/fetch-roomtype.php", // URL for fetching categories
       type: "GET", // Use GET request
       dataType: "json", // Expect JSON response
       success: function (data) {
@@ -509,7 +593,7 @@ $(document).ready(function () {
   //function to fetch record list of room
   function fetchroomlistRecord(roomId) {
     $.ajax({
-      url: `../admin/roomlist/fetch-room.php?id=${roomId}`, // URL for fetching room
+      url: `../fetch-data/fetch-room.php?id=${roomId}`, // URL for fetching room
       dataType: "json", // Expect JSON response
       success: function (room) {
         $("#room-name").val(room.room_name); // val(name of var initialized within fetch-room.php  .   refers to room.class.php public var)
@@ -735,8 +819,8 @@ $(document).ready(function () {
         });
       },
       error: function (xhr, status, error) {
-        console.error("Error fetching subject:", error);
-        alert('Failed to fetch subject.');
+        console.error("Error fetching section:", error);
+        alert('Failed to fetch section.');
       }
     });
   }
@@ -807,8 +891,8 @@ $(document).ready(function () {
           });
         },
         error: function (xhr, status, error) {
-          console.error("Error fetching subject:", error);
-          alert('Failed to fetch subject.');
+          console.error("Error fetching Teacher:", error);
+          alert('Failed to fetch Teacher.');
         }
     });
   }
