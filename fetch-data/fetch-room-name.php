@@ -3,9 +3,9 @@
 
     $roomObj = new Room();
 
-    $room_name = $roomObj->fetchroomList();
+    $room = $roomObj->fetchroomList();
 
     header('Content-Type: application/json');
-    echo json_encode($room_name);
+    echo json_encode($room);
 
 ?>

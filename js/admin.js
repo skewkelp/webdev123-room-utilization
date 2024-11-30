@@ -475,13 +475,11 @@ $(document).ready(function () {
         
         const modal = $('#staticBackdrop');
 
-        
         fetchroomName();//fetchroomname list
         fetchSubject();//fetchsubject
         fetchSection();//fetchsection
         fetchTeacher();
 
-       
         $(".modal-close").on("click", function (e) {
           e.preventDefault();
           closeModal(modal); // Pass modal to closeModal function
@@ -490,7 +488,7 @@ $(document).ready(function () {
         // Event listener for the add product form submission
         $("#form-add").on("submit", function (e) {
           e.preventDefault(); // Prevent default form submission
-          //saveroomStatus(); // Call function to save product
+          saveroomStatus(); // Call function to save product
         });
         
       },
@@ -501,31 +499,62 @@ $(document).ready(function () {
   }
 
 
-
   function saveroomStatus(){
     $.ajax({
       type: "POST", // Use POST request
-      url: "../admin/roomlist/save-room.php", // URL for saving room
+      url: "../class-room-status/save-room-status.php", // URL for saving room
       data: $("form").serialize(), // Serialize the form data for submission
       dataType: "json", // Expect JSON response
       success: function (response) {
         if (response.status === "error") {
           // Handle validation errors
-          if (response.nameErr){
-            $("#room-name").addClass("is-invalid"); // Mark field as invalid
-            $("#room-name").next(".invalid-feedback").text(response.nameErr).show(); // Show error message
+          if (response.room_idErr){
+            $("#dropdown-room").addClass("is-invalid"); // Mark field as invalid
+            $("#dropdown-room").next(".invalid-feedback").text(response.room_idErr).show(); // Show error message
           } else {
-            $("#room-name").removeClass("is-invalid"); // Remove invalid class if no error
+            $("#dropdown-room").removeClass("is-invalid"); // Remove invalid class if no error
           }
           
-          if (response.typeErr) {
-            $("#room-type").addClass("is-invalid");
-            $("#room-type")
-              .next(".invalid-feedback")
-              .text(response.typeErr)
-              .show();
+          if (response.subject_idErr){
+            $("#dropdown-subject").addClass("is-invalid"); // Mark field as invalid
+            $("#dropdown-subject").next(".invalid-feedback").text(response.subject_idErr).show(); // Show error message
           } else {
-            $("#room-type").removeClass("is-invalid");
+            $("#dropdown-subject").removeClass("is-invalid"); // Remove invalid class if no error
+          }
+
+          if (response.section_idErr){
+            $("#dropdown-section").addClass("is-invalid"); // Mark field as invalid
+            $("#dropdown-section").next(".invalid-feedback").text(response.section_idErr).show(); // Show error message
+          } else {
+            $("#dropdown-section").removeClass("is-invalid"); // Remove invalid class if no error
+          }
+
+          if (response.teacher_assignedErr){
+            $("#dropdown-teacher").addClass("is-invalid"); // Mark field as invalid
+            $("#dropdown-teacher").next(".invalid-feedback").text(response.teacher_assignedErr).show(); // Show error message
+          } else {
+            $("#dropdown-teacher").removeClass("is-invalid"); // Remove invalid class if no error
+          }
+
+          if (response.start_timeErr){
+            $("#start-time").addClass("is-invalid"); // Mark field as invalid
+            $("#start-time").next(".invalid-feedback").text(response.start_timeErr).show(); // Show error message
+          } else {
+            $("#start-time").removeClass("is-invalid"); // Remove invalid class if no error
+          }
+
+          if (response.end_timeErr){
+            $("#end-time").addClass("is-invalid"); // Mark field as invalid
+            $("#end-time").next(".invalid-feedback").text(response.end_timeErr).show(); // Show error message
+          } else {
+            $("#end-time").removeClass("is-invalid"); // Remove invalid class if no error
+          }
+
+          if (response.day_idErr){
+            $(".day-id").addClass("is-invalid"); // Mark field as invalid
+            $(".day-id").next(".invalid-feedback").text(response.day_idErr).show(); // Show error message
+          } else {
+            $(".day-id").removeClass("is-invalid"); // Remove invalid class if no error
           }
           
         } else if (response.status === "success") {
@@ -537,8 +566,8 @@ $(document).ready(function () {
         }
       },
       error: function (xhr, status, error) {
-        alert('Failed to load save room.php.');
-        console.error("Error saving php room:", status, error);
+        alert('Failed to load save-room-status.php.');
+        console.error("Error saving php room status:", status, error);
       }
 
     });
@@ -603,8 +632,8 @@ $(document).ready(function () {
               dropdownList.append(
                   $("<div>", {
                       text: room.room_name, // Displayed text
-                      'data-value': room.room_name // Value attribute
-                  })
+                      'data-value': room.id // Value attribute, 
+                  })// room.attributefromTable
               );
             });
             
@@ -626,7 +655,8 @@ $(document).ready(function () {
             // Select an item and update the input value
             dropdownList.on('click', 'div', function(event) {
               event.stopPropagation(); // Prevent click from bubbling
-              $('#dropdown-room').val($(this).data('value'));
+              $('#dropdown-room').val($(this).text());//shows selected displayed text on input field
+              // $('#dropdown-room').val($(this).data('value'));
               dropdownList.hide();  // Close dropdown
             });
 
@@ -677,7 +707,7 @@ $(document).ready(function () {
             dropdownList.append(
               $("<div>", {
                 text: subject.subject_option, // Displayed text
-                'data-value': subject.subject_option // Value attribute
+                'data-value': subject.subject_id // Value attribute
               })
             );
           });
@@ -699,7 +729,8 @@ $(document).ready(function () {
           // Select an item and update the input value
           dropdownList.on('click', 'div', function(event) {
             event.stopPropagation(); // Prevent click from bubbling
-            $('#dropdown-subject').val($(this).data('value')); // Keep focus for further searching
+            $('#dropdown-subject').val($(this).text());//shows selected displayed text on input field
+            // $('#dropdown-subject').val($(this).data('value')); // Keep focus for further searching
             dropdownList.hide(); // Close dropdown
           });
 
@@ -750,7 +781,7 @@ $(document).ready(function () {
           dropdownList.append(
             $("<div>", {
               text: section.section_name, // Displayed text
-              'data-value': section.section_name // Value attribute
+              'data-value': section.id // Value attribute
             })
           );
         });
@@ -772,7 +803,8 @@ $(document).ready(function () {
         // Select an item and update the input value
         dropdownList.on('click', 'div', function(event) {
           event.stopPropagation(); // Prevent click from bubbling
-          $('#dropdown-section').val($(this).data('value')); // Set input value to selected item
+          $('#dropdown-section').val($(this).text());//shows selected displayed text on input field
+          // $('#dropdown-section').val($(this).data('value')); // Set input value to selected item
           dropdownList.hide(); // Close dropdown
         });
 
@@ -822,8 +854,8 @@ $(document).ready(function () {
           $.each(data, function (index, teacher) {
             dropdownList.append(
               $("<div>", {
-                text: teacher.teacher_assigned, // Displayed text
-                'data-value': teacher.teacher_assigned // Value attribute
+                text: teacher.teacher_name, // Displayed text
+                'data-value': teacher.id // Value attribute
               })
             );
           });
@@ -845,7 +877,8 @@ $(document).ready(function () {
           // Select an item and update the input value
           dropdownList.on('click', 'div', function(event) {
             event.stopPropagation(); // Prevent click from bubbling
-            $('#dropdown-teacher').val($(this).data('value')); // Set input value to selected item
+            $('#dropdown-teacher').val($(this).text());//shows selected displayed text on input field
+            // $('#dropdown-teacher').val($(this).data('value')); // Set input value to selected item
             dropdownList.hide(); // Close dropdown
           });
 

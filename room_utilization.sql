@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 30, 2024 at 04:40 AM
+-- Generation Time: Nov 30, 2024 at 10:33 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -45,8 +45,8 @@ CREATE TABLE `account` (
 INSERT INTO `account` (`id`, `first_name`, `last_name`, `username`, `password`, `role`, `is_staff`, `is_admin`) VALUES
 (1, 'Rhamirl', 'Jaafar', 'rham', '$2y$10$42jGvgsU9zoKdFwm18wqQe0nzO78jZvk1m1vMvx8BJYsLTHPuBaCa', 'admin', 1, 1),
 (2, 'aziz', 'amin', 'amin123', '$2y$10$snPP2mhvYzbHhLYvQNqtcODt/ISqzoVkxK/THlbFFn26SFZ9yOT7u', 'student', 1, 1),
-(5, 'first', 'teacher', 'teacher1', '$2y$10$mvrv6cbnYmTAwXO.lK6UxevwEWqjCdk5bSMi1EJVt.8P2fD0BGMXO', 'teacher', 1, 0),
-(6, 'second', 'teacher', 'teacher2', '$2y$10$cInqcsJW1Wh6mqDji3OO1eXC6nEtUE0AF6D3Ha1XPn0qdYbRD..S.', 'teacher', 1, 0);
+(5, 'first', 'teacher', 'teacher1', '$2y$10$mvrv6cbnYmTAwXO.lK6UxevwEWqjCdk5bSMi1EJVt.8P2fD0BGMXO', 'teacher', 1, 1),
+(6, 'second', 'teacher', 'teacher2', '$2y$10$cInqcsJW1Wh6mqDji3OO1eXC6nEtUE0AF6D3Ha1XPn0qdYbRD..S.', 'teacher', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -109,7 +109,8 @@ CREATE TABLE `class_details` (
 INSERT INTO `class_details` (`id`, `section_id`, `room_id`, `subject_id`, `teacher_assigned`) VALUES
 (10, 1, 1, 1, 1),
 (11, 1, 2, 4, 2),
-(13, 2, 1, 3, 1);
+(13, 2, 1, 3, 1),
+(21, 8, 3, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -163,18 +164,16 @@ INSERT INTO `course_details` (`id`, `_name`, `_description`) VALUES
 
 CREATE TABLE `faculty_list` (
   `id` int(11) NOT NULL,
-  `account_id` int(11) NOT NULL,
-  `fname` varchar(50) NOT NULL,
-  `lname` varchar(50) NOT NULL
+  `account_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `faculty_list`
 --
 
-INSERT INTO `faculty_list` (`id`, `account_id`, `fname`, `lname`) VALUES
-(1, 6, 'first', 'teacher'),
-(2, 6, 'second', 'teacher');
+INSERT INTO `faculty_list` (`id`, `account_id`) VALUES
+(1, 5),
+(2, 6);
 
 -- --------------------------------------------------------
 
@@ -441,10 +440,10 @@ ALTER TABLE `class_day`
 --
 ALTER TABLE `class_details`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `subject_id` (`subject_id`),
-  ADD KEY `facultyid_fk` (`teacher_assigned`),
-  ADD KEY `classroomid_fk` (`room_id`),
-  ADD KEY `sectionid_fk` (`section_id`);
+  ADD KEY `faculty_id_fk` (`teacher_assigned`),
+  ADD KEY `room_id_fk` (`room_id`),
+  ADD KEY `section_id_fk` (`section_id`),
+  ADD KEY `subject_id_fk` (`subject_id`);
 
 --
 -- Indexes for table `class_time`
@@ -464,8 +463,7 @@ ALTER TABLE `course_details`
 --
 ALTER TABLE `faculty_list`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `accountid_fk` (`account_id`),
-  ADD KEY `name` (`fname`,`lname`) USING BTREE;
+  ADD KEY `accountid_fk` (`account_id`);
 
 --
 -- Indexes for table `product`
@@ -564,7 +562,7 @@ ALTER TABLE `class_day`
 -- AUTO_INCREMENT for table `class_details`
 --
 ALTER TABLE `class_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `class_time`
@@ -653,10 +651,10 @@ ALTER TABLE `class_day`
 -- Constraints for table `class_details`
 --
 ALTER TABLE `class_details`
-  ADD CONSTRAINT `classroomid_fk` FOREIGN KEY (`room_id`) REFERENCES `room_list` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `facultyid_fk` FOREIGN KEY (`teacher_assigned`) REFERENCES `faculty_list` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `sectionid_fk` FOREIGN KEY (`section_id`) REFERENCES `section_details` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `subjectid_fk` FOREIGN KEY (`subject_id`) REFERENCES `subject_details` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `faculty_id_fk` FOREIGN KEY (`teacher_assigned`) REFERENCES `faculty_list` (`id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `room_id_fk` FOREIGN KEY (`room_id`) REFERENCES `room_list` (`id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `section_id_fk` FOREIGN KEY (`section_id`) REFERENCES `section_details` (`id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `subject_id_fk` FOREIGN KEY (`subject_id`) REFERENCES `subject_details` (`id`) ON UPDATE CASCADE;
 
 --
 -- Constraints for table `class_time`
@@ -668,8 +666,7 @@ ALTER TABLE `class_time`
 -- Constraints for table `faculty_list`
 --
 ALTER TABLE `faculty_list`
-  ADD CONSTRAINT `accountid_fk` FOREIGN KEY (`account_id`) REFERENCES `account` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `name_fk` FOREIGN KEY (`fname`,`lname`) REFERENCES `account` (`first_name`, `last_name`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `accountid_fk` FOREIGN KEY (`account_id`) REFERENCES `account` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `product`

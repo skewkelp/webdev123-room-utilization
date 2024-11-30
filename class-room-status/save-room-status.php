@@ -20,51 +20,68 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $teacher_assigned = clean_input($_POST['teacher-assigned']);
     $start_time = clean_input($_POST['start-time']);
     $end_time = clean_input($_POST['end-time']);
-    $day_id = clean_input($_POST['day-id']);
-  
+    $day_id = isset($_POST['day-id']) ? $_POST['day-id'] : [];
+    
+    if(empty($room_id)){
+        $room_idErr = 'Room is required.';
+    } 
 
-    if(empty($name)){
-        $nameErr = 'Room name is required.';
-    } else if ($roomObj->roomnameExists($name)){
-        $nameErr = 'Room name already exists.';
+    if(empty($subject_id)){
+        $subject_idErr = 'Subject is required.';
     }
 
-    if(empty($type)){
-        $typeErr = 'Room type is required.';
+    if(empty($section_id)){
+        $section_idErr = 'Section is required.';
+    }
+
+    if(empty($teacher_assigned)){
+        $teacher_assignedErr = 'Teacher is required.';
+    }
+
+    if(empty($start_time)){
+        $start_timeErr = 'Start time is required is required.';
+    }
+    
+    if(empty($end_time)){
+        $end_timeErr = 'End time is required.';
+    }
+
+    if(empty($day_id)){
+        $day_idErr = 'Class Days is required.';
     }
     
 
     // If there are validation errors, return them as JSON
-    if(!empty($nameErr) || !empty($typeErr)){
+    if(!empty($room_idErr) || !empty($subject_idErr) || !empty($section_idErr)  || !empty($teacher_assignedErr) || !empty($start_timeErr) || !empty($end_timeErr) || !empty($day_idErr)){
         echo json_encode([
             'status' => 'error',
-            'nameErr' => $nameErr,
-            'typeErr' => $typeErr
+            'room_idErr' => $room_idErr,
+            'subject_idErr' => $subject_idErr,
+            'section_idErr' => $section_idErr,
+            'teacher_assignedErr' => $teacher_assignedErr,
+            'start_timeErr' => $start_timeErr,
+            'end_timeErr' => $end_timeErr,
+            'day_idErr' => $day_idErr
         ]);
         exit;
     }
 
-    $roomObj->room_name = $name;
-    $roomObj->room_type = $type;
-    
-    if($roomObj->addRoom()){
+    $roomObj->room_id = $room_id;
+    $roomObj->subject_id = $subject_id;
+    $roomObj->section_id = $section_id;
+    $roomObj->start_time = $start_time;
+    $roomObj->teacher_assigned = $teacher_assigned;
+    $roomObj->end_time = $end_time;
+    $roomObj->end_time = $end_time;
+    $roomObj->day_id = $day_id;
+
+    if($roomObj->addroomStatus()){
         echo json_encode(['status' => 'success']);
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'Something went wrong when adding the new room.']);
+        echo json_encode(['status' => 'error', 'message' => 'Something went wrong when adding the new class status.']);
     }
     exit;
 
-    // if(empty($nameErr) && empty($typeErr)){
-    //     $roomObj->room_name = $name;
-    //     $roomObj->room_type = $type;
-
-    //     if($roomObj->addRoom()){
-    //         echo json_encode(['status' => 'success']);
-    //     } else {
-    //         echo json_encode(['status' => 'error', 'message' => 'Something went wrong when adding the new room.']);
-    //     }
-    //     exit;
-    // }
     
 }
 

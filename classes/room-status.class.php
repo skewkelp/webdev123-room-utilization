@@ -5,24 +5,35 @@ require_once 'database.class.php';
 class Room
 {
     public $week_day = '';
+    
     public $id = '';
     public $room_code = '';
     //room_list
-    public $room_id = '';
     public $room_name = '';
     public $room_type = '';
-
+    
     //class_details
-    public $class_id = '';
-    public $section_id = '';
-    public $subject_code = '';
-    public $subject_type = '';
-    public $class_name = '';
+    public $room_id = '';//PK room_list
+    public $subject_id = '';//PK subject_details
+    public $section_id = '';//PK section_details
+    public $teacher_assigned = '';//class_details FK->PK faculty_list
+    public $class_time_id = '';//PK class_time
+    public $class_id = '';//PK class_details
     public $start_time = '';
     public $end_time = '';
-    public $teacher_assigned = '';
     public $status = '';
+    public $day_id = '';
+    public $class_day_id = '';
 
+
+
+    public $subject_code = '';
+    public $subject_type = '';
+
+
+    public $class_name = '';
+
+    
     // cda.week_day, 
     // rl.room_name, 
     // rl.room_type,
@@ -48,24 +59,72 @@ class Room
         return $query->execute();
     }
 
-    function addstatusRoom(){
-        $sql = "INSERT INTO room_list (room_name, type_id) VALUES (:room_name, :room_type);";
-        $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':room_name', $this->room_name);
-        $query->bindParam(':room_type', $this->room_type);
-        
-        return $query->execute();
-    }
+    // public $room_id = '';//PK room_list
+    // public $subject_id = '';//PK subject_details
+    // public $section_id = '';//PK section_details
+    // public $teacher_assigned = '';//class_details FK->PK faculty_list
+    // public $class_time_id = '';//PK class_time
+    // public $class_id = '';//PK class_details
+    // public $start_time = '';
+    // public $end_time = '';
+    // public $status = '';
+    // public $class_day_id = '';
+    /*
+    Fatal error: Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 
+    1452 Cannot add or update a child row: a foreign key constraint fails 
+    (`room_utilization`.`class_details`, CONSTRAINT `facultyid_fk` FOREIGN KEY (`teacher_assigned`) 
+    REFERENCES `faculty_list` (`id`) ON DELETE CASCADE ON UPDATE CASCADE) in 
+    C:\xampp\htdocs\templateProg\classes\room-status.class.php:90 Stack trace:
+    #0 C:\xampp\htdocs\templateProg\classes\room-status.class.php(90): PDOStatement->execute() 
+    #1 C:\xampp\htdocs\templateProg\class-room-status\save-room-status.php(78): Room->addroomStatus() 
+    #2 {main} thrown in C:\xampp\htdocs\templateProg\classes\room-status.class.php on line 90
+    
+    */
+    function addroomStatus(){
+        //insert on class_details
+        $sql = "INSERT INTO class_details (section_id, room_id, subject_id, teacher_assigned) VALUES (:section_id, :room_id, :subject_id, :teacher_id);";
+        $query1 = $this->db->connect()->prepare($sql);
+        $query1->bindParam(':section_id', $this->section_id);
+        $query1->bindParam(':room_id', $this->room_id);
+        $query1->bindParam(':subject_id', $this->subject_id);
+        $query1->bindParam(':teacher_id', $this->teacher_assigned);
+        $query1->execute();
 
-    function add(){
-        $sql = "INSERT INTO product (code, name, category_id, price) VALUES (:code, :name, :category_id, :price);";
-        $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':code', $this->code);
-        $query->bindParam(':name', $this->name);
-        $query->bindParam(':category_id', $this->category_id);
-        $query->bindParam(':price', $this->price);
+        //last inserted PK id, from class_details
+        $this->class_id = $this->db->connect()->lastInsertId();
+        //insert class_time
+        $sql2 = "INSERT INTO class_time (class_id, start_time, end_time) VALUES (:class_id, :start_time, :end_time)";
+        $query2 = $this->db->connect()->prepare($sql);
+        $query2->bindParam(':class_id', $this->class_id);
+        $query2->bindParam(':start_time', $this->start_time);
+        $query2->bindParam(':end_time', $this->end_time);
+        $query2->execute();
+
+        //last inserted PK id, from class_time
+        $this->class_time_id = $this->db->connect()->lastInsertId();
         
-        return $query->execute();
+        //insert class_day, _status
+        if (!empty($this->day_id)) {
+            foreach ($this->day_id as $day) {
+                //insert class_day
+                $sql3 = "INSERT INTO class_day (day_id, class_id) VALUES (:day_id, :class_time_id)";
+                $query3 = $this->db->connect()->prepare($sql);
+                $query3->bindParam(':day_id', $this->day_id);
+                $query3->bindParam(':class_time_id', $this->class_time_id);
+                $query3->execute();
+                //last inserted PK id, from class_day
+                $this->class_day_id = $this->db->connect()->lastInsertId();
+                //insert _status
+                $sql4 = "INSERT INTO _status (class_day_id) VALUES (:class_day_id)";
+                $query4 = $this->db->connect()->prepare($sql);
+                $query4->bindParam(':class_day_id', $this->class_day_id);
+                $query4->execute();
+                
+            }
+            
+        }
+        return true;
+        
     }
 
     function showAll($keyword = '', $category = ''){
@@ -182,7 +241,7 @@ class Room
                 sec.section_name AS section_name,
                 ctime.start_time AS start_time,
                 ctime.end_time AS end_time,
-                CONCAT(fac.lname,', ',fac.fname) AS faculty_name,
+                CONCAT(acc.last_name,', ',acc.first_name) AS faculty_name,
                 sdesc.description AS room_status
 
             FROM
@@ -211,7 +270,9 @@ class Room
                 subject_type_description stdesc ON sub.type_id = stdesc.id
             LEFT JOIN
                 faculty_list fac ON class.teacher_assigned = fac.id
-             
+            LEFT JOIN 
+                account acc ON fac.account_id = acc.id
+                
             WHERE
             (
                 room.room_name LIKE CONCAT('%', :keyword, '%') OR
@@ -221,7 +282,7 @@ class Room
                 sec.section_name LIKE CONCAT('%', :keyword, '%') OR
                 ctime.start_time LIKE CONCAT('%', :keyword, '%') OR
                 ctime.end_time LIKE CONCAT('%', :keyword, '%') OR
-                CONCAT(fac.lname,', ',fac.fname) LIKE CONCAT('%', :keyword, '%') OR
+                CONCAT(acc.last_name,', ',acc.first_name) LIKE CONCAT('%', :keyword, '%') OR
                 sdesc.description LIKE CONCAT('%', :keyword, '%')
             )AND(
                 d.day LIKE CONCAT('%', :fweek_day, '%') AND
@@ -232,7 +293,7 @@ class Room
                 sec.section_name LIKE CONCAT('%', :fsection_name, '%') AND
                 ctime.start_time LIKE CONCAT('%', :fstart_time, '%') AND
                 ctime.end_time LIKE CONCAT('%', :fend_time, '%') AND
-                CONCAT(fac.lname,', ',fac.fname) LIKE CONCAT('%', :fteacher_name, '%') AND
+                CONCAT(acc.last_name,', ',acc.first_name) LIKE CONCAT('%', :fteacher_name, '%') AND
                 sdesc.description LIKE CONCAT('%', :fstatus, '%')
             )
     
@@ -366,20 +427,22 @@ class Room
         return $data;
     }
 
-    //for filter dropdown search section
-    public function fetchsectOption(){
-        $sql = "SELECT id AS section_name, section_name FROM section_details;";
-        $query = $this->db->connect()->prepare($sql);
-        $data = null;
-        if ($query->execute()) {
-            $data = $query->fetchAll(PDO::FETCH_ASSOC);
-        }
-        return $data;
-    }
+    // //for filter dropdown search section
+    // public function fetchsectOption(){
+    //     $sql = "SELECT id AS section_name, section_name FROM section_details;";
+    //     $query = $this->db->connect()->prepare($sql);
+    //     $data = null;
+    //     if ($query->execute()) {
+    //         $data = $query->fetchAll(PDO::FETCH_ASSOC);
+    //     }
+    //     return $data;
+    // }
 
      //for filter dropdown search Teacher
     public function fetchteacherOption(){
-        $sql = "SELECT id, CONCAT(lname,', ',fname) AS teacher_assigned FROM faculty_list;";
+        $sql = "SELECT fac.id, CONCAT(acc.last_name,', ',acc.first_name) AS teacher_name 
+        FROM faculty_list fac 
+        LEFT JOIN account acc ON fac.account_id = acc.id ;";
         $query = $this->db->connect()->prepare($sql);
         $data = null;
         if ($query->execute()) {
@@ -412,7 +475,7 @@ class Room
 
     //for filter dropdown section
     public function fetchsectionOption(){
-        $sql = "SELECT section_name FROM section_details 
+        $sql = "SELECT * FROM section_details 
         ;";
         $query = $this->db->connect()->prepare($sql);
         $data = null;

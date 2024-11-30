@@ -3,9 +3,9 @@
 
     $roomObj = new Room();
 
-    $section_option = $roomObj->fetchsectOption();
+    $section = $roomObj->fetchsectionOption();
 
     header('Content-Type: application/json');
-    echo json_encode($section_option);
+    echo json_encode($section);
 
 ?>
