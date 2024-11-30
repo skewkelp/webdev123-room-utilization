@@ -16,7 +16,7 @@
             </div>
         </div>
     </div>
-    <div class="modal-container"></div>
+    <div class="modal-container1"></div>
     <div class="row">
         <div class="col-12">
             <div class="card p-4">
@@ -209,7 +209,7 @@
                                 <i class="bi bi-search"></i>
                             </span>
                         </div>
-                        <a id="add-room-status" href="#" class="btn admin btn-primary">Add Room Status</a>
+                        <a id="add-room-status" href="#" class="btn admin btn-primary open-modal-button">Add Room Status</a>
                     </div>
                     <div class="table-responsive">
                         <table id="table-room-status" class="table table-centered table-nowrap table-hover mb-0">

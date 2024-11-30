@@ -133,7 +133,7 @@ INNER JOIN room_type rt ON r.room_type = rt.room_code;
     // }
     
     function editRoom(){
-        $sql = "UPDATE room_list SET room_name = :room_name, room_type = :room_type WHERE id = :room_id;";
+        $sql = "UPDATE room_list SET room_name = :room_name, type_id = :room_type WHERE id = :room_id;";
         $query = $this->db->connect()->prepare($sql);   
         $query->bindParam(':room_name', $this->room_name);
         $query->bindParam(':room_type', $this->room_type);

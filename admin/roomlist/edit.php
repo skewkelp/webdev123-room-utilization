@@ -1,28 +1,8 @@
-<?php 
-// require_once('../classes/room.class.php');
-
-// $roomObj = new Room();
-// if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-//     if (isset($_GET['id'])) {
-//         $id = $_GET['id'];
-//         $record = $roomObj->fetchRoomName($id);
-//         if (!empty($record)) {
-//             $roomname = $record['room_name'];
-//         } else {
-//             echo 'No product found (GET)';
-//             exit;
-//         }
-//     } else {
-//         echo 'No product found(Noset GET)';
-//         exit;
-//     }
-// } <?= $roomname >
-?>
 
 <!-- Modal -->
 <div
   class="modal fade"
-  id="staticBackdropedit"
+  id="staticBackdrop"
   data-bs-backdrop="static"
   data-bs-keyboard="false"
   tabindex="-1"
@@ -36,7 +16,7 @@
         <h5 class="modal-title" id="staticBackdropLabel">Edit Room: </h5>
         <button
           type="button"
-          class="btn-close"
+          class="btn-close modal-close"
           data-bs-dismiss="modal"
           aria-label="Close"
         ></button>
@@ -63,7 +43,7 @@
         <div class="modal-footer">
           <button
             type="button"
-            class="btn btn-secondary"
+            class="btn btn-secondary modal-close"
             data-bs-dismiss="modal"
           >
             Close

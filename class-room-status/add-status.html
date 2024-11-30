@@ -1,10 +1,10 @@
 <!-- Modal -->
-<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" style="display: none;">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="staticBackdropLabel">Add Status Room</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div> 
         <form action="" method="post" id="form-add">
           <div class="modal-body">
@@ -13,7 +13,7 @@
                 <div class="mb-2">
                     <P class="form-label">Room Name</P>
                     <div class="dropdown">
-                        <input type="text" class="form-control dropdown-input" placeholder="Select or search..." id="dropdown-room" name="room-id">
+                        <input type="text" class="form-control dropdown-input" placeholder="Select or search..." id="dropdown-room" name="room-id" >
                         <div class="dropdown-list" id="dropdown-list-name">
                             <!-- Options will be populated here by JavaScript -->
                         </div>
@@ -46,7 +46,7 @@
                 <div class="mb-2">
                     <P class="form-label">Teacher Assigned</P>
                     <div class="dropdown">
-                        <input type="text" class="form-control dropdown-input" placeholder="Select or search..." id="dropdown-teacher" name="teacher-assigned">
+                        <input type="text" class="form-control dropdown-input" placeholder="Select or search..." id="dropdown-teacher" name="teacher-assigned" >
                         <div class="dropdown-list" id="dropdown-list-teacher">
                             <!-- Options will be populated here by JavaScript -->
                         </div>
@@ -60,7 +60,7 @@
             <div style="padding-left: 8px;">
                 <div class="mb-2">
                     <label for="start-time" class="form-label">Start-Time</label>
-                    <input type="time" class="form-control" id="start-time" name="start-time">
+                    <input type="time" class="form-control" id="start-time" name="start-time" >
                     <div class="invalid-feedback"></div>
                 </div>
                 <br>
@@ -103,7 +103,7 @@
 
           </div>
           <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-secondary modal-close" data-bs-dismiss="modal">Close</button>
               <button type="submit" class="btn btn-primary brand-bg-color">Add Room</button>
           </div>
         </form>
