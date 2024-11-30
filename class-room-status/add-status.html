@@ -13,8 +13,9 @@
                 <div class="mb-2">
                     <P class="form-label">Room</P>
                     <div class="dropdown">
-                        <input type="text" class="form-control dropdown-input" placeholder="Select or search..." id="dropdown-room" name="room-id" >
+                        <input type="text" class="form-control dropdown-input" placeholder="Select or search..." id="dropdown-room" name="room" >
                         <div class="invalid-feedback"></div>
+                        <input type="hidden" id="hidden-room-id" name="room-id"/>
                         <div class="dropdown-list" id="dropdown-list-name">
                             <!-- Options will be populated here by JavaScript -->
                         </div>
@@ -24,8 +25,10 @@
                 <div class="mb-2">
                     <P class="form-label">Subject</P>
                     <div class="dropdown">
-                        <input type="text" class="form-control dropdown-input" placeholder="Select or search..." id="dropdown-subject" name="subject-id">
+                        <input type="text" class="form-control dropdown-input" placeholder="Select or search..." id="dropdown-subject" name="subject">
                         <div class="invalid-feedback"></div>
+                        <input type="hidden" id="hidden-subject-id" name="subject-id"/>
+
                         <div class="dropdown-list" id="dropdown-list-subject">
                             <!-- Options will be populated here by JavaScript -->
                         </div>
@@ -35,8 +38,9 @@
                 <div class="mb-2">
                     <P class="form-label">Section</P>
                     <div class="dropdown">
-                        <input type="text" class="form-control dropdown-input" placeholder="Select or search..." id="dropdown-section" name="section-id">
+                        <input type="text" class="form-control dropdown-input" placeholder="Select or search..." id="dropdown-section" name="section">
                         <div class="invalid-feedback"></div>
+                        <input type="hidden" id="hidden-section-id" name="section-id"/>
                         <div class="dropdown-list" id="dropdown-list-section">
                             <!-- Options will be populated here by JavaScript -->
                         </div>
@@ -46,8 +50,9 @@
                 <div class="mb-2">
                     <P class="form-label">Teacher Assigned</P>
                     <div class="dropdown">
-                        <input type="text" class="form-control dropdown-input" placeholder="Select or search..." id="dropdown-teacher" name="teacher-assigned" >
+                        <input type="text" class="form-control dropdown-input" placeholder="Select or search..." id="dropdown-teacher" name="teacher" >
                         <div class="invalid-feedback"></div>
+                        <input type="hidden" id="hidden-teacher-assigned" name="teacher-assigned"/>
                         <div class="dropdown-list" id="dropdown-list-teacher">
                             <!-- Options will be populated here by JavaScript -->
                         </div>

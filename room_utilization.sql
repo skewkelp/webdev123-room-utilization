@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 30, 2024 at 10:33 AM
+-- Generation Time: Nov 30, 2024 at 12:58 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -86,7 +86,9 @@ CREATE TABLE `class_day` (
 INSERT INTO `class_day` (`id`, `day_id`, `class_id`) VALUES
 (3, 1, 7),
 (4, 1, 8),
-(5, 2, 9);
+(5, 2, 9),
+(7, 2, 12),
+(8, 5, 13);
 
 -- --------------------------------------------------------
 
@@ -110,7 +112,8 @@ INSERT INTO `class_details` (`id`, `section_id`, `room_id`, `subject_id`, `teach
 (10, 1, 1, 1, 1),
 (11, 1, 2, 4, 2),
 (13, 2, 1, 3, 1),
-(21, 8, 3, 1, 1);
+(36, 8, 1, 1, 2),
+(37, 8, 1, 2, 2);
 
 -- --------------------------------------------------------
 
@@ -133,7 +136,9 @@ CREATE TABLE `class_time` (
 INSERT INTO `class_time` (`id`, `class_id`, `start_time`, `end_time`, `time_modified`) VALUES
 (7, 10, '07:00:00', '09:00:00', '2024-11-27 10:57:00'),
 (8, 11, '09:00:00', '12:00:00', '2024-11-27 10:57:00'),
-(9, 13, '07:00:00', '09:00:00', '2024-11-29 04:29:18');
+(9, 13, '07:00:00', '09:00:00', '2024-11-29 04:29:18'),
+(12, 36, '11:11:00', '14:22:00', '2024-11-30 11:47:31'),
+(13, 37, '14:30:00', '16:00:00', '2024-11-30 11:55:43');
 
 -- --------------------------------------------------------
 
@@ -396,7 +401,7 @@ INSERT INTO `_day` (`id`, `day`) VALUES
 
 CREATE TABLE `_status` (
   `class_day_id` int(11) NOT NULL,
-  `status_desc_id` int(11) NOT NULL,
+  `status_desc_id` int(11) NOT NULL DEFAULT 2,
   `time_modified` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -407,7 +412,9 @@ CREATE TABLE `_status` (
 INSERT INTO `_status` (`class_day_id`, `status_desc_id`, `time_modified`) VALUES
 (3, 2, '2024-11-28 00:25:28'),
 (4, 2, '2024-11-28 00:25:28'),
-(5, 1, '2024-11-29 08:58:01');
+(5, 1, '2024-11-29 08:58:01'),
+(7, 2, '2024-11-30 11:47:31'),
+(8, 2, '2024-11-30 11:55:43');
 
 --
 -- Indexes for dumped tables
@@ -556,19 +563,19 @@ ALTER TABLE `category`
 -- AUTO_INCREMENT for table `class_day`
 --
 ALTER TABLE `class_day`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `class_details`
 --
 ALTER TABLE `class_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `class_time`
 --
 ALTER TABLE `class_time`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `course_details`

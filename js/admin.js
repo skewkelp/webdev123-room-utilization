@@ -562,7 +562,7 @@ $(document).ready(function () {
           $("#staticBackdrop").modal("hide");
           $("form")[0].reset(); // Reset the form
           // Optionally, reload roomlist to show new entry
-          viewroomList();
+          viewroomStatus();
         }
       },
       error: function (xhr, status, error) {
@@ -655,8 +655,12 @@ $(document).ready(function () {
             // Select an item and update the input value
             dropdownList.on('click', 'div', function(event) {
               event.stopPropagation(); // Prevent click from bubbling
-              $('#dropdown-room').val($(this).text());//shows selected displayed text on input field
-              // $('#dropdown-room').val($(this).data('value'));
+              const selectedText = $(this).text();//Get the displayed text
+              const selectedValue = $(this).data('value');//Get data value 
+              
+              $('#dropdown-room').val(selectedText); // Set the input to displayed text
+              $('#hidden-room-id').val(selectedValue); // Set a hidden input to the room ID
+
               dropdownList.hide();  // Close dropdown
             });
 
@@ -729,7 +733,14 @@ $(document).ready(function () {
           // Select an item and update the input value
           dropdownList.on('click', 'div', function(event) {
             event.stopPropagation(); // Prevent click from bubbling
-            $('#dropdown-subject').val($(this).text());//shows selected displayed text on input field
+            
+            const selectedText = $(this).text();//Get the displayed text
+            const selectedValue = $(this).data('value');//Get data value 
+            
+            $('#dropdown-subject').val(selectedText); // Set the input to displayed text
+            $('#hidden-subject-id').val(selectedValue); // Set a hidden input to the room ID
+          
+            // $('#dropdown-subject').val($(this).text());//shows selected displayed text on input field
             // $('#dropdown-subject').val($(this).data('value')); // Keep focus for further searching
             dropdownList.hide(); // Close dropdown
           });
@@ -803,7 +814,12 @@ $(document).ready(function () {
         // Select an item and update the input value
         dropdownList.on('click', 'div', function(event) {
           event.stopPropagation(); // Prevent click from bubbling
-          $('#dropdown-section').val($(this).text());//shows selected displayed text on input field
+          const selectedText = $(this).text(); // Get the displayed text
+          const selectedValue = $(this).data('value'); // Get the data-value (ID)
+          $('#dropdown-section').val(selectedText); // Set the input to displayed text
+          $('#hidden-section-id').val(selectedValue); // Set a hidden input to the room ID
+        
+          // $('#dropdown-section').val($(this).text());//shows selected displayed text on input field
           // $('#dropdown-section').val($(this).data('value')); // Set input value to selected item
           dropdownList.hide(); // Close dropdown
         });
@@ -855,7 +871,7 @@ $(document).ready(function () {
             dropdownList.append(
               $("<div>", {
                 text: teacher.teacher_name, // Displayed text
-                'data-value': teacher.id // Value attribute
+                'data-value': teacher.faculty_id // Value attribute
               })
             );
           });
@@ -877,7 +893,11 @@ $(document).ready(function () {
           // Select an item and update the input value
           dropdownList.on('click', 'div', function(event) {
             event.stopPropagation(); // Prevent click from bubbling
-            $('#dropdown-teacher').val($(this).text());//shows selected displayed text on input field
+            const selectedText = $(this).text(); // Get the displayed text
+            const selectedValue = $(this).data('value'); // Get the data-value (ID)
+            $('#dropdown-teacher').val(selectedText); // Set the input to displayed text
+            $('#hidden-teacher-assigned').val(selectedValue); // Set a hidden input to the room ID
+            // $('#dropdown-teacher').val($(this).text());//shows selected displayed text on input field
             // $('#dropdown-teacher').val($(this).data('value')); // Set input value to selected item
             dropdownList.hide(); // Close dropdown
           });
