@@ -59,86 +59,72 @@ class Room
         return $query->execute();
     }
 
-    // public $room_id = '';//PK room_list
-    // public $subject_id = '';//PK subject_details
-    // public $section_id = '';//PK section_details
-    // public $teacher_assigned = '';//class_details FK->PK faculty_list
-    // public $class_time_id = '';//PK class_time
-    // public $class_id = '';//PK class_details
-    // public $start_time = '';
-    // public $end_time = '';
-    // public $status = '';
-    // public $class_day_id = '';
-    /*
-    Fatal error: Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 
-    1452 Cannot add or update a child row: a foreign key constraint fails 
-    (`room_utilization`.`class_details`, CONSTRAINT `facultyid_fk` FOREIGN KEY (`teacher_assigned`) 
-    REFERENCES `faculty_list` (`id`) ON DELETE CASCADE ON UPDATE CASCADE) in 
-    C:\xampp\htdocs\templateProg\classes\room-status.class.php:90 Stack trace:
-    #0 C:\xampp\htdocs\templateProg\classes\room-status.class.php(90): PDOStatement->execute() 
-    #1 C:\xampp\htdocs\templateProg\class-room-status\save-room-status.php(78): Room->addroomStatus() 
-    #2 {main} thrown in C:\xampp\htdocs\templateProg\classes\room-status.class.php on line 90
     
-    */
 
 
-    function addroomStatus() {
-        // Insert into class_details
-        $sql = "INSERT INTO class_details (section_id, room_id, subject_id, teacher_assigned) VALUES (:section_id, :room_id, :subject_id, :teacher_id);";
-        $query1 = $this->db->connect()->prepare($sql);
-        $query1->bindParam(':section_id', $this->section_id);
-        $query1->bindParam(':room_id', $this->room_id);
-        $query1->bindParam(':subject_id', $this->subject_id);
-        $query1->bindParam(':teacher_id', $this->teacher_assigned);
-        $query1->execute();
-    
-        // Last inserted PK id from class_details
-        $this->class_id = $this->db->connect()->lastInsertId();
-    
-        // Insert class_time
-        $sql2 = "INSERT INTO class_time (class_id, start_time, end_time) VALUES (:class_id, :start_time, :end_time)";
-        $query2 = $this->db->connect()->prepare($sql2);
-        $query2->bindParam(':class_id', $this->class_id);
-        $query2->bindParam(':start_time', $this->start_time);
-        $query2->bindParam(':end_time', $this->end_time);
-        $query2->execute();
-    
-        // Last inserted PK id from class_time
-        $this->class_time_id = $this->db->connect()->lastInsertId();
+    // function addroomStatus() {
+    //     try {
+    //         // Insert into class_details
+    //         $sql = "INSERT INTO class_details (section_id, room_id, subject_id, teacher_assigned) VALUES (:section_id, :room_id, :subject_id, :teacher_id);";
+    //         $query1 = $this->db->connect()->prepare($sql);
+    //         $query1->bindParam(':section_id', $this->section_id);
+    //         $query1->bindParam(':room_id', $this->room_id);
+    //         $query1->bindParam(':subject_id', $this->subject_id);
+    //         $query1->bindParam(':teacher_id', $this->teacher_assigned);
+    //         $query1->execute();
         
-        // Insert class_day and _status
-        if (!empty($this->day_id)) {
-            // Ensure day_id is treated as an array
-            $day_ids = is_array($this->day_id) ? $this->day_id : [$this->day_id];
-    
-            $controlledVariable = 0; // Initialize controlled variable
-            $maxDays = count($day_ids); // Get the number of days
-    
-            while ($controlledVariable < $maxDays) {
-                $day = $day_ids[$controlledVariable]; // Get the current day_id
-                
-                // Insert class_day
-                $sql3 = "INSERT INTO class_day (day_id, class_id) VALUES (:day_id, :class_time_id)";
-                $query3 = $this->db->connect()->prepare($sql3);
-                $query3->bindParam(':day_id', $day); // Bind the current day id
-                $query3->bindParam(':class_time_id', $this->class_time_id);
-                $query3->execute();
-    
-                // Last inserted PK id from class_day
-                $this->class_day_id = $this->db->connect()->lastInsertId();
-    
-                // Insert _status
-                $sql4 = "INSERT INTO _status (class_day_id) VALUES (:class_day_id)";
-                $query4 = $this->db->connect()->prepare($sql4);
-                $query4->bindParam(':class_day_id', $this->class_day_id);
-                $query4->execute();
-                
-                $controlledVariable++; // Increment controlled variable
-            }
-        }
-    
-        return true;
-    }
+    //         // Last inserted PK id from class_details
+    //         $this->class_id = $this->db->connect()->lastInsertId();
+        
+    //         // Insert class_time
+    //         $sql2 = "INSERT INTO class_time (class_id, start_time, end_time) VALUES (:class_id, :start_time, :end_time)";
+    //         $query2 = $this->db->connect()->prepare($sql2);
+    //         $query2->bindParam(':class_id', $this->class_id);
+    //         $query2->bindParam(':start_time', $this->start_time);
+    //         $query2->bindParam(':end_time', $this->end_time);
+    //         $query2->execute();
+        
+    //         // Last inserted PK id from class_time
+    //         $this->class_time_id = $this->db->connect()->lastInsertId();
+            
+    //         // Insert class_day and _status
+    //         if (!empty($this->day_id)) {
+    //             // Ensure day_id is treated as an array
+    //             $day_ids = is_array($this->day_id) ? $this->day_id : [$this->day_id];
+        
+    //             $controlledVariable = 0; // Initialize controlled variable
+    //             $maxDays = count($day_ids); // Get the number of days
+        
+    //             while ($controlledVariable < $maxDays) {
+    //                 $day = $day_ids[$controlledVariable]; // Get the current day_id
+                    
+    //                 // Insert class_day
+    //                 $sql3 = "INSERT INTO class_day (day_id, class_id) VALUES (:day_id, :class_time_id)";
+    //                 $query3 = $this->db->connect()->prepare($sql3);
+    //                 $query3->bindParam(':day_id', $day); // Bind the current day id
+    //                 $query3->bindParam(':class_time_id', $this->class_time_id); // Use the correct class_time_id
+    //                 $query3->execute();
+        
+    //                 // Last inserted PK id from class_day
+    //                 $class_day_id = $this->db->connect()->lastInsertId(); // Get the last inserted ID for class_day
+        
+    //                 // Insert _status
+    //                 $sql4 = "INSERT INTO _status (class_day_id) VALUES (:class_day_id)";
+    //                 $query4 = $this->db->connect()->prepare($sql4);
+    //                 $query4->bindParam(':class_day_id', $class_day_id); // Bind the current class_day_id
+    //                 $query4->execute();
+                    
+    //                 $controlledVariable++; // Increment controlled variable
+    //             }
+    //         }
+    //     } catch (PDOException $e) {
+    //         echo "Error: " . $e->getMessage();
+    //         return false; // Indicate failure
+    //     }
+        
+    //     return true;
+    // }
+
     // function addroomStatus(){
 
     //     //insert on class_details

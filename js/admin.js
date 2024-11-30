@@ -534,7 +534,7 @@ $(document).ready(function () {
             $("#dropdown-teacher").next(".invalid-feedback").text(response.teacher_assignedErr).show(); // Show error message
           } else {
             $("#dropdown-teacher").removeClass("is-invalid"); // Remove invalid class if no error
-          }
+          } 
 
           if (response.start_timeErr){
             $("#start-time").addClass("is-invalid"); // Mark field as invalid
