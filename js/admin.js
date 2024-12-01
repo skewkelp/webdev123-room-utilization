@@ -1,27 +1,45 @@
 $(document).ready(function () { 
-  
-  // Add this at the start of your admin.js file
-  // Function to hide admin elements
-  function hideAdminElements() {
-    const userPermissions = window.userPermissions || {};
-    
-    if (!userPermissions.isAdmin) {
-        $('.admin').addClass('d-none');
+
+  //hide restricted elements
+  function hideRestrictedElements() {
+    try {
+        const userPermissions = window.userPermissions || {};
+        
+        // Log permissions for debugging
+        console.debug('User Permissions:', userPermissions);
+        
+        // Hide admin elements
+        if (!userPermissions.isAdmin) {
+            $('.admin').addClass('d-none');
+        }
+        
+        // Hide staff elements
+        if (!userPermissions.isStaff) {
+            $('.staff').addClass('d-none');
+        }
+        
+        // Hide elements requiring either permission
+        if (!userPermissions.isAdmin && !userPermissions.isStaff) {
+            $('.restricted').addClass('d-none');
+        }
+    } catch (error) {
+        console.error('Error in hideRestrictedElements:', error);
     }
   }   
 
   // Initial hide
-  hideAdminElements();
+  hideRestrictedElements();
  
+  // Single ajaxComplete handler
   $(document).ajaxComplete(function() {
-    hideAdminElements();
+    hideRestrictedElements();
   });
 
   // Alternative approach using MutationObserver
   const observer = new MutationObserver(function(mutations) {
     mutations.forEach(function(mutation) {
         if (mutation.addedNodes.length) {
-            hideAdminElements();
+            hideRestrictedElements();
         }
     });
   });
@@ -99,8 +117,8 @@ $(document).ready(function () {
     $("#roomlist-link").trigger("click"); // Trigger the dashboard click event
   } else if (url.endsWith("room-status")) {
     $("#roomstatus-link").trigger("click"); // Trigger the roomstatus click 
-  } else if (url.endsWith("products")) {
-    $("#products-link").trigger("click"); // Trigger the products click event
+  } else if (url.endsWith("room-schedule")) {
+    $("#roomschedule-link").trigger("click"); // Trigger the products click event
   } else {
     $("#roomlist-link").trigger("click"); // Default to dashboard if no specific page
   }
@@ -109,7 +127,7 @@ $(document).ready(function () {
   function viewroomList() {
     $.ajax({
       type: "GET", // Use GET request
-      url: "viewroomlist.php", // URL for the analytics view
+      url: "../room-list/viewroomlist.php", // URL for the analytics view
       dataType: "html", // Expect HTML response
       success: function (response) {
         $(".content-page").html(response); // Load the response into the content area
@@ -366,7 +384,7 @@ $(document).ready(function () {
   function editRoom(roomId) {
     return $.ajax({
       type: "GET", // Use GET request
-      url: "../admin/roomlist/edit.php?v=" + new Date().getTime(), // URL to get product data
+      url: "../room-list/edit.php?v=" + new Date().getTime(), // URL to get product data
       dataType: "html", // Expect JSON response
       success: function (view) {
         // Assuming 'view' contains the new content you want to display
@@ -397,7 +415,7 @@ $(document).ready(function () {
   function updateRoom(roomId) {
     $.ajax({
       type: "POST", // Use POST request
-      url: `../admin/roomlist/update-room.php?id=${roomId}`, // URL for saving room
+      url: `../room-list/update-room.php?id=${roomId}`, // URL for saving room
       data: $("form").serialize(), // Serialize the form data for submission
       dataType: "json", // Expect JSON response
       success: function (response) {
@@ -435,7 +453,7 @@ $(document).ready(function () {
   function addRoom() {
     $.ajax({
       type: "GET", // Use GET request
-      url: "../admin/roomlist/add.html?v=" + new Date().getTime(), // URL for add product view
+      url: "../room-list/add.html?v=" + new Date().getTime(), // URL for add product view
       dataType: "html", // Expect HTML response
       success: function (view) {
         $(".modal-container").html(view); // Load the modal view
@@ -463,7 +481,7 @@ $(document).ready(function () {
   function saveRoom(){
     $.ajax({
       type: "POST", // Use POST request
-      url: "../admin/roomlist/save-room.php", // URL for saving room
+      url: "../room-list/save-room.php", // URL for saving room
       data: $("form").serialize(), // Serialize the form data for submission
       dataType: "json", // Expect JSON response
       success: function (response) {

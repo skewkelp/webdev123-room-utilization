@@ -1,7 +1,7 @@
 <?php
 
-require_once('../../tools/functions.php');
-require_once('../../classes/room.class.php');
+require_once('../tools/functions.php');
+require_once('../classes/room.class.php');
 
 //this var refers to room_
 $name = $type = '';

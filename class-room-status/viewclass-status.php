@@ -254,9 +254,9 @@ require_once '../tools/functions.php';  // Add this line
                                         <td><?= $arr['room_status'] ?></td>
                                         <td class="text-nowrap">
                                             <a href="" class="btn room-schedule">Schedule</a>
-                                            <a href="" class="btn room-status">Occupy</a>
-                                            <a href="" class="btn admin edit-room-status" data-id="<?= $arr['class_status_id'] ?>">Edit</a>
+                                            <a href="" class="btn staff room-status">Occupy</a>
                                             <?php if (hasPermission('admin')): ?>
+                                                <a href="" class="btn admin edit-room-status" data-id="<?= $arr['class_status_id'] ?>">Edit</a>
                                                 <a href="" class="btn admin display-row">Display</a> <!-- hidden or displayed  -->
                                                 <a href="" class="btn admin delete delete-room-status"data-id="<?= $arr['class_status_id'] ?>">X</a>
                                             <?php endif; ?>

@@ -1,10 +1,7 @@
 <?php
 // Add these at the top of viewroomlist.php
 require_once '../tools/functions.php';  // Add this line
-require_once '../classes/room.class.php';
 
-
-$roomObj = new Room();   
 ?>
 
 <div class="container-fluid">

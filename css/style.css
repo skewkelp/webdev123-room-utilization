@@ -51,6 +51,9 @@ update test
   --user-btn-color:#fff;
   --user-btn-hover-background-color: rgba(60, 79, 30, 0.8);
 
+  --staff-btn-background-color: #95A679;
+
+
   --admin-btn-background-color: #FFC107;
   --delete-btn-background-color: red;
   --delete-btn-color: white;
@@ -232,7 +235,9 @@ body{
 }
 
 .btn.admin{
-  background-color: var(--admin-btn-background-color);
+  background-color: var(--admin-btn-background-color)!important;
+}.btn.staff{
+  background-color: var(--staff-btn-background-color)!important;
 }
 
 .btn.delete{
