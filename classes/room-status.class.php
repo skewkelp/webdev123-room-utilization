@@ -21,6 +21,25 @@ class Room
     public $status = '';
    
     
+    // Properties for class details
+    public $room_id = '';
+    public $subject_id = '';
+    public $section_id = '';
+    public $teacher_assigned = ''; 
+    public $start_time = '';
+    public $end_time = ''; 
+    public $day_id = [];
+
+    // Properties for IDs and logs
+    public $class_id = ''; // PK class_details
+    public $class_time_id = ''; // PK class_time
+    public $class_day_id = '';
+    public $log_cid = []; // Log for class IDs
+    public $log_ctid = []; // Log for class time IDs
+    public $log_cdid = []; // Log for class day IDs
+    public $log_day = []; // Log for day IDs
+    public $log_sid = []; // Log for day IDs
+
     //cday.id AS cday_id,
     // d.day AS week_day,
     // room.room_name AS room_name,
@@ -39,26 +58,6 @@ class Room
     }
 
     
-
-    // Properties for class details
-    public $room_id = '';
-    public $subject_id = '';
-    public $section_id = '';
-    public $teacher_assigned = ''; 
-    public $start_time = '';
-    public $end_time = ''; 
-    public $day_id = [];
-
-    // Properties for IDs and logs
-    public $class_id = ''; // PK class_details
-    public $class_time_id = ''; // PK class_time
-    public $class_day_id = '';
-    public $log_cid = []; // Log for class IDs
-    public $log_ctid = []; // Log for class time IDs
-    public $log_cdid = []; // Log for class day IDs
-    public $log_day = []; // Log for day IDs
-
-
     function addroomStatus() {// 1. Insert into class_details
         $sql1 = "INSERT INTO class_details (room_id, subject_id, section_id, teacher_assigned) VALUES (:room_id, :subject_id, :section_id, :teacher_id);";
         $query1 = $this->db->connect()->prepare($sql1);
@@ -383,35 +382,38 @@ class Room
         return $count > 0;
     }
 
+    function deleteroomStatus() {
+        $this->log_sid[] = $this->class_status_id;
+        // 1. Delete from _status (will cascade delete due to constraints)
+        $sql1 = "DELETE FROM _status WHERE class_day_id = :class_day_id;";
+        $query1 = $this->db->connect()->prepare($sql1);
+        $query1->bindParam(':class_day_id', $this->class_status_id);
+        $query1->execute();
+        $this->log_cdid[] = $this->class_day_id;
+        // 2. Delete from class_day
+        $sql2 = "DELETE FROM class_day WHERE id = :class_day_id;";
+        $query2 = $this->db->connect()->prepare($sql2);
+        $query2->bindParam(':class_day_id', $this->class_status_id); // Fixed parameter name
+        $query2->execute();
 
-    // function classTimeExistsOnDay($class_time_id, $day_id, $current_class_day_id = null) {
-    //     $sql = "
-    //         SELECT COUNT(*) AS count
-    //         FROM class_day cd
-    //         WHERE cd.day_id = :day_id 
-    //         AND cd.class_time_id = :class_time_id
-    //     ";
+        $this->log_ctid[] = $this->class_day_id;
         
-    //     // If editing existing record, exclude current class_day_id
-    //     if ($current_class_day_id !== null) {
-    //         $sql .= " AND cd.id != :current_class_day_id";
-    //     }
+        // 3. Delete from class_time
+        $sql3 = "DELETE FROM class_time WHERE id = :class_time_id;";
+        $query3 = $this->db->connect()->prepare($sql3);
+        $query3->bindParam(':class_time_id', $this->class_time_id);
+        $query3->execute();
+        
+        $this->log_cid[] = $this->class_id;
+        // 4. Delete from class_details
+        $sql4 = "DELETE FROM class_details WHERE id = :class_id;";
+        $query4 = $this->db->connect()->prepare($sql4);
+        $query4->bindParam(':class_id', $this->class_id);
+        $query4->execute();
+    
+        return true;
+    }
 
-    //     $query = $this->db->prepare($sql);
-    //     $query->bindParam(':day_id', $day_id);
-    //     $query->bindParam(':class_time_id', $class_time_id);
-        
-    //     if ($current_class_day_id !== null) {
-    //         $query->bindParam(':current_class_day_id', $current_class_day_id);
-    //     }
-        
-    //     $query->execute();
-        
-    //     $count = $query->fetchColumn();
-        
-    //     // Return true if any conflicting schedule exists
-    //     return $count > 0;
-    // }
 
 
 
@@ -427,13 +429,7 @@ class Room
         return $data;
     }
 
-    function delete($recordID){
-        $sql = "DELETE FROM product WHERE id = :recordID;";
-        $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':recordID', $recordID);
-        return $query->execute();
-    }
-
+    
     function roomnameExists($room_name, $excludeID = null){
         $sql = "SELECT COUNT(*) FROM room_list WHERE room_name = :room_name";
         if ($excludeID) {

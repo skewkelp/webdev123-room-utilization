@@ -52,6 +52,12 @@ update test
   --user-btn-hover-background-color: rgba(60, 79, 30, 0.8);
 
   --admin-btn-background-color: #FFC107;
+  --delete-btn-background-color: red;
+  --delete-btn-color: white;
+  --delete-border-radius-sm: 0.75rem;
+  --delete-width: auto;
+  --delete-height: auto;
+  --delete-font-weight: 800;
 
   --sidebar-bg-color: #313a46;
   --sidebar-menu-item-color: #8391a2;
@@ -229,6 +235,14 @@ body{
   background-color: var(--admin-btn-background-color);
 }
 
+.btn.delete{
+  background-color: var(--delete-btn-background-color)!important;
+  color: var(--delete-btn-color)!important;
+  border-radius: var(--delete-border-radius-sm)!important;
+  width: var(--delete-width)!important;
+  height: var(--delete-height)!important;
+  font-weight: var(--delete-font-weight)!important;
+}
 
 h1{
   font-size: var(--h1-font-size) !important;
@@ -583,6 +597,11 @@ a.nav-link{
 }
 
 .modal {
+  --modal-error-justify-content: center;
+  --modal-error-text-align: center;
+  --modal-error-display: flex;
+  --warning-color: red;
+
   --bs-modal-zindex: 1055;
   --bs-modal-width: 500px;
   --bs-modal-padding: 1rem;
@@ -604,17 +623,31 @@ a.nav-link{
   --bs-modal-footer-bg: ;
   --bs-modal-footer-border-color: var(--bs-border-color);
   --bs-modal-footer-border-width: var(--bs-border-width);
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: var(--bs-modal-zindex);
-  display: none;
-  width: 100%;
-  height: 100%;
-  overflow-x: hidden;
-  overflow-y: auto;
-  outline: 0;
+  
 }
+
+.icon.delete{        
+  justify-self: center!important;
+  width: 84px!important;               
+  height: 100px!important;     
+  background-image: url('../img/figma-icon/Delete-Icon.png');
+  background-size: cover;    
+  background-position: center; 
+  background-repeat: no-repeat; 
+  margin: 0;
+  display: block;
+}
+
+.modal-footer.delete, .modal-body.delete, .modal-header.delete{
+  display: var(--modal-error-display);
+  justify-content: var(--modal-error-justify-content)!important;
+  align-items: center !important;
+  text-align: var(--modal-error-text-align)!important;
+ 
+}.modal-title.delete{
+  color: var(--warning-color);
+}
+
 /*
 
 */

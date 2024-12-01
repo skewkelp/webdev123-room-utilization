@@ -297,7 +297,7 @@ $(document).ready(function () {
         });
          
 
-        $('#table-room-status').on('click', '.room-schedule, .room-status, .edit-room-status, .display-status', function(e) {
+        $('#table-room-status').on('click', '.room-schedule, .room-status, .edit-room-status, .display-status, .delete-room-status', function(e) {
           e.preventDefault();
           const button = $(this);
           button.prop("disabled", true);
@@ -319,6 +319,11 @@ $(document).ready(function () {
           }
           else if ($(this).hasClass('display-status')) {
               displayStatus().always(function() {
+                  button.prop("disabled", false);
+              });
+          }
+          else if ($(this).hasClass('delete-room-status')) {
+              deleteconfirmationStatus(this.dataset.id).always(function() {
                   button.prop("disabled", false);
               });
           }
@@ -629,6 +634,7 @@ $(document).ready(function () {
               $('#start-time').val(data.start_time);
               $('#end-time').val(data.end_time);
 
+              $('#hidden-class-day-id').val(data.class_day_id);
               // Check the appropriate day checkbox
               $(`input[name="day-id[]"][value="${data.day_id}"]`).prop('checked', true);
           },
@@ -734,6 +740,85 @@ $(document).ready(function () {
 
   }
 
+  //Load delete modal
+  function deleteconfirmationStatus(roomstatusId){
+    return $.ajax({
+      type: "GET", // Use GET request
+      url: "../class-room-status/delete-confirmation-status.html?v=" + new Date().getTime(), // URL to get product data
+      dataType: "html", // Expect JSON response
+      success: function (view) {
+        // Assuming 'view' contains the new content you want to display
+        $(".modal-container").empty().html(view); // Load the modal view
+        $("#staticBackdrop").modal("show"); // Show the modal
+        $("#staticBackdroped").attr("data-id", roomstatusId);
+
+        const modal = $('#staticBackdrop');
+        
+        $.ajax({
+          url: `../fetch-data/fetch-room-status.php?id=${roomstatusId}`,
+          dataType: "json",
+          success: function(data) {
+              console.log('Fetched data:', data); // For debugging
+              //Fetch class status id
+              $('#hidden-class-status-id').val(data.class_status_id);
+              //Fetch class id
+              $('#hidden-class-id').val(data.class_id);
+
+              $('#hidden-class-day-id').val(data.class_day_id);
+            
+              //Fetch-class-time-id
+              $('#hidden-class-time-id').val(data.class_time_id);
+
+            
+          },
+          error: function(xhr, status, error) {
+              console.error("Error fetching status record:", error);
+          }
+        });
+
+        $(".modal-close").on("click", function (e) {
+          e.preventDefault();
+          closeModal(modal); // Pass modal to closeModal function
+        }); 
+
+        // Event listener for the add product form submission
+        $("#form-delete").on("submit", function (e) {
+          e.preventDefault(); // Prevent default form submission
+          deleteroomStatus(); // Call function to save product
+        });
+      },
+      error: function (xhr, status, error) {
+        alert("An error occurred while loading the modal: " + error);
+      }
+    });
+  }
+
+  function deleteroomStatus(){
+    $.ajax({
+      type: "POST", // Use POST request
+      url: "../class-room-status/delete-room-status.php", // URL for saving room
+      data: $("form").serialize(), // Serialize the form data for submission, Add ID to form data
+      dataType: "json", // Expect JSON response
+      success: function (response) {
+        if (response.status === "error") {
+          // Handle validation errors
+          
+          
+        } else if (response.status === "success") {
+          // On success, hide modal and reset form
+          $("#staticBackdrop").modal("hide");
+          $("form")[0].reset(); // Reset the form
+          // Optionally, reload roomlist to show new entry
+          viewroomStatus();
+        }
+      },
+      error: function (xhr, status, error) {
+        alert('Failed to load delete-room-status.php.');
+        console.error("Error deleting class schedule status:", status, error);
+      }
+
+    });
+  }
 
 
 

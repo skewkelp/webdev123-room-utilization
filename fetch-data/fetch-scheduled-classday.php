@@ -28,6 +28,7 @@ if ($array) {
                 <a href='' class='btn room-status'>Occupy</a>
                 <a href='' class='btn admin edit-room-status' data-id='{$arr['class_status_id']}'>Edit</a>
                 <a href='' class='btn admin display-row'>Display</a>
+                <a href='' class='btn admin delete delete-room-status' data-id='{$arr['class_status_id']}'>X</a>
             </td>
             </tr>";
     }
