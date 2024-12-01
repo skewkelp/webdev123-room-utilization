@@ -11,7 +11,7 @@ $class_status_id = $class_id = $class_time_id= = $class_day_id = '';
 $room_id = $subject_id = $section_id = $teacher_assigned = $start_time = $end_time = $day_id = '';
 $room_idErr = $subject_idErr = $section_idErr = $teacher_assignedErr = $start_timeErr = $end_timeErr = $day_idErr = '';
 
-$roomObj = new Room();
+$roomObj = new RoomStatus();
 
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $class_status_id = clean_input($_POST['class-status-id']);

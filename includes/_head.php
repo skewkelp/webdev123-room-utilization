@@ -1,3 +1,7 @@
+<?php 
+require_once '../tools/functions.php';
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,3 +14,10 @@
     <link rel="stylesheet" href="../vendor/datatable-2.1.8/datatables.min.css">
     <link rel="stylesheet" href="../css/style.css">
 </head>
+
+<script>
+    window.userPermissions = {
+        isAdmin: <?php echo isset($_SESSION['account']) && $_SESSION['account']['is_admin'] == 1 ? 'true' : 'false'; ?>,
+        isStaff: <?php echo isset($_SESSION['account']) && $_SESSION['account']['is_staff'] == 1 ? 'true' : 'false'; ?>
+    };
+</script>

@@ -1,4 +1,31 @@
 $(document).ready(function () { 
+  
+  // Add this at the start of your admin.js file
+  // Function to hide admin elements
+  function hideAdminElements() {
+    const userPermissions = window.userPermissions || {};
+    
+    if (!userPermissions.isAdmin) {
+        $('.admin').addClass('d-none');
+    }
+  }   
+
+  // Initial hide
+  hideAdminElements();
+ 
+  $(document).ajaxComplete(function() {
+    hideAdminElements();
+  });
+
+  // Alternative approach using MutationObserver
+  const observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+        if (mutation.addedNodes.length) {
+            hideAdminElements();
+        }
+    });
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
 
   // Function to close the modal
   function closeModal(modal) {

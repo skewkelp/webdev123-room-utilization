@@ -2,8 +2,7 @@
 
 require_once 'database.class.php';
 
-class Room
-{
+class Room{
     public $id = '';
 
     public $room_code = '';

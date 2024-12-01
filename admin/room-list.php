@@ -1,13 +1,24 @@
 <?php
 session_start();
+// //  session_start() to see what's in the session
+// echo "<pre>";
+// print_r($_SESSION);
+// echo "</pre>";
+// exit;
+require_once '../tools/functions.php';
 
-if (isset($_SESSION['account'])) {
-    if (!$_SESSION['account']['is_staff']) {
-        header('location: ../account/loginwcss.php');
-    }
-} else {
+if(!isset($_SESSION['account'])) {
     header('location: ../account/loginwcss.php');
+    exit();
 }
+
+// Then check user permissions
+if (!hasPermission('both')){
+    // If user is neither staff nor admin, redirect
+    header('location: ../account/loginwcss.php');
+    exit();
+}
+
 $page_title = "roomlist";
 
 require_once '../includes/_head.php';

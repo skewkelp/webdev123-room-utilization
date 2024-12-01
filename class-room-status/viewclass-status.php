@@ -1,3 +1,9 @@
+<?php
+// Add these at the top of viewroomlist.php
+require_once '../tools/functions.php';  // Add this line
+  
+?>
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
@@ -23,7 +29,7 @@
                 <?php
                     require_once '../classes/room-status.class.php';
                     session_start();
-                    $roomObj = new Room();   
+                    $roomObj = new RoomStatus();   
                 ?>
                 <div class="d-flex justify-content-between align-items-center gap-4">
                     
@@ -206,7 +212,9 @@
                                 <i class="bi bi-search"></i>
                             </span>
                         </div>
-                        <a id="add-room-status" href="#" class="btn admin btn-primary open-modal-button">Add Room Status</a>
+                        <?php if (hasPermission('admin')): ?>
+                            <a id="add-room-status" href="#" class="btn admin btn-primary open-modal-button">Add Room Status</a>
+                        <?php endif; ?>
                     </div>
                     <div class="table-responsive">
                         <table id="table-room-status" class="table table-centered table-nowrap table-hover mb-0">
@@ -248,8 +256,10 @@
                                             <a href="" class="btn room-schedule">Schedule</a>
                                             <a href="" class="btn room-status">Occupy</a>
                                             <a href="" class="btn admin edit-room-status" data-id="<?= $arr['class_status_id'] ?>">Edit</a>
-                                            <a href="" class="btn admin display-row">Display</a> <!-- hidden or displayed  -->
-                                            <a href="" class="btn admin delete delete-room-status"data-id="<?= $arr['class_status_id'] ?>">X</a>
+                                            <?php if (hasPermission('admin')): ?>
+                                                <a href="" class="btn admin display-row">Display</a> <!-- hidden or displayed  -->
+                                                <a href="" class="btn admin delete delete-room-status"data-id="<?= $arr['class_status_id'] ?>">X</a>
+                                            <?php endif; ?>
                                         </td>
                                     </tr>
                                 <?php

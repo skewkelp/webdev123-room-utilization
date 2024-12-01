@@ -5,7 +5,7 @@ require_once('../classes/room-status.class.php');
 
 $class_status_id = $class_id = $class_time_id = $class_day_id = '';
 
-$roomObj = new Room();
+$roomObj = new RoomStatus();
 
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $class_status_id = clean_input($_POST['class-status-id']);

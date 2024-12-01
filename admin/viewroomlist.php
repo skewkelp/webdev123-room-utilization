@@ -1,3 +1,12 @@
+<?php
+// Add these at the top of viewroomlist.php
+require_once '../tools/functions.php';  // Add this line
+require_once '../classes/room.class.php';
+
+
+$roomObj = new Room();   
+?>
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
@@ -69,9 +78,12 @@
                             </span>
                         </div>
                     </form>
-                    <div class="page-title-right d-flex align-items-center">
+
+                    <?php if (hasPermission('admin')): ?>
+                    <div class="page-title-right d-flex align-items-center" admin>
                         <a id="add-room" href="#" class="btn btn-primary brand-bg-color">Add Room</a>
                     </div>
+                    <?php endif; ?>
                 </div>
                 
                 <!-- <form class="d-flex card-header justify-content-between align-items-center w-100 px-2">
@@ -105,10 +117,9 @@
                                         <td class="text-nowrap">
                                             <a href="" class="btn room-schedule">Schedule</a>
                                             <a href="" class="btn room-status">Status</a>
+                                            <?php if (hasPermission('admin')): ?>
                                             <a href="" class="btn admin edit-room" data-id="<?= $arr['id'] ?>">Edit</a>
-                                            <!-- <a href="../admin/roomstatus.php?id=<= $arr['id'] ?>" class="btn room-status">Status</a>
-                                            <a href="" class="btn edit-product" data-id="<= $arr['id'] ?>">Edit</a> -->
-                                            <!-- data-id="<= $arr['id'] ?>" -->
+                                            <?php endif; ?>
                                         </td>
                                     </tr>
                                 <?php

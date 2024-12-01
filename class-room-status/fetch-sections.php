@@ -3,7 +3,7 @@ require_once '../classes/room-status.class.php';
 session_start();
 
 $courseId = $_GET['course_id'];
-$roomObj = new Room(); // Assuming you have a Room class
+$roomObj = new RoomStatus(); // Assuming you have a Room class
 
 if ($courseId === 'ALL') {
     $sections = $roomObj->fetchsectionOption(); // Fetch all sections

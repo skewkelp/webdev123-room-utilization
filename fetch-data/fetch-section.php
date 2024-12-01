@@ -1,7 +1,7 @@
 <?php
     require_once('../classes/room-status.class.php');
 
-    $roomObj = new Room();
+    $roomObj = new RoomStatus();
 
     $section = $roomObj->fetchsectionOption();
 

@@ -1,7 +1,7 @@
 <?php
 require_once('../classes/room-status.class.php');
 
-$roomObj = new Room();
+$roomObj = new RoomStatus();
 $class_status_id = $_GET['id'];
 $class_status = $roomObj->fetchroomstatustRecord($class_status_id);
 

@@ -2,8 +2,7 @@
 
 require_once 'database.class.php';
 
-class Room
-{
+class RoomStatus{
     public $week_day = '';
     
     public $id = '';

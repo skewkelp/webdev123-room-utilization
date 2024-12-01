@@ -33,3 +33,20 @@ function getDayName($day_id) {
     ];
     return isset($days[$day_id]) ? $days[$day_id] : 'Unknown Day';
 }
+
+
+function hasPermission($type = 'both') {
+    if (!isset($_SESSION['account'])) return false;
+    
+    switch($type) {
+        case 'admin':
+            return $_SESSION['account']['is_admin'] == 1;
+        case 'staff':
+            return $_SESSION['account']['is_staff'] == 1;
+        case 'both':
+            return $_SESSION['account']['is_admin'] == 1 || $_SESSION['account']['is_staff'] == 1;
+        default:
+            return false;
+    }
+}
+
