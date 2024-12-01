@@ -166,10 +166,10 @@ $(document).ready(function () {
         // Get the select element
         const selectDay = document.getElementById("day");
 
-        // Function to set the current day in the dropdown, real time
+        // Function to set the current day in the dropdown, real-time
         function setCurrentDay() {
-          const options = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-          const currentDayIndex = new Date().getDay(); // Get current day index (0-6)
+          const options = ["Sunday","Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+          const currentDayIndex = new Date().getDay();  //
           const currentDay = options[currentDayIndex]; // Get current day name
 
           // Set the dropdown value to the current day
@@ -195,8 +195,9 @@ $(document).ready(function () {
               }
           });
         }
-        setCurrentDay();
 
+        // // Initialize
+        setCurrentDay();
         selectDay.addEventListener("change", fetchDayData);
 
         var table = $("#table-room-status").DataTable({

@@ -20,7 +20,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $teacher_assigned = clean_input($_POST['teacher-assigned']);
     $start_time = clean_input($_POST['start-time']);
     $end_time = clean_input($_POST['end-time']);
-    $day_id = isset($_POST['day-id']) ? $_POST['day-id'] : [];
+    $day_id = isset($_POST['day-id']) ? (array) $_POST['day-id'] : [];
     
     if(empty($room_id)){
         $room_idErr = 'Room is required.';
@@ -69,14 +69,19 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $roomObj->room_id = $room_id;
     $roomObj->subject_id = $subject_id;
     $roomObj->section_id = $section_id;
-    $roomObj->start_time = $start_time;
     $roomObj->teacher_assigned = $teacher_assigned;
-    $roomObj->end_time = $end_time;
+    $roomObj->start_time = $start_time;
     $roomObj->end_time = $end_time;
     $roomObj->day_id = $day_id;
 
+
     if($roomObj->addroomStatus()){
-        echo json_encode(['status' => 'success']);
+        echo json_encode(['status' => 'success', 'debug' => [
+            'class_id created' => $roomObj->log_cid,
+            'class_time_id created' => $roomObj->log_ctid,
+            'Day_id inserted' => $roomObj->log_day,
+            'class_day_id created' => $roomObj->log_cdid
+        ]]);
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Something went wrong when adding the new class status.']);
     }

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 30, 2024 at 12:58 PM
+-- Generation Time: Dec 01, 2024 at 03:06 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -76,19 +76,21 @@ INSERT INTO `category` (`id`, `name`) VALUES
 CREATE TABLE `class_day` (
   `id` int(11) NOT NULL,
   `day_id` int(11) NOT NULL,
-  `class_id` int(11) NOT NULL
+  `class_time_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `class_day`
 --
 
-INSERT INTO `class_day` (`id`, `day_id`, `class_id`) VALUES
+INSERT INTO `class_day` (`id`, `day_id`, `class_time_id`) VALUES
 (3, 1, 7),
 (4, 1, 8),
 (5, 2, 9),
 (7, 2, 12),
-(8, 5, 13);
+(8, 5, 13),
+(50, 6, 59),
+(51, 3, 60);
 
 -- --------------------------------------------------------
 
@@ -113,7 +115,9 @@ INSERT INTO `class_details` (`id`, `section_id`, `room_id`, `subject_id`, `teach
 (11, 1, 2, 4, 2),
 (13, 2, 1, 3, 1),
 (36, 8, 1, 1, 2),
-(37, 8, 1, 2, 2);
+(37, 8, 1, 2, 2),
+(81, 8, 1, 5, 2),
+(82, 1, 1, 5, 2);
 
 -- --------------------------------------------------------
 
@@ -138,7 +142,9 @@ INSERT INTO `class_time` (`id`, `class_id`, `start_time`, `end_time`, `time_modi
 (8, 11, '09:00:00', '12:00:00', '2024-11-27 10:57:00'),
 (9, 13, '07:00:00', '09:00:00', '2024-11-29 04:29:18'),
 (12, 36, '11:11:00', '14:22:00', '2024-11-30 11:47:31'),
-(13, 37, '14:30:00', '16:00:00', '2024-11-30 11:55:43');
+(13, 37, '14:30:00', '16:00:00', '2024-11-30 11:55:43'),
+(59, 81, '11:11:00', '14:22:00', '2024-12-01 01:56:44'),
+(60, 82, '11:11:00', '14:22:00', '2024-12-01 01:58:32');
 
 -- --------------------------------------------------------
 
@@ -349,7 +355,8 @@ INSERT INTO `subject_details` (`id`, `subject_code`, `description`, `type_id`, `
 (1, 'CC103', 'Data Structures and Algorithm', 1, '2024-11-28 01:39:00'),
 (2, 'CC103', 'Data Structures and Algorithm', 2, '2024-11-28 01:39:00'),
 (3, 'CC100', 'Introduction to Computing Studies', 1, '2024-11-28 01:39:00'),
-(4, 'CC100', 'Introduction to Computing Studies', 2, '2024-11-28 01:39:00');
+(4, 'CC100', 'Introduction to Computing Studies', 2, '2024-11-28 01:39:00'),
+(5, 'SIPP125', 'Social Issues and Professional Practice', 1, '2024-11-30 12:10:00');
 
 -- --------------------------------------------------------
 
@@ -386,6 +393,7 @@ CREATE TABLE `_day` (
 --
 
 INSERT INTO `_day` (`id`, `day`) VALUES
+(0, 'Sunday'),
 (1, 'Monday'),
 (2, 'Tuesday'),
 (3, 'Wednesday'),
@@ -414,7 +422,9 @@ INSERT INTO `_status` (`class_day_id`, `status_desc_id`, `time_modified`) VALUES
 (4, 2, '2024-11-28 00:25:28'),
 (5, 1, '2024-11-29 08:58:01'),
 (7, 2, '2024-11-30 11:47:31'),
-(8, 2, '2024-11-30 11:55:43');
+(8, 2, '2024-11-30 11:55:43'),
+(50, 2, '2024-12-01 01:56:44'),
+(51, 2, '2024-12-01 01:58:32');
 
 --
 -- Indexes for dumped tables
@@ -439,7 +449,7 @@ ALTER TABLE `category`
 --
 ALTER TABLE `class_day`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `classtimeid_fk` (`class_id`),
+  ADD KEY `classtimeid_fk` (`class_time_id`),
   ADD KEY `dayid_fk` (`day_id`);
 
 --
@@ -563,19 +573,19 @@ ALTER TABLE `category`
 -- AUTO_INCREMENT for table `class_day`
 --
 ALTER TABLE `class_day`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT for table `class_details`
 --
 ALTER TABLE `class_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
 
 --
 -- AUTO_INCREMENT for table `class_time`
 --
 ALTER TABLE `class_time`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- AUTO_INCREMENT for table `course_details`
@@ -629,19 +639,13 @@ ALTER TABLE `stocks`
 -- AUTO_INCREMENT for table `subject_details`
 --
 ALTER TABLE `subject_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `subject_type_description`
 --
 ALTER TABLE `subject_type_description`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT for table `_day`
---
-ALTER TABLE `_day`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables
@@ -651,7 +655,7 @@ ALTER TABLE `_day`
 -- Constraints for table `class_day`
 --
 ALTER TABLE `class_day`
-  ADD CONSTRAINT `classtimeid_fk` FOREIGN KEY (`class_id`) REFERENCES `class_time` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `classtimeid_fk` FOREIGN KEY (`class_time_id`) REFERENCES `class_time` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `dayid_fk` FOREIGN KEY (`day_id`) REFERENCES `_day` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
