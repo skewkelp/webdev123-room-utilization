@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 01, 2024 at 03:06 AM
+-- Generation Time: Dec 01, 2024 at 05:25 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -34,8 +34,8 @@ CREATE TABLE `account` (
   `username` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `role` enum('student','teacher','admin') NOT NULL,
-  `is_staff` tinyint(1) NOT NULL DEFAULT 1,
-  `is_admin` tinyint(1) NOT NULL DEFAULT 1
+  `is_staff` tinyint(1) NOT NULL DEFAULT 0,
+  `is_admin` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -45,8 +45,9 @@ CREATE TABLE `account` (
 INSERT INTO `account` (`id`, `first_name`, `last_name`, `username`, `password`, `role`, `is_staff`, `is_admin`) VALUES
 (1, 'Rhamirl', 'Jaafar', 'rham', '$2y$10$42jGvgsU9zoKdFwm18wqQe0nzO78jZvk1m1vMvx8BJYsLTHPuBaCa', 'admin', 1, 1),
 (2, 'aziz', 'amin', 'amin123', '$2y$10$snPP2mhvYzbHhLYvQNqtcODt/ISqzoVkxK/THlbFFn26SFZ9yOT7u', 'student', 1, 1),
-(5, 'first', 'teacher', 'teacher1', '$2y$10$mvrv6cbnYmTAwXO.lK6UxevwEWqjCdk5bSMi1EJVt.8P2fD0BGMXO', 'teacher', 1, 1),
-(6, 'second', 'teacher', 'teacher2', '$2y$10$cInqcsJW1Wh6mqDji3OO1eXC6nEtUE0AF6D3Ha1XPn0qdYbRD..S.', 'teacher', 1, 1);
+(5, 'first', 'teacher', 'teacher1', '$2y$10$mvrv6cbnYmTAwXO.lK6UxevwEWqjCdk5bSMi1EJVt.8P2fD0BGMXO', 'teacher', 1, 0),
+(6, 'second', 'teacher', 'teacher2', '$2y$10$cInqcsJW1Wh6mqDji3OO1eXC6nEtUE0AF6D3Ha1XPn0qdYbRD..S.', 'teacher', 1, 0),
+(7, 'admin', 'admin', 'admin', '$2y$10$DtLHko2brenK97L3eR1zK.L8B0QhfQNzSsdA0Nc7Np/CAJI5nzO6S', 'admin', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -88,9 +89,11 @@ INSERT INTO `class_day` (`id`, `day_id`, `class_time_id`) VALUES
 (4, 1, 8),
 (5, 2, 9),
 (7, 2, 12),
-(8, 5, 13),
-(50, 6, 59),
-(51, 3, 60);
+(55, 3, 69),
+(56, 4, 69),
+(57, 1, 70),
+(58, 1, 72),
+(59, 1, 73);
 
 -- --------------------------------------------------------
 
@@ -115,9 +118,10 @@ INSERT INTO `class_details` (`id`, `section_id`, `room_id`, `subject_id`, `teach
 (11, 1, 2, 4, 2),
 (13, 2, 1, 3, 1),
 (36, 8, 1, 1, 2),
-(37, 8, 1, 2, 2),
-(81, 8, 1, 5, 2),
-(82, 1, 1, 5, 2);
+(91, 15, 5, 4, 1),
+(92, 1, 1, 1, 1),
+(93, 1, 5, 1, 1),
+(94, 1, 5, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -142,9 +146,11 @@ INSERT INTO `class_time` (`id`, `class_id`, `start_time`, `end_time`, `time_modi
 (8, 11, '09:00:00', '12:00:00', '2024-11-27 10:57:00'),
 (9, 13, '07:00:00', '09:00:00', '2024-11-29 04:29:18'),
 (12, 36, '11:11:00', '14:22:00', '2024-11-30 11:47:31'),
-(13, 37, '14:30:00', '16:00:00', '2024-11-30 11:55:43'),
-(59, 81, '11:11:00', '14:22:00', '2024-12-01 01:56:44'),
-(60, 82, '11:11:00', '14:22:00', '2024-12-01 01:58:32');
+(69, 91, '07:00:00', '09:00:00', '2024-12-01 03:22:26'),
+(70, 92, '07:00:00', '09:00:00', '2024-12-01 08:48:47'),
+(71, 10, '07:00:00', '09:00:00', '2024-12-01 09:00:54'),
+(72, 93, '07:00:00', '09:00:00', '2024-12-01 10:58:55'),
+(73, 94, '07:00:00', '09:00:00', '2024-12-01 10:59:09');
 
 -- --------------------------------------------------------
 
@@ -422,9 +428,11 @@ INSERT INTO `_status` (`class_day_id`, `status_desc_id`, `time_modified`) VALUES
 (4, 2, '2024-11-28 00:25:28'),
 (5, 1, '2024-11-29 08:58:01'),
 (7, 2, '2024-11-30 11:47:31'),
-(8, 2, '2024-11-30 11:55:43'),
-(50, 2, '2024-12-01 01:56:44'),
-(51, 2, '2024-12-01 01:58:32');
+(55, 2, '2024-12-01 03:22:26'),
+(56, 2, '2024-12-01 03:22:26'),
+(57, 2, '2024-12-01 08:49:47'),
+(58, 2, '2024-12-01 10:58:55'),
+(59, 2, '2024-12-01 10:59:09');
 
 --
 -- Indexes for dumped tables
@@ -561,7 +569,7 @@ ALTER TABLE `_status`
 -- AUTO_INCREMENT for table `account`
 --
 ALTER TABLE `account`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `category`
@@ -573,19 +581,19 @@ ALTER TABLE `category`
 -- AUTO_INCREMENT for table `class_day`
 --
 ALTER TABLE `class_day`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 --
 -- AUTO_INCREMENT for table `class_details`
 --
 ALTER TABLE `class_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=96;
 
 --
 -- AUTO_INCREMENT for table `class_time`
 --
 ALTER TABLE `class_time`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
 
 --
 -- AUTO_INCREMENT for table `course_details`
