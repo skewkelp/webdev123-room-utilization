@@ -59,7 +59,7 @@ class Room
     public $log_day = []; // Log for day IDs
 
 
-    public function addroomStatus() {// 1. Insert into class_details
+    function addroomStatus() {// 1. Insert into class_details
         $sql1 = "INSERT INTO class_details (room_id, subject_id, section_id, teacher_assigned) VALUES (:room_id, :subject_id, :section_id, :teacher_id);";
         $query1 = $this->db->connect()->prepare($sql1);
         $query1->bindParam(':room_id', $this->room_id);
@@ -93,6 +93,7 @@ class Room
         return true;
     }
 
+    
     function insertDayStatus($time_id, $day) {// 1. Insert into class_day
         $this->log_ctid[]=$time_id; 
         $this->log_day[]=$day; 

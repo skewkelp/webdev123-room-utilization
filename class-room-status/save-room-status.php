@@ -20,7 +20,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $teacher_assigned = clean_input($_POST['teacher-assigned']);
     $start_time = clean_input($_POST['start-time']);
     $end_time = clean_input($_POST['end-time']);
-    $day_id = isset($_POST['day-id']) ? (array) $_POST['day-id'] : [];
+    // $day_id = isset($_POST['day-id']) ? $_POST['day-id'] : [];
+    $day_id = isset($_POST['day-id']) ? $_POST['day-id'] : [];
     
     if(empty($room_id)){
         $room_idErr = 'Room is required.';
