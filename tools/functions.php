@@ -15,3 +15,21 @@ function clean_input($input)
     // Return the sanitized input.
     return $input;
 }
+
+
+
+/**
+ * Converts a day ID to its corresponding name
+ */
+function getDayName($day_id) {
+    $days = [
+        0 => 'Sunday',
+        1 => 'Monday',
+        2 => 'Tuesday',
+        3 => 'Wednesday',
+        4 => 'Thursday',
+        5 => 'Friday',
+        6 => 'Saturday'
+    ];
+    return isset($days[$day_id]) ? $days[$day_id] : 'Unknown Day';
+}

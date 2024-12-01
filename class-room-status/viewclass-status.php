@@ -16,7 +16,7 @@
             </div>
         </div>
     </div>
-    <div class="modal-container1"></div>
+    <div class="modal-container"></div>
     <div class="row">
         <div class="col-12">
             <div class="card p-4">
@@ -196,11 +196,7 @@
                             </select>
                         </div>
                     </form>
-                </div>
-                
-                <!-- <form class="d-flex card-header justify-content-between align-items-center w-100 px-2">
-                    <p>header</p>
-                </form> -->
+                </div> 
 
                 <div class="card-body p-1 pt-2">
                     <div class="d-flex ct1 flex-row align-items-start gap-5">
@@ -251,11 +247,9 @@
                                         <td class="text-nowrap">
                                             <a href="" class="btn room-schedule">Schedule</a>
                                             <a href="" class="btn room-status">Occupy</a>
-                                            <a href="" class="btn admin edit-room-status" data-id="<?= $arr['cday_id'] ?>">Edit</a>
-                                            <a href="" class="btn admin display-status">Display</a> <!-- hidden or displayed  -->
-                                            <!-- <a href="../admin/roomstatus.php?id=<= $arr['id'] ?>" class="btn room-status">Status</a>
-                                            <a href="" class="btn edit-product" data-id="<= $arr['id'] ?>">Edit</a> -->
-                                            <!-- data-id="<= $arr['id'] ?>" -->
+                                            <a href="" class="btn admin edit-room-status" data-id="<?= $arr['class_status_id'] ?>">Edit</a>
+                                            <a href="" class="btn admin display-row">Display</a> <!-- hidden or displayed  -->
+                                            
                                         </td>
                                     </tr>
                                 <?php

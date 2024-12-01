@@ -122,10 +122,89 @@ class Room
         return false; // Indicate failure to insert
     }
 
+    function editroomStatus() {
+        try {
+            $this->db->connect()->beginTransaction();
+            
+            // 1. Update class_details
+            $sql1 = 
+            "UPDATE class_details 
+                SET room_id = :room_id, 
+                    subject_id = :subject_id, 
+                    section_id = :section_id, 
+                    teacher_assigned = :teacher_id 
+                WHERE id = :class_id";
+            $query1 = $this->db->connect()->prepare($sql1);
+            $query1->bindParam(':class_id', $this->class_id);
+            $query1->bindParam(':room_id', $this->room_id);
+            $query1->bindParam(':subject_id', $this->subject_id);
+            $query1->bindParam(':section_id', $this->section_id);
+            $query1->bindParam(':teacher_id', $this->teacher_assigned);
+            $query1->execute();
+    
+            // 2. Update class_time
+            $sql2 = 
+            "UPDATE class_time 
+                SET start_time = :start_time, 
+                    end_time = :end_time 
+                WHERE id = :class_time_id";
+            $query2 = $this->db->connect()->prepare($sql2);
+            $query2->bindParam(':class_time_id', $this->class_time_id);
+            $query2->bindParam(':start_time', $this->start_time);
+            $query2->bindParam(':end_time', $this->end_time);
+            $query2->execute();
+    
+            // 3. Update existing class_day
+            $sql3 = "UPDATE class_day 
+                    SET day_id = :day_id 
+                    WHERE id = :class_day_id";
+            $query3 = $this->db->connect()->prepare($sql3);
+            $query3->bindParam(':class_day_id', $this->class_day_id);
+            $query3->bindParam(':day_id', $this->day_id[0]); // First selected day updates existing record
+            $query3->execute();
+    
+            // 4. Insert additional days if more were selected
+            if (count($this->day_id) > 1) {
+                // Prepare statements for inserting new class_day and _status records
+                $sql4 = "INSERT INTO class_day (day_id, class_time_id) VALUES (:day_id, :class_time_id)";
+                $sql5 = "INSERT INTO _status (class_day_id, status_desc_id) VALUES (:class_day_id, :status_desc_id)";
+                
+                $query4 = $this->db->connect()->prepare($sql4);
+                $query5 = $this->db->connect()->prepare($sql5);
+                
+                // Start from second element since first was used to update
+                for ($i = 1; i < count($this->day_id); $i++) {
+                    // Insert new class_day record
+                    $query4->bindParam(':day_id', $this->day_id[$i]);
+                    $query4->bindParam(':class_time_id', $this->class_time_id);
+                    $query4->execute();
+                    
+                    // Get the new class_day_id
+                    $new_class_day_id = $this->db->connect()->lastInsertId();
+                    
+                    // Insert corresponding _status record
+                    $query5->bindParam(':class_day_id', $new_class_day_id);
+                    $default_status = 2; // Default status ID
+                    $query5->bindParam(':status_desc_id', $default_status);
+                    $query5->execute();
+                }
+            }
+    
+            $this->db->connect()->commit();
+            return true;
+        } catch (PDOException $e) {
+            $this->db->connect()->rollBack();
+            error_log("Error in editroomStatus: " . $e->getMessage());
+            return false;
+        }
+    }
+
+
 
     function showAllStatus($keyword = '', $fweek_day = '', $froom_name = '', $froom_type = '', $fsubject_code = '', $fsubject_type = '', $fsection_name = '', $fstart_time = '', $fend_time = '', $fteacher_name = '', $fstatus = ''){
         $sql = 
             "SELECT
+                stat.class_day_id AS class_status_id,
                 cday.id AS cday_id,
                 d.day AS week_day,
                 room.room_name AS room_name,
@@ -225,6 +304,116 @@ class Room
         }
         return $data;
     }
+    
+    function fetchroomstatustRecord($recordID){
+        $sql = 
+        "SELECT
+            stat.class_day_id AS class_status_id,
+            class.id AS class_id,
+            room.room_name AS room_name,
+            class.room_id AS room_id,
+            sec.section_name,
+            class.section_id AS section_id,
+            class.teacher_assigned AS teacher_id,
+            CONCAT(acc.last_name,', ',acc.first_name) AS teacher_name,
+            class.subject_id AS subject_id,
+            CONCAT(sub.subject_code,' ', stdesc.type) AS subject_for,
+            ctime.id AS class_time_id,
+            ctime.start_time AS start_time,
+            ctime.end_time AS end_time,
+            cday.id AS class_day_id,
+            cday.day_id AS day_id
+        FROM
+            status_description sdesc
+        RIGHT JOIN 
+            _status stat ON stat.status_desc_id = sdesc.id
+        LEFT JOIN 
+            class_day cday ON stat.class_day_id = cday.id
+        LEFT JOIN
+            _day d ON cday.day_id = d.id
+        LEFT JOIN
+            class_time ctime ON cday.class_time_id = ctime.id
+        LEFT JOIN
+            class_details class ON ctime.class_id = class.id
+        LEFT JOIN
+            room_list room ON class.room_id = room.id
+        LEFT JOIN
+            room_type rtype ON room.type_id = rtype.id
+        LEFT JOIN
+            section_details sec ON class.section_id = sec.id
+        LEFT JOIN
+            course_details course ON sec.course_id = course.id
+        LEFT JOIN
+            subject_details sub ON class.subject_id = sub.id
+        LEFT JOIN
+            subject_type_description stdesc ON sub.type_id = stdesc.id
+        LEFT JOIN
+            faculty_list fac ON class.teacher_assigned = fac.id
+        LEFT JOIN 
+            account acc ON fac.account_id = acc.id
+            
+        WHERE stat.class_day_id = :recordID;";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':recordID', $recordID);
+        $data = null;
+        if ($query->execute()) {
+            $data = $query->fetch();
+        }
+        return $data;
+    }
+
+    function classTimeExistsOnDay($class_id, $day_id) {
+        $sql = "
+            SELECT COUNT(*) AS count
+            FROM class_day cd
+            JOIN class_time ct ON cd.class_time_id = ct.id
+            WHERE cd.day_id = :day_id 
+            AND ct.class_id = :class_id;
+        ";
+    
+        $query = $this->db->prepare($sql);
+        $query->bindParam(':day_id', $day_id);
+        $query->bindParam(':class_id', $class_id);
+        $query->execute();
+        
+        $count = $query->fetchColumn();
+        
+        // Return true if any schedule exists for this class on this day
+        return $count > 0;
+    }
+
+
+    // function classTimeExistsOnDay($class_time_id, $day_id, $current_class_day_id = null) {
+    //     $sql = "
+    //         SELECT COUNT(*) AS count
+    //         FROM class_day cd
+    //         WHERE cd.day_id = :day_id 
+    //         AND cd.class_time_id = :class_time_id
+    //     ";
+        
+    //     // If editing existing record, exclude current class_day_id
+    //     if ($current_class_day_id !== null) {
+    //         $sql .= " AND cd.id != :current_class_day_id";
+    //     }
+
+    //     $query = $this->db->prepare($sql);
+    //     $query->bindParam(':day_id', $day_id);
+    //     $query->bindParam(':class_time_id', $class_time_id);
+        
+    //     if ($current_class_day_id !== null) {
+    //         $query->bindParam(':current_class_day_id', $current_class_day_id);
+    //     }
+        
+    //     $query->execute();
+        
+    //     $count = $query->fetchColumn();
+        
+    //     // Return true if any conflicting schedule exists
+    //     return $count > 0;
+    // }
+
+
 
 
     function fetchRoomName($recordID){
@@ -302,7 +491,7 @@ class Room
     //for filter dropdown search subject code
     public function fetchsubjectOption(){
         $sql = 
-        " SELECT sub.id AS subject_id, CONCAT(sub.subject_code,' ', _desc.type) AS subject_option
+        " SELECT sub.id AS subject_id, CONCAT(sub.subject_code,' ', _desc.type) AS subject_for
         FROM subject_details sub LEFT JOIN subject_type_description _desc ON sub.type_id = _desc.id;";
         $query = $this->db->connect()->prepare($sql);
         $data = null;

@@ -21,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     
+
     if (empty($type)) {
         $typeErr = 'Room type is required.';
     }

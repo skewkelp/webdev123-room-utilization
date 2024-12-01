@@ -88,49 +88,6 @@ class Room
         return $data;
     }
 
-
-    //     $sql = "SELECT 
-    //         CONCAT(r.room_type, ' ', r.room_no) AS room_name,
-    //         CONCAT(rt.room_code, '-', rt.room_description) AS room_details
-    //         FROM room_list r
-    //         INNER JOIN room_type rt ON r.room_type = rt.room_code
-    //         WHERE (r.room_no LIKE CONCAT('%', :keyword, '%') OR rt.room_description LIKE CONCAT('%', :keyword, '%'))
-    //         AND (:category = '' OR rt.room_code = :category);
-    //     ";
-    /*
-    SELECT
-    CONCAT(r.room_type, r.room_no) AS room_name,
-    CONCAT(rt.room_code, '-', rt.room_description) AS room_details
-    FROM room_list r
-    INNER JOIN room_type rt ON r.room_type = rt.room_code;
-    WHERE (r.room_no LIKE CONCAT('%', :keyword, '%') OR rt.room_description LIKE CONCAT('%', :keyword, '%'))
-    AND (:category = '' OR rt.room_code = :category);
-    */
-     
-    /*
-    roomname, roomtype
-    SELECT CONCAT(room_type, room_no) as room_type 
-    FROM room_list rl 
-    
-SELECT
-    CONCAT(r.room_type, r.room_no) AS room_type,
-    CONCAT(rt.room_code, '-', rt.room_description) AS room_details
-FROM room_list r
-INNER JOIN room_type rt ON r.room_type = rt.room_code;
-
-    */
-
-    // function edit()
-    // {
-    //     $sql = "UPDATE product SET code = :code, name = :name, category_id = :category_id, price = :price WHERE id = :id;";
-    //     $query = $this->db->connect()->prepare($sql);
-    //     $query->bindParam(':code', $this->code);
-    //     $query->bindParam(':name', $this->name);
-    //     $query->bindParam(':category_id', $this->category_id);
-    //     $query->bindParam(':price', $this->price);
-    //     $query->bindParam(':id', $this->id);
-    //     return $query->execute();
-    // }
     
     function editRoom(){
         $sql = "UPDATE room_list SET room_name = :room_name, type_id = :room_type WHERE id = :room_id;";

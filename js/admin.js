@@ -155,6 +155,13 @@ $(document).ready(function () {
     });
   }
 
+  $(".room-status").on("click", function (e) {
+    e.preventDefault(); // Prevent default behavior
+    viewroomList(); // Call the function to load products
+  });
+
+
+  // Function to load room status view
   function viewroomStatus() {
     $.ajax({
       type: "GET", // Use GET request
@@ -284,45 +291,45 @@ $(document).ready(function () {
         });
 
          // Call function to load the chart
-         $("#add-room-status").on("click", function (e) {
+        $("#add-room-status").on("click", function (e) {
            e.preventDefault(); // Prevent default behavior
           addroomStatus(); // Call function to add status
-         });
+        });
          
-        $(".room-schedule").on("click", function (e) {
-          e.preventDefault(); // Prevent default behavior
-          //viewschedule(); // Call the function to view class schedule
+
+        $('#table-room-status').on('click', '.room-schedule, .room-status, .edit-room-status, .display-status', function(e) {
+          e.preventDefault();
+          const button = $(this);
+          button.prop("disabled", true);
+          
+          if ($(this).hasClass('edit-room-status')) {
+              editroomStatus(this.dataset.id).always(function() {
+                  button.prop("disabled", false);
+              });
+          } 
+          else if ($(this).hasClass('room-schedule')) {
+              viewSchedule(this.dataset.id).always(function() {
+                  button.prop("disabled", false);
+              });
+          }
+          else if ($(this).hasClass('room-status')) {
+              statusChange(this.dataset.id).always(function() {
+                  button.prop("disabled", false);
+              });
+          }
+          else if ($(this).hasClass('display-status')) {
+              displayStatus().always(function() {
+                  button.prop("disabled", false);
+              });
+          }
         });
 
-        $(".room-status").on("click", function (e) {
-          e.preventDefault(); // Prevent default behavior
-          // statusChange(); // Call the function to occupy or unoccupy a room
-        });
-
-        $(".edit-room-status").on("click", function (e) {
-          e.preventDefault(); // Prevent default behavior
-      
-          const button = $(this); // Reference to the clicked button
-          button.prop("disabled", true); // Disable the button
-      
-          // Call the AJAX function
-          // editroomStatus(this.dataset.id).always(function() {
-          //     // Re-enable the button after the AJAX call completes
-          //     button.prop("disabled", false);
-          // });
-        });
-        
       },
     });
   }
 
-
-  $(".room-status").on("click", function (e) {
-    e.preventDefault(); // Prevent default behavior
-    viewroomList(); // Call the function to load products
-  });
-
   
+  //Function for ROOM LIST, MODAL AJAX
   // Function to show the add product modal
   function editRoom(roomId) {
     return $.ajax({
@@ -463,14 +470,16 @@ $(document).ready(function () {
     });
   }
 
+
+  //Function for room status, MODAL AJAX
   //add room status
   function addroomStatus() {
     $.ajax({
       type: "GET", // Use GET request
-      url: "../class-room-status/add-status.html?v=" + new Date().getTime(), // URL for add product view
+      url: "../class-room-status/add-room-status.html?v=" + new Date().getTime(), // URL for add product view
       dataType: "html", // Expect HTML response
       success: function (view) {
-        $(".modal-container1").html(view); // Load the modal view
+        $(".modal-container").html(view); // Load the modal view
         console.log("Modal content loaded successfully.");
         $("#staticBackdrop").modal("show");
         
@@ -479,7 +488,7 @@ $(document).ready(function () {
         fetchroomName();//fetchroomname list
         fetchSubject();//fetchsubject
         fetchSection();//fetchsection
-        fetchTeacher();
+        fetchTeacher();//fetchTeacher list
 
         $(".modal-close").on("click", function (e) {
           e.preventDefault();
@@ -498,7 +507,6 @@ $(document).ready(function () {
       }
     });
   }
-
 
   function saveroomStatus(){
     $.ajax({
@@ -573,6 +581,163 @@ $(document).ready(function () {
 
     });
   }
+
+  function editroomStatus(roomstatusId){
+    return $.ajax({
+      type: "GET", // Use GET request
+      url: "../class-room-status/edit-room-status.html?v=" + new Date().getTime(), // URL to get product data
+      dataType: "html", // Expect JSON response
+      success: function (view) {
+        // Assuming 'view' contains the new content you want to display
+        $(".modal-container").empty().html(view); // Load the modal view
+        $("#staticBackdrop").modal("show"); // Show the modal
+        $("#staticBackdroped").attr("data-id", roomstatusId);
+
+        const modal = $('#staticBackdrop');
+        
+        // Then fetch and populate the data
+        $.ajax({
+          url: `../fetch-data/fetch-room-status.php?id=${roomstatusId}`,
+          dataType: "json",
+          success: function(data) {
+              console.log('Fetched data:', data); // For debugging
+              //Fetch class status id
+              $('#hidden-class-status-id').val(data.class_status_id);
+
+              //Fetch class id
+              $('#hidden-class-id').val(data.class_id);
+
+              // Populate room dropdown
+              $('#dropdown-room').val(data.room_name);
+              $('#hidden-room-id').val(data.room_id);
+
+              // Populate subject dropdown
+              $('#dropdown-subject').val(data.subject_for);
+              $('#hidden-subject-id').val(data.subject_id);
+
+              // Populate section dropdown
+              $('#dropdown-section').val(data.section_name);
+              $('#hidden-section-id').val(data.section_id);
+
+              $('#dropdown-teacher').val(data.teacher_name);
+              $('#hidden-teacher-assigned').val(data.teacher_id);
+
+              //Fetch-class-time-id
+              $('#hidden-class-time-id').val(data.class_time_id);
+
+              // Populate time fields
+              $('#start-time').val(data.start_time);
+              $('#end-time').val(data.end_time);
+
+              // Check the appropriate day checkbox
+              $(`input[name="day-id[]"][value="${data.day_id}"]`).prop('checked', true);
+          },
+          error: function(xhr, status, error) {
+              console.error("Error fetching status record:", error);
+          }
+        });
+
+        fetchroomName();//fetchroomname list
+        fetchSubject();//fetchsubject
+        fetchSection();//fetchsection
+        fetchTeacher();//fetchTeacher list
+
+        $(".modal-close").on("click", function (e) {
+          e.preventDefault();
+          closeModal(modal); // Pass modal to closeModal function
+        }); 
+
+        // Event listener for the add product form submission
+        $("#form-edit").on("submit", function (e) {
+          e.preventDefault(); // Prevent default form submission
+          updateroomStatus(); // Call function to save product
+        });
+      },
+      error: function (xhr, status, error) {
+        alert("An error occurred while loading the modal: " + error);
+      }
+    });
+  }
+
+  function updateroomStatus(){
+    $.ajax({
+      type: "POST", // Use POST request
+      url: "../class-room-status/save-room-status.php", // URL for saving room
+      data: $("form").serialize(), // Serialize the form data for submission, Add ID to form data
+      dataType: "json", // Expect JSON response
+      success: function (response) {
+        if (response.status === "error") {
+          // Handle validation errors
+          if (response.room_idErr){
+            $("#dropdown-room").addClass("is-invalid"); // Mark field as invalid
+            $("#dropdown-room").next(".invalid-feedback").text(response.room_idErr).show(); // Show error message
+          } else {
+            $("#dropdown-room").removeClass("is-invalid"); // Remove invalid class if no error
+          }
+          
+          if (response.subject_idErr){
+            $("#dropdown-subject").addClass("is-invalid"); // Mark field as invalid
+            $("#dropdown-subject").next(".invalid-feedback").text(response.subject_idErr).show(); // Show error message
+          } else {
+            $("#dropdown-subject").removeClass("is-invalid"); // Remove invalid class if no error
+          }
+
+          if (response.section_idErr){
+            $("#dropdown-section").addClass("is-invalid"); // Mark field as invalid
+            $("#dropdown-section").next(".invalid-feedback").text(response.section_idErr).show(); // Show error message
+          } else {
+            $("#dropdown-section").removeClass("is-invalid"); // Remove invalid class if no error
+          }
+
+          if (response.teacher_assignedErr){
+            $("#dropdown-teacher").addClass("is-invalid"); // Mark field as invalid
+            $("#dropdown-teacher").next(".invalid-feedback").text(response.teacher_assignedErr).show(); // Show error message
+          } else {
+            $("#dropdown-teacher").removeClass("is-invalid"); // Remove invalid class if no error
+          } 
+
+          if (response.start_timeErr){
+            $("#start-time").addClass("is-invalid"); // Mark field as invalid
+            $("#start-time").next(".invalid-feedback").text(response.start_timeErr).show(); // Show error message
+          } else {
+            $("#start-time").removeClass("is-invalid"); // Remove invalid class if no error
+          }
+
+          if (response.end_timeErr){
+            $("#end-time").addClass("is-invalid"); // Mark field as invalid
+            $("#end-time").next(".invalid-feedback").text(response.end_timeErr).show(); // Show error message
+          } else {
+            $("#end-time").removeClass("is-invalid"); // Remove invalid class if no error
+          }
+
+          if (response.day_idErr){
+            $(".day-id").addClass("is-invalid"); // Mark field as invalid
+            $(".day-id").next(".invalid-feedback").text(response.day_idErr).show(); // Show error message
+          } else {
+            $(".day-id").removeClass("is-invalid"); // Remove invalid class if no error
+          }
+          
+        } else if (response.status === "success") {
+          // On success, hide modal and reset form
+          $("#staticBackdrop").modal("hide");
+          $("form")[0].reset(); // Reset the form
+          // Optionally, reload roomlist to show new entry
+          viewroomStatus();
+        }
+      },
+      error: function (xhr, status, error) {
+        alert('Failed to load update-room-status.php.');
+        console.error("Error updating class schedule status:", status, error);
+      }
+
+    });
+
+  }
+
+
+
+
+
 
   // Function to fetch room type
   function fetchroomType(){
@@ -711,7 +876,7 @@ $(document).ready(function () {
           $.each(data, function (index, subject) {
             dropdownList.append(
               $("<div>", {
-                text: subject.subject_option, // Displayed text
+                text: subject.subject_for, // Displayed text
                 'data-value': subject.subject_id // Value attribute
               })
             );
@@ -936,5 +1101,5 @@ $(document).ready(function () {
     });
   }
 
-
+  
 });
