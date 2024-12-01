@@ -110,6 +110,11 @@ $(document).ready(function () {
     viewProducts(); // Call the function to load products
   });
 
+  $("#profile-link").on("click", function (e) {
+    e.preventDefault(); // Prevent default behavior
+    viewProfile(); // Call the function to load products
+  });
+
 
   // Determine which page to load based on the current URL
   let url = window.location.href;
@@ -119,9 +124,54 @@ $(document).ready(function () {
     $("#roomstatus-link").trigger("click"); // Trigger the roomstatus click 
   } else if (url.endsWith("room-schedule")) {
     $("#roomschedule-link").trigger("click"); // Trigger the products click event
+  } else if (url.endsWith("profile-page")) {
+    $("#profile-link").trigger("click"); // Trigger the products click event
   } else {
     $("#roomlist-link").trigger("click"); // Default to dashboard if no specific page
   }
+
+  // Function to load analytics view
+  function viewProfile() {
+    $.ajax({
+      type: "GET", // Use GET request
+      url: "../profile/viewProfile.php", // URL for the analytics view
+      dataType: "html", // Expect HTML response
+      success: function (response) {
+        $(".content-page").html(response); // Load the response into the content area
+         // Call function to load the chart
+
+         $("#userTable").DataTable({
+          dom: "rtp",
+          pageLength: 10,
+          ordering: false
+        });
+
+        $(".edit-room").on("click", function (e) {
+          e.preventDefault(); // Prevent default behavior
+      
+          const button = $(this); // Reference to the clicked button
+          button.prop("disabled", true); // Disable the button
+      
+           // Call the AJAX function
+          // editRoom(this.dataset.id);
+
+          // Call the AJAX function
+          editRoom(this.dataset.id).always(function() {
+            button.prop("disabled", false); // Re-enable the button after AJAX completes
+          });
+
+
+        });
+        
+      },
+      error: function (xhr, status, error) {
+        alert('Failed to load viewProfile.php.');
+        console.error("Error loading viewProfile.php:", status, error);
+      }
+    });
+  }
+
+
 
   // Function to load analytics view
   function viewroomList() {

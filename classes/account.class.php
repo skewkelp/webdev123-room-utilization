@@ -83,6 +83,17 @@ class Account
         return $data;
     }
 
+    function showAllusers(){
+        $sql = "SELECT * FROM account;";
+        $query = $this->db->connect()->prepare($sql);
+        $data = null;
+        if ($query->execute()) {
+            $data = $query->fetch();
+        }
+
+        return $data;
+    }
+
 
 }
 
