@@ -15,7 +15,7 @@
                         <img src="../img/ImageSmall.png" alt="mdo" width="32" height="32" class="rounded-circle">
                     </a>
                     <ul class="dropdown-menu text-small">
-                        <li><a class="dropdown-item" href="../profile/user.php">Profile</a></li>
+                        <li><a class="dropdown-item user-profile" href="profile-page" id="profile-link">Profile</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
