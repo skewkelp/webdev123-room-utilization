@@ -62,6 +62,17 @@ $(document).ready(function () {
     window.history.pushState({ path: url }, "", url); // Update the browser's URL without reloading
   });
 
+  $(".user-profile").on("click", function (e) {
+    e.preventDefault(); // Prevent default anchor click behavior
+    $(".user-profile").removeClass("link-active"); // Remove active class from all links
+    $(".nav-link").removeClass("link-active");
+    $(this).addClass("link-active"); // Add active class to the clicked link
+
+    let url = $(this).attr("href"); // Get the URL from the href attribute
+    window.history.pushState({ path: url }, "", url); // Update the browser's URL without reloading
+  });
+
+
   //burger-sidebar Event Listener
   $("#burger").on("click", function (e) {
     e.preventDefault(); // Prevent default behavior
@@ -93,21 +104,22 @@ $(document).ready(function () {
 
   
   //SIDE BAR NAVIGATION LINK BUTTON
-  // Event listener for the dashboard link
+  // Event listener for the roomlist-link
   $("#roomlist-link").on("click", function (e) {
     e.preventDefault(); // Prevent default behavior
     viewroomList(); // Call the function to load analytics
   });
 
-  // Event listener for the products link
+  // Event listener for the roomstatus-link
   $("#roomstatus-link").on("click", function (e) {
     e.preventDefault(); // Prevent default behavior
     viewroomStatus(); // Call the function to load products
   });
 
-  $("#products-link").on("click", function (e) {
+  //Event listener for the roomschedule-link
+  $("#roomschedule-link").on("click", function (e) {
     e.preventDefault(); // Prevent default behavior
-    viewProducts(); // Call the function to load products
+    viewroomSchedule(); // Call the function to load products
   });
 
   $("#profile-link").on("click", function (e) {
@@ -115,6 +127,7 @@ $(document).ready(function () {
     viewProfile(); // Call the function to load products
   });
 
+  // href="room-schedule" id="roomschedule-link" 
 
   // Determine which page to load based on the current URL
   let url = window.location.href;
@@ -140,7 +153,7 @@ $(document).ready(function () {
         $(".content-page").html(response); // Load the response into the content area
          // Call function to load the chart
 
-         $("#userTable").DataTable({
+         $("#table-profile").DataTable({
           dom: "rtp",
           pageLength: 10,
           ordering: false
@@ -156,9 +169,9 @@ $(document).ready(function () {
           // editRoom(this.dataset.id);
 
           // Call the AJAX function
-          editRoom(this.dataset.id).always(function() {
-            button.prop("disabled", false); // Re-enable the button after AJAX completes
-          });
+          // editRoom(this.dataset.id).always(function() {
+          //   button.prop("disabled", false); // Re-enable the button after AJAX completes
+          // });
 
 
         });
@@ -170,8 +183,6 @@ $(document).ready(function () {
       }
     });
   }
-
-
 
   // Function to load analytics view
   function viewroomList() {
@@ -428,7 +439,38 @@ $(document).ready(function () {
     });
   }
 
-  
+
+  //Function to load room schedule view, load content
+  //edit here
+  function viewroomSchedule() {
+    $.ajax({
+      type: "GET", // Use GET request
+      url: "../room-schedule/viewroom-schedule.php", // URL for the analytics view
+      dataType: "html", // Expect HTML response
+      success: function (response) {
+        $(".content-page").html(response); // Load the response into the content are
+        
+        var table = $("#table-room-schedule").DataTable({
+            dom: "rtp", // Set DataTable options
+            pageLength: 10, // Default page length
+            ordering: false, // Disable ordering
+        });
+    
+        // Bind custom input to DataTable search
+        $("#custom-search").on("keyup", function () {
+          table.search(this.value).draw(); // Search room based on input
+        });
+
+    
+
+       
+      },
+    });
+  }
+
+
+
+
   //Function for ROOM LIST, MODAL AJAX
   // Function to show the add product modal
   function editRoom(roomId) {
@@ -914,10 +956,6 @@ $(document).ready(function () {
 
     });
   }
-
-
-
-
 
   // Function to fetch room type
   function fetchroomType(){

@@ -22,6 +22,9 @@ class Account
 
     function add(){
         $sql = "INSERT INTO account (first_name, last_name, username, password, role, is_staff, is_admin) VALUES (:first_name, :last_name, :username, :password, :role, :is_staff, :is_admin);";
+        $this->is_admin= false;
+        $this->is_staff= false;
+
         $query = $this->db->connect()->prepare($sql);
 
         $query->bindParam(':first_name', $this->first_name);
@@ -83,12 +86,13 @@ class Account
         return $data;
     }
 
-    function showAllusers(){
-        $sql = "SELECT * FROM account;";
+    function showAllusers($excludeAdmin = 1){
+        $sql = "SELECT * FROM account WHERE is_admin != :excludeAdmin;";
         $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':excludeAdmin', $excludeAdmin);
         $data = null;
         if ($query->execute()) {
-            $data = $query->fetch();
+            $data = $query->fetchAll();
         }
 
         return $data;

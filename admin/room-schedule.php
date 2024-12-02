@@ -2,13 +2,13 @@
 session_start();
 
 if (isset($_SESSION['account'])) {
-    if (!$_SESSION['account']['is_staff']) {
+    if (!$_SESSION['account']) {
         header('location: ../account/loginwcss.php');
     }
 } else {
     header('location: ../account/loginwcss.php');
 }
-$page_title = "CodeLuck - products";
+$page_title = "room-schedule";
 require_once '../includes/_head.php';
 ?>
 
