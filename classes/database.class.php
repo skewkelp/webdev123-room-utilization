@@ -7,7 +7,7 @@ class Database
     private $host = 'localhost';      // The hostname of the database server.
     private $username = 'root';       // The username used to connect to the database.
     private $password = '';           // The password used to connect to the database (empty string means no password).
-    private $dbname = 'room_utilization'; // The name of the database to connect to.
+    private $dbname = 'testdelete'; // The name of the database to connect to.
 
     protected $connection; // This property will hold the PDO connection object once connected.
 

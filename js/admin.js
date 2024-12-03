@@ -727,7 +727,7 @@ $(document).ready(function () {
   function editroomStatus(roomstatusId){
     return $.ajax({
       type: "GET", // Use GET request
-      url: "../class-room-status/edit-room-status.html?v=" + new Date().getTime(), // URL to get product data
+      url: "../class-room-status/edit-room-status.php?v=" + new Date().getTime(), // URL to get product data
       dataType: "html", // Expect JSON response
       success: function (view) {
         // Assuming 'view' contains the new content you want to display
@@ -743,24 +743,35 @@ $(document).ready(function () {
           dataType: "json",
           success: function(data) {
               console.log('Fetched data:', data); // For debugging
+              console.log('Original Day ID:', data.day_id);
+              // console.log('Hidden field value after setting:', $('#hidden-original-day-id').val());
+
               //Fetch class status id
               $('#hidden-class-status-id').val(data.class_status_id);
 
               //Fetch class id
               $('#hidden-class-id').val(data.class_id);
 
+              
+              $('#hidden-original-room-id').val(data.room_id);
               // Populate room dropdown
               $('#dropdown-room').val(data.room_name);
               $('#hidden-room-id').val(data.room_id);
 
+              
+              $('#hidden-original-subject-id').val(data.subject_id);
               // Populate subject dropdown
               $('#dropdown-subject').val(data.subject_for);
               $('#hidden-subject-id').val(data.subject_id);
 
+
+              $('#hidden-original-section-id').val(data.section_id);
               // Populate section dropdown
               $('#dropdown-section').val(data.section_name);
               $('#hidden-section-id').val(data.section_id);
 
+
+              $('#hidden-original-teacher-assigned').val(data.teacher_id);
               $('#dropdown-teacher').val(data.teacher_name);
               $('#hidden-teacher-assigned').val(data.teacher_id);
 
@@ -770,8 +781,12 @@ $(document).ready(function () {
               // Populate time fields
               $('#start-time').val(data.start_time);
               $('#end-time').val(data.end_time);
+              
+              $('#hidden-original-start-time').val(data.start_time);
+              $('#hidden-original-end-time').val(data.end_time);
 
               $('#hidden-class-day-id').val(data.class_day_id);
+              $('#hidden-original-day-id').val(data.day_id);
               // Check the appropriate day checkbox
               $(`input[name="day-id[]"][value="${data.day_id}"]`).prop('checked', true);
           },
@@ -805,7 +820,7 @@ $(document).ready(function () {
   function updateroomStatus(){
     $.ajax({
       type: "POST", // Use POST request
-      url: "../class-room-status/save-room-status.php", // URL for saving room
+      url: "../class-room-status/update-room-status.php?v=" + new Date().getTime(), // URL for saving room
       data: $("form").serialize(), // Serialize the form data for submission, Add ID to form data
       dataType: "json", // Expect JSON response
       success: function (response) {
@@ -860,12 +875,20 @@ $(document).ready(function () {
             $(".day-id").removeClass("is-invalid"); // Remove invalid class if no error
           }
           
+
+          $(".modal-close").on("click", function (e) {
+            e.preventDefault();
+            closeModal(modal); // Pass modal to closeModal function
+          }); 
+          
         } else if (response.status === "success") {
           // On success, hide modal and reset form
           $("#staticBackdrop").modal("hide");
           $("form")[0].reset(); // Reset the form
           // Optionally, reload roomlist to show new entry
           viewroomStatus();
+        }else if(response.status === "logicerror"){
+
         }
       },
       error: function (xhr, status, error) {
@@ -1241,7 +1264,7 @@ $(document).ready(function () {
     });
   }
 
-  function fetchTeacher() {
+  function fetchTeacher() {//hidden-teacher-assigned
     $.ajax({
         url: "../fetch-data/fetch-teacher.php", // URL for fetching categories
         type: "GET", // Use GET request

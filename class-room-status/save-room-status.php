@@ -46,6 +46,10 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     if(empty($end_time)){
         $end_timeErr = 'End time is required.';
     }
+    
+    if(empty($day_id)){
+        $day_idErr = 'Class Days is required.';
+    }
 
     if(!empty($start_time) && !empty($end_time)){
         if($start_time > $end_time){
@@ -56,12 +60,31 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
             $end_timeErr = "End time should not be the same as start time.";
         }
     }
-    
 
-    if(empty($day_id)){
-        $day_idErr = 'Class Days is required.';
-    }
     
+    // if(!empty($day_id)){
+    //     $dayCount = count($day_id);
+    //     $dayIndex = 0; 
+    //     $conflictDays = [];
+    //     $conflictCount = 0;
+
+    //     foreach($day_id as $selected_day) {
+    //         // Only check new days being added
+            
+    //             // Check if this class_time already exists on the selected day
+    //         if($roomObj->classTimeExistsOnDay($selected_day, $class_time_id)) {
+    //             $conflictDays[] = getDayName($selected_day);
+    //             $conflictCount++;
+    //         }
+            
+    //         $dayIndex++;
+    //     }
+        
+    //     if($conflictCount > 0){
+    //         $day_idErr = "This class time is already scheduled on: " . implode(', ', $conflictDays);
+    //     }
+
+    // }   
 
     // If there are validation errors, return them as JSON
     if(!empty($room_idErr) || !empty($subject_idErr) || !empty($section_idErr)  || !empty($teacher_assignedErr) || !empty($start_timeErr) || !empty($end_timeErr) || !empty($day_idErr)){
@@ -87,7 +110,63 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $roomObj->day_id = $day_id;
 
 
-    if($roomObj->addroomStatus()){
+    $class_id = $class_time_id = '';
+    $newTime = $newClass = $newDay = true;
+
+    if($roomObj->checkExistingClassDetails() != null){//not new class
+        $newClass = false;
+        $class_id = $roomObj->checkExistingClassDetails();
+
+    }else{
+        $class_id = $roomObj->insertClassDetails();
+    }
+
+    if($roomObj->checkExistingClassTimeID() != null){//not new time
+        $newTime =false;
+        $class_time_id = $roomObj->checkExistingClassTimeID();
+    }else{
+        $class_time_id = $roomObj->insertClassTime();
+    }
+
+    $roomObj->newClass = $newClass;
+    $roomObj->newTime = $newTime;
+    $roomObj->newDay = $newDay;
+
+    $roomObj->class_id = $class_id;
+    $roomObj->class_time_id = $class_time_id;
+
+    foreach($day_id as $selected_day){
+        $roomObj->class_time_id = $class_time_id;
+        $roomObj->day_id = $selected_day;
+        $class_day_id = $roomObj->insertClassDay();
+    }
+
+    
+
+    
+
+    
+    // if($roomObj->checkExistingClassDetails() != null){
+    //     //Checks if there is an existing class time id of the new start-time and end-time
+    //     $newClass = true;
+    //     $class_id = $roomObj->checkExistingClassDetails();
+    // }
+
+    // if($roomObj->checkExistingClassTimeID() != null){
+    //     //Checks if there is an existing class time id of the new start-time and end-time
+    //     $newTime = true;
+    //     $class_time_id = $roomObj->checkExistingClassTimeID();
+    // }
+
+    
+    // $roomObj->newClass = $newClass;
+    // $roomObj->class_id = $class_id; 
+
+    // $roomObj->newTime = $newTime;
+    // $roomObj->class_time_id = $class_time_id;
+    
+
+    if(TRUE){
         echo json_encode(['status' => 'success', 'debug' => [
             'class_id created' => $roomObj->log_cid,
             'class_time_id created' => $roomObj->log_ctid,
@@ -98,8 +177,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
         echo json_encode(['status' => 'error', 'message' => 'Something went wrong when adding the new class status.']);
     }
     exit;
-
-    
 }
 
 ?>

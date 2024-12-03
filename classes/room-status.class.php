@@ -56,147 +56,237 @@ class RoomStatus{
         $this->db = new Database();
     }
 
-    
-    function addroomStatus() {// 1. Insert into class_details
-        $sql1 = "INSERT INTO class_details (room_id, subject_id, section_id, teacher_assigned) VALUES (:room_id, :subject_id, :section_id, :teacher_id);";
-        $query1 = $this->db->connect()->prepare($sql1);
-        $query1->bindParam(':room_id', $this->room_id);
-        $query1->bindParam(':subject_id', $this->subject_id);
-        $query1->bindParam(':section_id', $this->section_id);
-        $query1->bindParam(':teacher_id', $this->teacher_assigned);
-        $query1->execute();
+    public $newDay; //bool classDay if existing
+    public $newtime; //bool classTime if existing
+    public $newClass; //bool classDetails if existing
+    public $newRoom; //bool room if existing
+    public $newSubject; //bool subject if existing
+    public $newSection; //bool section if existing
+    public $newTeacher; //bool teacher if existing
 
-        // 2. Get the last inserted ID from class_details
-        $this->class_id = $this->db->connect()->lastInsertId();
-        $this->log_cid[]= $this->class_id; 
-
-        // 3. Insert into class_time
-        $sql2 = "INSERT INTO class_time (class_id, start_time, end_time) VALUES (:class_id, :start_time, :end_time)";
-        $query2 = $this->db->connect()->prepare($sql2);
-        $query2->bindParam(':class_id', $this->class_id);
-        $query2->bindParam(':start_time', $this->start_time);
-        $query2->bindParam(':end_time', $this->end_time);
-        $query2->execute();
-
-        // 4. Get the last inserted ID from class_time
-        $this->class_time_id = $this->db->connect()->lastInsertId();
-        // 5. Insert class_day and _status
-
-        foreach ($this->day_id as $day) {
-            if (!$this->insertDayStatus($this->class_time_id, $day)) {
-                return false; // Stop if insertion fails
-            }
-        }
-        
+    function updateClassDetails(){
+        $sql = "UPDATE class_details SET room_id = :room_id, subject_id = :subject_id, section_id = :section_id, teacher_assigned = :teacher_id WHERE id = :class_id;";
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':class_id', $this->class_id);
+        $query->bindParam(':room_id', $this->room_id);
+        $query->bindParam(':subject_id', $this->subject_id);
+        $query->bindParam(':section_id', $this->section_id);
+        $query->bindParam(':teacher_id', $this->teacher_assigned);
+        $query->execute();
         return true;
     }
 
-    
-    function insertDayStatus($time_id, $day) {// 1. Insert into class_day
-        $this->log_ctid[]=$time_id; 
-        $this->log_day[]=$day; 
-        $sql1 = "INSERT INTO class_day (day_id, class_time_id) VALUES (:day_id, :class_time_id)";
-        $query1 = $this->db->connect()->prepare($sql1);
-        $query1->bindParam(':day_id', $day); // Bind the current day_id
-        $query1->bindParam(':class_time_id', $time_id); // Use the class_time_id
-        
-        // Check if the insertion was successful
-        if ($query1->execute()) {
-            // 2. Get the last inserted ID from class_day
+    function updateClassTime(){
+        $sql = "UPDATE class_time SET start_time = :start_time, end_time = :end_time WHERE id = :class_time_id;";
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':class_time_id', $this->class_time_id);
+        $query->bindParam(':start_time', $this->start_time);
+        $query->bindParam(':end_time', $this->end_time);
+        $query->execute();
+        return true;
+    }
+
+    function updateClassDay(){
+        $sql = "UPDATE class_day SET day_id = :day_id WHERE id = :class_day_id;";
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':class_day_id', $this->class_day_id);
+        $query->bindParam(':day_id', $this->day_id);
+        $query->execute();
+        return true;
+    }
+
+    function insertClassDetails(){
+        if($this->newClass == true){
+            $sql = "INSERT INTO class_details (room_id, subject_id, section_id, teacher_assigned) VALUES (:room_id, :subject_id, :section_id, :teacher_id);";
+            $query = $this->db->connect()->prepare($sql);
+            $query->bindParam(':room_id', $this->room_id);
+            $query->bindParam(':subject_id', $this->subject_id);
+            $query->bindParam(':section_id', $this->section_id);
+            $query->bindParam(':teacher_id', $this->teacher_assigned);
+            $query->execute();
+
+            $this->class_id = $this->db->connect()->lastInsertId();
+
+            return $this->class_id;
+        }
+
+        return true;
+    }
+
+    function insertClassTime(){
+        if($this->newtime == true){
+            $sql = "INSERT INTO class_time (class_id, start_time, end_time) VALUES (:class_id, :start_time, :end_time);";
+            $query = $this->db->connect()->prepare($sql);
+            $query->bindParam(':class_id', $this->class_id);
+            $query->bindParam(':start_time', $this->start_time);
+            $query->bindParam(':end_time', $this->end_time);
+            $query->execute();
+
+            $this->class_time_id = $this->db->connect()->lastInsertId();
+
+            return $this->class_time_id;
+        }
+        return true;
+    }
+
+
+    function insertClassDay(){
+        if($this->newDay == true){
+            $sql = "INSERT INTO class_day (day_id, class_time_id) VALUES (:day_id, :class_time_id);";
+            $query = $this->db->connect()->prepare($sql);
+            $query->bindParam(':day_id', $this->day_id);
+            $query->bindParam(':class_time_id', $this->class_time_id);
+            $query->execute();
+
             $this->class_day_id = $this->db->connect()->lastInsertId();
-            $this->log_cdid[] = $this->class_day_id; 
 
-            // 3. Insert into _status
-            $sql2 = "INSERT INTO _status (class_day_id, status_desc_id) VALUES (:class_day_id, :status_desc_id)";
-            $query2 = $this->db->connect()->prepare($sql2);
-            $query2->bindParam(':class_day_id', $this->class_day_id); // Bind the current class_day_id
-            $default_status_desc_id = 2; // Assuming 2 is the default status ID
-            $query2->bindParam(':status_desc_id', $default_status_desc_id);
-            $query2->execute();
-
-            return true; // Indicate successful insertion
+            return $this->class_day_id;
         }
-
-        return false; // Indicate failure to insert
+        return true;
     }
 
-    function editroomStatus() {
-        try {
-            $this->db->connect()->beginTransaction();
+    function insertStatus(){
+        $sql = "INSERT INTO _status (class_day_id) VALUES (:class_day_id);";
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':class_day_id', $this->class_day_id);
+        $query->execute();
+        return true;
+    }
+
+
+
+    // function addroomStatus() {// 1. Insert into class_details
+        
+    //     if($this->newClass == false){
+    //         $sql1 = "INSERT INTO class_details (room_id, subject_id, section_id, teacher_assigned) VALUES (:room_id, :subject_id, :section_id, :teacher_id);";
+    //         $query1 = $this->db->connect()->prepare($sql1);
+    //         $query1->bindParam(':room_id', $this->room_id);
+    //         $query1->bindParam(':subject_id', $this->subject_id);
+    //         $query1->bindParam(':section_id', $this->section_id);
+    //         $query1->bindParam(':teacher_id', $this->teacher_assigned);
+    //         $query1->execute();
+
+    //         // 2. Get the last inserted ID from class_details
+    //         $this->class_id = $this->db->connect()->lastInsertId();
+    //     }          
+        
+    //     if ($this->newtime == false){//if there is no existing class time id
+    //         $this->log_cid[]= $this->class_id; 
+
+    //         // 3. Insert into class_time
+    //         $sql2 = "INSERT INTO class_time (class_id, start_time, end_time) VALUES (:class_id, :start_time, :end_time)";
+    //         $query2 = $this->db->connect()->prepare($sql2);
+    //         $query2->bindParam(':class_id', $this->class_id);
+    //         $query2->bindParam(':start_time', $this->start_time);
+    //         $query2->bindParam(':end_time', $this->end_time);
+    //         $query2->execute();
+    //         $this->class_time_id = $this->db->connect()->lastInsertId();
+    //     }
+
+
+    //     foreach ($this->day_id as $day) {
+    //         if (!$this->insertDayStatus($this->class_time_id, $day)) {
+    //             return false; // Stop if insertion fails
+    //         }
+    //     }
+        
+    //     return true;
+    // }
+
+    
+    // function insertDayStatus($time_id, $day) {// 1. Insert into class_day
+    //     if($this->newDay == false){
+    //         $this->log_ctid[]=$time_id; 
+    //         $this->log_day[]=$day; 
+    //         $sql1 = "INSERT INTO class_day (day_id, class_time_id) VALUES (:day_id, :class_time_id)";
+    //         $query1 = $this->db->connect()->prepare($sql1);
+    //         $query1->bindParam(':day_id', $day); // Bind the current day_id
+    //         $query1->bindParam(':class_time_id', $time_id); // Use the class_time_id
             
-            // 1. Update class_details
-            $sql1 = 
-            "UPDATE class_details 
-                SET room_id = :room_id, 
-                    subject_id = :subject_id, 
-                    section_id = :section_id, 
-                    teacher_assigned = :teacher_id 
-                WHERE id = :class_id";
-            $query1 = $this->db->connect()->prepare($sql1);
-            $query1->bindParam(':class_id', $this->class_id);
-            $query1->bindParam(':room_id', $this->room_id);
-            $query1->bindParam(':subject_id', $this->subject_id);
-            $query1->bindParam(':section_id', $this->section_id);
-            $query1->bindParam(':teacher_id', $this->teacher_assigned);
-            $query1->execute();
-    
-            // 2. Update class_time
-            $sql2 = 
-            "UPDATE class_time 
-                SET start_time = :start_time, 
-                    end_time = :end_time 
-                WHERE id = :class_time_id";
-            $query2 = $this->db->connect()->prepare($sql2);
-            $query2->bindParam(':class_time_id', $this->class_time_id);
-            $query2->bindParam(':start_time', $this->start_time);
-            $query2->bindParam(':end_time', $this->end_time);
-            $query2->execute();
-    
-            // 3. Update existing class_day
-            $sql3 = "UPDATE class_day 
-                    SET day_id = :day_id 
-                    WHERE id = :class_day_id";
-            $query3 = $this->db->connect()->prepare($sql3);
-            $query3->bindParam(':class_day_id', $this->class_day_id);
-            $query3->bindParam(':day_id', $this->day_id[0]); // First selected day updates existing record
-            $query3->execute();
-    
-            // 4. Insert additional days if more were selected
-            if (count($this->day_id) > 1) {
-                // Prepare statements for inserting new class_day and _status records
-                $sql4 = "INSERT INTO class_day (day_id, class_time_id) VALUES (:day_id, :class_time_id)";
-                $sql5 = "INSERT INTO _status (class_day_id, status_desc_id) VALUES (:class_day_id, :status_desc_id)";
-                
-                $query4 = $this->db->connect()->prepare($sql4);
-                $query5 = $this->db->connect()->prepare($sql5);
-                
-                // Start from second element since first was used to update
-                for ($i = 1; i < count($this->day_id); $i++) {
-                    // Insert new class_day record
-                    $query4->bindParam(':day_id', $this->day_id[$i]);
-                    $query4->bindParam(':class_time_id', $this->class_time_id);
-                    $query4->execute();
-                    
-                    // Get the new class_day_id
-                    $new_class_day_id = $this->db->connect()->lastInsertId();
-                    
-                    // Insert corresponding _status record
-                    $query5->bindParam(':class_day_id', $new_class_day_id);
-                    $default_status = 2; // Default status ID
-                    $query5->bindParam(':status_desc_id', $default_status);
-                    $query5->execute();
-                }
-            }
-    
-            $this->db->connect()->commit();
-            return true;
-        } catch (PDOException $e) {
-            $this->db->connect()->rollBack();
-            error_log("Error in editroomStatus: " . $e->getMessage());
-            return false;
-        }
-    }
+    //         // Check if the insertion was successful
+    //         if ($query1->execute()) {
+    //             // 2. Get the last inserted ID from class_day
+    //             $this->class_day_id = $this->db->connect()->lastInsertId();
+    //             $this->log_cdid[] = $this->class_day_id; 
 
+    //             // 3. Insert into _status
+    //             $sql2 = "INSERT INTO _status (class_day_id, status_desc_id) VALUES (:class_day_id, :status_desc_id)";
+    //             $query2 = $this->db->connect()->prepare($sql2);
+    //             $query2->bindParam(':class_day_id', $this->class_day_id); // Bind the current class_day_id
+    //             $default_status_desc_id = 2; // Assuming 2 is the default status ID
+    //             $query2->bindParam(':status_desc_id', $default_status_desc_id);
+    //             $query2->execute();
+
+    //             return true; // Indicate successful insertion
+    //         }
+            
+    //         return false; // Indicate failure to insert
+    //     }else{
+    //         $sql = "UPDATE class_day SET id=:class_day_id, day_id = :day_id , class_time_id= :class_time_id";
+
+
+
+
+    //         return false; // Indicate failure to insert
+    //     }
+
+    // }
+
+    public $original_day_id = '';
+
+    // function editroomStatus() {
+    //     try {
+    //         // 1. Update class_details
+    //         if($this->newClass == true){
+                
+    //             $sql1 = 
+    //             "UPDATE class_details 
+    //             SET room_id = :room_id, 
+    //                 subject_id = :subject_id, 
+    //                 section_id = :section_id, 
+    //                 teacher_assigned = :teacher_id 
+    //             WHERE id = :class_id";
+    //             $query1 = $this->db->connect()->prepare($sql1);
+    //             $query1->bindParam(':class_id', $this->class_id);
+    //             $query1->bindParam(':room_id', $this->room_id);
+    //             $query1->bindParam(':subject_id', $this->subject_id);
+    //             $query1->bindParam(':section_id', $this->section_id);
+    //             $query1->bindParam(':teacher_id', $this->teacher_assigned);
+    //             $query1->execute();
+    //         }
+                
+    //         // 2. Update class_time
+    //         if($this->newtime == true){
+    //             $sql2 = 
+    //             "UPDATE class_time 
+    //             SET start_time = :start_time, 
+    //                 end_time = :end_time 
+    //             WHERE id = :class_time_id";
+    //             $query2 = $this->db->connect()->prepare($sql2);
+    //             $query2->bindParam(':class_time_id', $this->class_time_id);
+    //             $query2->bindParam(':start_time', $this->start_time);
+    //             $query2->bindParam(':end_time', $this->end_time);
+    //             $query2->execute();
+    //         }
+            
+           
+
+    //         if($this->newDay == true){
+    //             foreach ($this->day_id as $day) {
+    //                 if (!$this->insertDayStatus($this->class_time_id, $day)) {
+    //                     return false; // Stop if insertion fails
+    //                 }
+    //             }
+    //         }
+        
+           
+    //         return true;
+    //     } catch (PDOException $e) {
+    //         $this->db->connect()->rollBack();
+    //         error_log("Error in editroomStatus: " . $e->getMessage());
+    //         return false;
+    //     }
+    // }
 
 
     function showAllStatus($keyword = '', $fweek_day = '', $froom_name = '', $froom_type = '', $fsubject_code = '', $fsubject_type = '', $fsection_name = '', $fstart_time = '', $fend_time = '', $fteacher_name = '', $fstatus = ''){
@@ -291,6 +381,57 @@ class RoomStatus{
     }
 
     
+
+    //CHECK IF AN EXISTING ROW ALREADY EXIST ON TABLE
+    function checkExistingClassTimeID(){
+        $sql = "SELECT (ct.id) AS class_time_id
+        FROM class_time ct
+        WHERE ct.start_time = :start_time AND ct.end_time = :end_time AND ct.class_id = :class_id;";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':start_time', $this->start_time);
+        $query->bindParam(':end_time', $this->end_time);
+        $query->bindParam(':class_id', $this->class_id);
+        $data = null;
+        if ($query->execute()) {
+            $data = $query->fetch();
+        }
+        return $data;
+    }
+
+    function checkExistingClassDetails(){
+        $sql = "SELECT (class.id) AS class_id
+        FROM class_details class
+        WHERE class.room_id = :room_id AND class.section_id = :section_id AND class.subject_id = :subject_id AND class.teacher_assigned = :teacher_id;";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':room_id', $this->room_id);
+        $query->bindParam(':section_id', $this->section_id);
+        $query->bindParam(':subject_id', $this->subject_id);
+        $query->bindParam(':teacher_id', $this->teacher_assigned);
+        $data = null;
+        if ($query->execute()) {
+            $data = $query->fetch();
+        }
+        return $data;
+    }
+
+
+    function checkExistingClassDayID(){
+        $sql = "SELECT (cday.id) AS class_day_id
+        FROM class_day cday
+        WHERE cday.day_id = :day_id AND cday.class_time_id = :class_time_id;";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':day_id', $this->day_id);
+        $query->bindParam(':class_time_id', $this->class_time_id);
+        $data = null;
+        if ($query->execute()) {
+            $data = $query->fetch();
+        }
+        return $data;
+    }   
+
     //fetch room list record
     function fetchroomlistRecord($recordID){
         $sql = "SELECT * FROM room_list WHERE id = :recordID;";
@@ -303,7 +444,7 @@ class RoomStatus{
         return $data;
     }
     
-    function fetchroomstatustRecord($recordID){
+    function fetchroomstatusRecord($recordID){
         $sql = 
         "SELECT
             stat.class_day_id AS class_status_id,
@@ -361,24 +502,34 @@ class RoomStatus{
         return $data;
     }
 
-    function classTimeExistsOnDay($class_id, $day_id) {
+    function classTimeExistsOnDay($selected_day, $class_time_id) {
+        // $sql = "
+        //     SELECT COUNT(*) 
+        //     FROM class_day cd
+        //     JOIN class_time ct ON cd.class_time_id = ct.id
+        //     WHERE cd.day_id = :day_id 
+        //     AND ct.id = :class_time_id
+        //     AND cd.class_time_id != :current_class_time_id
+        // ";
         $sql = "
-            SELECT COUNT(*) AS count
+            SELECT COUNT(*) 
             FROM class_day cd
             JOIN class_time ct ON cd.class_time_id = ct.id
             WHERE cd.day_id = :day_id 
-            AND ct.class_id = :class_id;
+            AND cd.class_time_id != :class_time_id 
         ";
-    
-        $query = $this->db->prepare($sql);
-        $query->bindParam(':day_id', $day_id);
-        $query->bindParam(':class_id', $class_id);
+        
+        // $query = $this->db->connect()->prepare($sql);
+        // $query->bindParam(':day_id', $selected_day);
+        // $query->bindParam(':class_time_id', $class_time_id);
+        // $query->bindParam(':current_class_time_id', $this->class_time_id);
+        // $query->execute();
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':day_id', $selected_day);
+        $query->bindParam(':class_time_id', $class_time_id);
         $query->execute();
-        
-        $count = $query->fetchColumn();
-        
-        // Return true if any schedule exists for this class on this day
-        return $count > 0;
+    
+        return $query->fetchColumn() > 0;
     }
 
     function deleteroomStatus() {
@@ -496,16 +647,6 @@ class RoomStatus{
         return $data;
     }
 
-    // //for filter dropdown search section
-    // public function fetchsectOption(){
-    //     $sql = "SELECT id AS section_name, section_name FROM section_details;";
-    //     $query = $this->db->connect()->prepare($sql);
-    //     $data = null;
-    //     if ($query->execute()) {
-    //         $data = $query->fetchAll(PDO::FETCH_ASSOC);
-    //     }
-    //     return $data;
-    // }
 
      //for filter dropdown search Teacher
     public function fetchteacherOption(){
