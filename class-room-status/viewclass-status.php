@@ -9,16 +9,6 @@ require_once '../tools/functions.php';  // Add this line
         <div class="col-12">
             <div class="page-title-box">
                 <h1 class="page-title">STATUS LIST</h1>
-                <div class="page-title-right">
-                    <form class="d-flex">
-                        <div class="input-group">
-                            <input type="text" class="form-control form-control-light" id="dash-daterange">
-                            <span class="input-group-text bg-primary border-primary text-white brand-bg-color">
-                                <i class="bi bi-calendar3"></i>
-                            </span>
-                        </div>
-                    </form>
-                </div>
             </div>
         </div>
     </div>

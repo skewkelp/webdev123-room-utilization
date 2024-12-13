@@ -23,7 +23,7 @@ require_once '../tools/functions.php';  // Add this line
         
                 <div class="card-body p-1 pt-2">
                     <div class="table-responsive">
-                    <table class="table table-hover" id="userTable">
+                        <table id="table-profile" class="table table-centered table-nowrap table-hover mb-0">
                             <thead>
                                 <tr>
                                     <th>ID</th>
@@ -31,7 +31,6 @@ require_once '../tools/functions.php';  // Add this line
                                     <th>Last Name</th>
                                     <th>Username</th>
                                     <th>Role</th>
-                                    <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -48,22 +47,8 @@ require_once '../tools/functions.php';  // Add this line
                                     <td><?= $arr['last_name'] ?></td>
                                     <td><?= $arr['username'] ?></td>
                                     <td><?= $arr['role'] ?></td>
-                                    <td class="text-nowrap">
-                                        <a href="" class="btn room-schedule">Schedule</a>
-                                        <a href="" class="btn room-status">Status</a>
-                                        <?php if (hasPermission('admin')): ?>
-                                        <a href="" class="btn admin edit-room" data-id="<?= $arr['id'] ?>">Edit</a>
-                                        <?php endif; ?>
-                                    </td>
                                 </tr>
-                                <!-- <td>" . htmlspecialchars($user['id']) . </td>;
-                                <td>" . htmlspecialchars($user['first_name']) . "</td>";
-                                <td>" . htmlspecialchars($user['last_name']) . "</td>";
-                                <td>" . htmlspecialchars($user['username']) . "</td>";
-                                <td>" . htmlspecialchars($user['role']) . "</td>";
-                                <td>" . ($user['is_admin'] ? 'Active' : 'Inactive') . "</td>"; // Assuming is_admin indicates status
-                                </tr>" -->
-                               
+
                                 <?php
                                     $i++;  
                                 }
@@ -76,10 +61,9 @@ require_once '../tools/functions.php';  // Add this line
             </div>
         </div>
     </div>
-    <?php require_once '../includes/_footer.php'; ?>
+    
     <script src="../js/profile.js"></script>
 </div>
        
     
-
 

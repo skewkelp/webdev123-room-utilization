@@ -19,7 +19,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="products" id="products-link" class="nav-link">
+            <a href="room-schedule" id="roomschedule-link" class="nav-link">
                 <i class="bi schedule-icon">
                     <img src="../img/sidebar-icon/schedule-icon.png" alt="" width="27.5px" height="27.5px">
                 </i>

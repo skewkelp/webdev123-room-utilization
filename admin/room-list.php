@@ -12,14 +12,14 @@ if(!isset($_SESSION['account'])) {
     exit();
 }
 
-// Then check user permissions
-if (!hasPermission('both')){
-    // If user is neither staff nor admin, redirect
-    header('location: ../account/loginwcss.php');
-    exit();
-}
+// // Then check user permissions
+// if (!hasPermission('both')){
+//     // If user is neither staff nor admin, redirect
+//     header('location: ../account/loginwcss.php');
+//     exit();
+// }
 
-$page_title = "roomlist";
+$page_title = "room-list";
 
 require_once '../includes/_head.php';
 ?>
