@@ -5,26 +5,114 @@ require_once '../tools/functions.php';  // Add this line
 ?>
 
 <div class="container-fluid">
-    <div class="row">
+    <?php
+        require_once '../classes/room-status.class.php';
+        session_start();
+        
+        $roomObj = new RoomStatus();   
+        
+        $split_PK = $semester_PK = '';
+        
+        $semester_PK = $_SESSION['selected_semester_id'];
+        $split_PK = explode('|', $semester_PK);
+        $roomObj->semester = $split_PK[0];
+        $roomObj->school_year = $split_PK[1];
+        ?>
+
+    
+    <div class="row admin">
         <div class="col-12">
             <div class="page-title-box">
-                <h1 class="page-title">STATUS LIST</h1>
+                <h1 class="page-title">CLASS DETAILS LIST</h1>
             </div>
         </div>
     </div>
     <div class="modal-container"></div>
+
+    <div class="row admin">
+        <div class="col-12">
+            <div class="card p-4">
+                
+                <div class="card-body p-1 pt-2">
+                    <div class="d-flex ct1 flex-row align-items-start gap-5">
+                        
+                        <div class="input-group w-25">
+                            <input type="text" id="search-class-details" class="form-control form-control-light" placeholder="Search class details...">
+                            <span class="input-group-text bg-primary border-primary text-white brand-bg-color">
+                                <i class="bi bi-search"></i>
+                            </span>
+                        </div>
+
+                        <!-- 1. Add Class Details   -->
+                        <a id="add-class-details" href="#" class="btn admin btn-primary open-modal-button">Add Class Details</a>
+                    </div>
+                    <div class="table-responsive">
+                        <!-- 2. Table Class Details -->
+                        <table id="table-class-details" class="table table-centered table-nowrap table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Subject</th>
+                                    <th>Section</th>
+                                    <th>Teacher</th>
+                                    <th>Room</th>
+                                    <th style="width: 30%;">Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <?php
+                                    
+
+                                    $array = $roomObj->showAllClassDetails();
+                                    
+                                    foreach ($array as $arr) {
+                                ?>
+                                    <tr>
+                                        <td><?= $arr['class_id'] ?></td>
+                                        <td><?= $arr['subject_'] ?></td>
+                                        <td><?= $arr['section_'] ?></td>
+                                        <td><?= $arr['teacher_'] ?></td>
+                                        <td><?= $arr['room_'] ?></td>
+                                        <td class="text-nowrap" style="">
+                                            <a href="" class="btn admin w-50 edit-class-details" data-id="<?= $arr['id']?>">Edit</a>
+                                            <a href="" class="btn admin w-50 delete delete-class-details" data-id="<?= $arr['id']?>">Delete</a>
+                                        </td>
+                                    </tr>
+                                <?php
+                                 
+                                    
+                                }
+                                ?>
+                            </tbody>
+                        </table>
+                    </div> <!-- end table-responsive-->
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box">
+                <h1 class="page-title">CLASS STATUS LIST</h1>
+            </div>
+        </div>
+    </div>
+    <div class="modal-container"></div>
+
     <div class="row">
         <div class="col-12">
             <div class="card p-4">
-                <?php
-                    require_once '../classes/room-status.class.php';
-                    session_start();
-                    $roomObj = new RoomStatus();   
-                ?>
+                
                 <div class="d-flex justify-content-between align-items-center gap-4">
                     
                     <div class="d-flex ct1 flex-row align-items-start gap-5">
-                        <form id ="room-form" class="d-flex flex-column justify-content-between align-items-start gap-5">
+                        <form id ="room-form" class="d-flex flex-column justify-content-between align-items-start gap-5"><!-- #room_form handling filter form-->
                             <div class="d-flex width flex-column align-items-start gap-1">
                                 <div class="d-flex width justify-content-between">
                                     <label for="room-name-filter" class="label-text">Room Name:</label>
@@ -153,29 +241,7 @@ require_once '../tools/functions.php';  // Add this line
                         </form>
                     </div>
                     
-                    <!-- <form class="d-flex ct2 me-2">
-                        <div class="d-flex width flex-column align-content-between align-items-start gap-5 ">
-                            <div class="d-flex width flex-column align-content-between align-items-start gap-1">
-                                <div class="d-flex width justify-content-between">
-                                    <label for="start-time" class="label-text">Start:</label>
-                                    <select id="start-time" class="form-select">
-                                        <option value="choose">Choose...</option>
-                                        <option value="">All</option>
-                                        
-                                    </select>
-                                </div>
-                                    
-                                <div class="d-flex width align-items-center">
-                                    <label for="end-time" class="me-2 label-text">End: </label>
-                                    <select id="end-time" class="form-select">
-                                        <option value="choose">Choose...</option>
-                                        <option value="">All</option>
-                                    </select>
-                                </div> 
-                            </div>  
-                        </div>
-                    </form> -->
-
+        
                     <form class="d-flex ct3 flex-column align-items-start gap-1">
                         
                         <div class="d-flex width align-items-center justify-content-between">
@@ -197,10 +263,10 @@ require_once '../tools/functions.php';  // Add this line
                 <div class="card-body p-1 pt-2">
                     <div class="d-flex ct1 flex-row align-items-start gap-5">
                         <div class="input-group w-100">
-                            <input type="text" class="form-control form-control-light" id="custom-search" placeholder="Search ...">
+                            <!-- <input type="text" class="form-control form-control-light" id="custom-search" placeholder="Search ...">
                             <span class="input-group-text bg-primary border-primary text-white brand-bg-color">
                                 <i class="bi bi-search"></i>
-                            </span>
+                            </span> -->
                         </div>
                         <?php if (hasPermission('admin')): ?>
                             <a id="add-room-status" href="#" class="btn admin btn-primary open-modal-button">Add Room Status</a>
@@ -244,7 +310,7 @@ require_once '../tools/functions.php';  // Add this line
                                         <td><?= $arr['room_status'] ?></td>
                                         <td class="text-nowrap">
                                             <a href="" class="btn room-schedule">Schedule</a>
-                                            <a href="" class="btn staff room-status">Occupy</a>
+                                            <a href="" class="btn staff room-status" data-id="<?= $arr['class_status_id'] ?>">Occupy</a>
                                             <?php if (hasPermission('admin')): ?>
                                                 <a href="" class="btn admin edit-room-status" data-id="<?= $arr['class_status_id'] ?>">Edit</a>
                                                 <a href="" class="btn admin display-row">Display</a> <!-- hidden or displayed  -->
@@ -261,7 +327,11 @@ require_once '../tools/functions.php';  // Add this line
                         </table>
                     </div> <!-- end table-responsive-->
                 </div>
+
+
             </div>
         </div>
     </div>
+
+
 </div>

@@ -1,8 +1,10 @@
 <?php
+session_start();
 // Add these at the top of viewroomlist.php
 require_once '../tools/functions.php';  // Add this line
 
 ?>
+
 
 <div class="container-fluid">
     <div class="row">

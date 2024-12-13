@@ -1,0 +1,91 @@
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Edit Class Details</h5>
+          <button type="button" class="btn-close modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div> 
+        <form action="" method="post" id="form-edit">
+          <div class="modal-body">
+     
+            <div style="padding-left: 8px;">
+                <div class="mb-2">
+                    <div class="alert alert-danger d-none" id="existing-class-error"></div>
+                    <input type="hidden" id="existing-class-id"/>
+                </div>
+
+                <div class="mb-2">
+                    <input type="hidden" id="original-class-id" name="original-class-id"/>
+                    <label for="class-id" class="form-label">Class ID</label>
+                    <input type="text" class="form-control" id="class-id" name="class-id" placeholder="BSCS000000" title="Please enter a code in the format: 3-4 uppercase letters followed by 6 digits (e.g., ABC123456 or ABCD123456)">
+                    <div class="invalid-feedback"></div>
+                </div>
+                
+                <br>
+
+                <div class="mb-2">
+                    <P class="form-label">Subject</P>
+                    <div class="dropdown">
+                        <input type="hidden" id="original-subject-id" name="original-subject-id"/>
+                        <input type="text" class="form-control dropdown-input" placeholder="Select or search..." id="dropdown-subject" name="subject">
+                        <input type="hidden" id="hidden-subject-id" name="subject-id"/>
+                        <div class="dropdown-list" id="dropdown-list-subject">
+                            <!-- Options will be populated here by JavaScript -->
+                        </div>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+
+                <br>
+                
+                <div class="mb-2">
+                    <P class="form-label">Section</P>
+                    <div class="dropdown">
+                        <input type="text" class="form-control dropdown-input" placeholder="Select or search..." id="dropdown-section" name="section">
+                        <input type="hidden" id="hidden-section-id" name="section-id"/>
+                        <div class="dropdown-list" id="dropdown-list-section">
+                            <!-- Options will be populated here by JavaScript -->
+                        </div>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+
+                <br>
+
+                <div class="mb-2">
+                    <P class="form-label">Teacher Assigned</P>
+                    <div class="dropdown">
+                        <input type="text" class="form-control dropdown-input" placeholder="Select or search..." id="dropdown-teacher" name="teacher" >
+                        <input type="hidden" id="hidden-teacher-assigned" name="teacher-assigned"/>
+                        <div class="dropdown-list" id="dropdown-list-teacher">
+                            <!-- Options will be populated here by JavaScript -->
+                        </div>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+
+                <br>
+
+                <div class="mb-2">
+                    <P class="form-label">Room</P>
+                    <div class="dropdown">
+                        <input type="text" class="form-control dropdown-input" placeholder="Select or search..." id="dropdown-room" name="room" >
+                        <input type="hidden" id="hidden-room-id" name="room-id"/>
+                        <div class="dropdown-list" id="dropdown-list-name">
+                            <!-- Options will be populated here by JavaScript -->
+                        </div>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary modal-close" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary brand-bg-color">Edit Class Details</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>

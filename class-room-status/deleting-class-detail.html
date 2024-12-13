@@ -10,15 +10,17 @@
             <form action="" method="post" id="form-delete">
                 <div class="mb-2 modal-body d-flex flex-column delete">
                     <div class="icon delete"></div>
-                        <p class="form-label">WARNING! Deleting this schedule will be completely deleted from the database.</p>
-                        <input type="hidden" id="hidden-class-status-id" name="class-status-id">
-                        <input type="hidden" id="hidden-class-day-id" name="class-day-id">
-                        <input type="hidden" id="hidden-class-time-id" name="class-time-id">
-                        <!-- <input type="hidden" id="hidden-class-id" name="class-id"> -->
+                        <p class="form-label">WARNING! Deleting this class will completely be deleted from the database. Scheduled time and day assigned in this class will also be deleted.</p>
+                        <input type="hidden" id="hidden-class-id" name="class-id">
+                        <input type="hidden" id="hidden-subject-id" name="subject-id">
+                        <!-- <input type="hidden" id="hidden-section-id" name="section-id">
+                        <input type="hidden" id="hidden-teacher-assigned" name="teacher-assigned">
+                        <input type="hidden" id="hidden-room-id" name="room-id"> -->
                     </div>
                     <div class="modal-footer delete">
-                    <button type="button" class="btn btn-secondary modal-close" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary brand-bg-color">Delete</button>
+                        <button type="button" class="btn btn-secondary modal-close" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary brand-bg-color">Delete</button>
+                    </div>
                 </div>
             </form>
         </div>

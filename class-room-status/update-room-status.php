@@ -1,59 +1,68 @@
 <?php
-
+session_start();
 require_once('../tools/functions.php');
 require_once('../classes/room-status.class.php');
 
 //(class-details)room-id, subject-id, section-id, teacher-assigned, 
 //(class-time)start-time, end-time, day
-//
+
+
+$semester_PK = '';
+$semester = $school_year = '';
+
+
+$original_class_id = $original_subject_id = $class_day_id = $class_time_id = $original_start_time = $original_end_time = $original_day_id = '';
+
+$splitclass_PK = $splitoriginalclass_PK = '';
 //this var refers to room_
-$class_status_id = $class_id = $class_time_id = $class_day_id = '';
-$room_id = $subject_id = $section_id = $teacher_assigned = $start_time = $end_time = $day_id = $original_day_id = '';
-$room_idErr = $subject_idErr = $section_idErr = $teacher_assignedErr = $start_timeErr = $end_timeErr = '';
-$day_idErr = '';
+
+$class_status_id = $class_id = '';
+
+$class_PK = $start_time = $end_time = $day_id = '';
+$class_PKErr = $start_timeErr = $end_timeErr = $day_idErr = '';
+
 
 $roomObj = new RoomStatus();
 
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
-    $class_status_id = clean_input($_POST['class-status-id']);
-    $class_id = clean_input($_POST['class-id']);
-    $class_time_id = clean_input($_POST['class-time-id']);
-    $class_day_id = clean_input($_POST['class-day-id']);
+    $semester_PK = clean_input($_SESSION['selected_semester_id']);
+    $splitsemester_PK = explode('|', $semester_PK);
+    $semester = $splitsemester_PK[0];
+    $school_year = $splitsemester_PK[1];
 
-    $original_room_id = clean_input($_POST['original-room-id']);
-    $original_subject_id = clean_input($_POST['original-subject-id']);
-    $original_section_id = clean_input($_POST['original-section-id']);
-    $original_teacher_assigned = clean_input($_POST['original-teacher-assigned']);
 
+    $original_class_id = clean_input($_POST['original-class-id']);
+    $splitoriginalclass_PK = explode('|', $original_class_id);
+    $original_class_id = $splitoriginalclass_PK[0];
+    $original_subject_id = $splitoriginalclass_PK[1];
+
+     // First check if class-id exists in POST
+    if(empty($_POST['class-id'])){
+        $class_PKErr = 'Class is required.';
+    } else {
+        $class_PK = clean_input($_POST['class-id']);
+        $splitclass_PK = explode('|', $class_PK);
+        
+        // Check if we got both values after splitting
+        if(count($splitclass_PK) !== 2) {
+            $class_PKErr = 'Invalid class selection format';
+        } else {
+            $class_id = $splitclass_PK[0];
+            $subject_id = $splitclass_PK[1];
+        }
+    }
+
+    $class_day_id = clean_input($_POST['class-day-id']);    
+    $class_time_id = clean_input($_POST['original-class-time-id']);
     $original_start_time = clean_input($_POST['original-start-time']);
     $original_end_time = clean_input($_POST['original-end-time']);
-    $original_day_id = clean_input($_POST['original-day-id']);
+    $original_day_id = isset($_POST['original-day-id']) ? $_POST['original-day-id'] : [];
 
-    $room_id = clean_input($_POST['room-id']);
-    $subject_id = clean_input($_POST['subject-id']);
-    $section_id = clean_input($_POST['section-id']);
-    $teacher_assigned = clean_input($_POST['teacher-assigned']);
+
     $start_time = clean_input($_POST['start-time']);
     $end_time = clean_input($_POST['end-time']);
-    $day_id = isset($_POST['day-id']) ? $_POST['day-id'] : [];
+    $day_id = clean_input($_POST['day-id']);
 
-
-    if(empty($room_id)){
-        $room_idErr = 'Room is required.';
-    } 
-
-   
-    if(empty($subject_id)){
-        $subject_idErr = 'Subject is required.';
-    }
-
-    if(empty($section_id)){
-        $section_idErr = 'Section is required.';
-    }
-
-    if(empty($teacher_assigned)){
-        $teacher_assignedErr = 'Teacher is required.';
-    }
 
     if(empty($start_time)){
         $start_timeErr = 'Start time is required is required.';
@@ -62,7 +71,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     if(empty($end_time)){
         $end_timeErr = 'End time is required.';
     }
-
+    
     if(empty($day_id)){
         $day_idErr = 'Class Days is required.';
     }
@@ -79,32 +88,16 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     }
 
 
-
-
-
-    if(!empty($day_id)){
-        $dayCount = count($day_id);
-        $dayIndex = 0; 
-        $conflictDays = [];
-        $conflictCount = 0;
-
-        foreach($day_id as $selected_day) {
-            // Only check new days being added
-            if($selected_day != $original_day_id) {
-                // Check if this class_time already exists on the selected day
-                if($roomObj->classTimeExistsOnDay($selected_day, $class_time_id, )) {
-                    $conflictDays[] = getDayName($selected_day);
-                    $conflictCount++;
-                }
-            }
-            $dayIndex++;
-        }
-        
-        if($conflictCount > 0){
-            $day_idErr = "This class time is already scheduled on: " . implode(', ', $conflictDays);
-        }
-
-    }   
+    // if(!empty($day_id)){
+    //     // Only check new days being added
+    //     if($day_id != $original_day_id) {
+    //         // Check if this class_time already exists on the selected day
+    //         if($roomObj->classTimeExistsOnDay($day_id, $class_time_id, )) {
+    //             $day_idErr = "This class time is already scheduled on: " . getDayName($day_id);
+    //         }
+    //     }
+          
+    // }   
    
 
 
@@ -124,13 +117,10 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
 
     // If there are validation errors, return them as JSON
-    if(!empty($room_idErr) || !empty($subject_idErr) || !empty($section_idErr)  || !empty($teacher_assignedErr) || !empty($start_timeErr) || !empty($end_timeErr) || !empty($day_idErr)){
+    if(!empty($class_PKErr) || !empty($start_timeErr) || !empty($end_timeErr) || !empty($day_idErr)){
         echo json_encode([
             'status' => 'error',
-            'room_idErr' => $room_idErr,
-            'subject_idErr' => $subject_idErr,
-            'section_idErr' => $section_idErr,
-            'teacher_assignedErr' => $teacher_assignedErr,
+            'class_PKErr' => $class_PKErr,
             'start_timeErr' => $start_timeErr,
             'end_timeErr' => $end_timeErr,
             'day_idErr' => $day_idErr
@@ -148,109 +138,138 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $roomObj->class_day_id = $class_day_id;
     $roomObj->original_day_id = $original_day_id;
     
+    $roomObj->class_time_id = $class_time_id;
+    $roomObj->class_id = $class_id;
+    $roomObj->subject_id = $subject_id;
+    $roomObj->start_time = $start_time;
+    $roomObj->end_time = $end_time; 
+    $roomObj->day_id = $day_id;
     
-    $originalDayStillSelected = false;
-    $newDaysSelected = [];
-    
-    // First check if original day is still selected
-    foreach($day_id as $selected_day) {
-        if($selected_day == $original_day_id) {
-            $originalDayStillSelected = true;
-        } else {
-            $newDaysSelected[] = $selected_day;
-        }
-    }
+    $existingTime = $roomObj->checkExistingClassTime($original_class_id, $original_subject_id);
+    if($existingTime != null){
+        $occupied_class_id = $existingTime[0];
+        $occupied_day_name[] = $existingTime[1];
+        $occupied_start_time[] = $existingTime[2];
+        $occupied_end_time[] = $existingTime[3];
 
+        $existing_classErr = 'This schedule overlaps with class ID ' .  $class_id . ' on ' . $occupied_day_name . ' from ' . $occupied_start_time . ' to ' . $occupied_end_time; 
         
-     
-    $newTime = $newClass = $newDay = false;
-    $newRoom = $newSubject = $newSection = $newTeacher = false;
-    if($originalDayStillSelected) { // Original day is still selected
+        $start_timeErr = "Invalid.";
+        $end_timeErr = "Invalid.";
+        $day_idErr = "Invalid."; 
 
-        if(count($newDaysSelected) > 0) { // Original day plus new days selected
-            $newDay = true;
-            if($room_id != $original_room_id || $subject_id != $original_subject_id || $section_id != $original_section_id || $teacher_assigned != $original_teacher_assigned){
-                $newClass = true;
-                $roomObj->room_id = $room_id; 
-                $roomObj->subject_id = $subject_id;
-                $roomObj->section_id = $section_id;
-                $roomObj->teacher_assigned = $teacher_assigned;
-                if($newClass == true){
-                    $roomObj->updateClassDetails();
-                }
-            }
-            
-            if($start_time != $original_start_time || $end_time != $original_end_time){// Check if start-time and end-time is different from original start-time and end-time
-                $newTime = true;
-                $roomObj->start_time = $start_time;
-                $roomObj->end_time = $end_time;
-                if($newTime == true){
-                    $roomObj->updateClassTime();
-                }
-            }
-            
-            foreach($newDaysSelected as $selected_day){
-                $roomObj->class_time_id = $class_time_id;
-                $roomObj->day_id = $selected_day;
-                $class_day_id = $roomObj->insertClassDay();
-            
-                $roomObj->class_day_id = $class_day_id;
-                $roomObj->insertStatus();
-            }
-
-        }else{// Only original day selected
-            if($room_id != $original_room_id || $subject_id != $original_subject_id || $section_id != $original_section_id || $teacher_assigned != $original_teacher_assigned){
-                $newClass = true;
-                $roomObj->room_id = $room_id; 
-                $roomObj->subject_id = $subject_id;
-                $roomObj->section_id = $section_id;
-                $roomObj->teacher_assigned = $teacher_assigned;
-                if($newClass == true){
-                    $roomObj->updateClassDetails();
-                }
-            }
-            
-            if($start_time != $original_start_time || $end_time != $original_end_time){// Check if start-time and end-time is different from original start-time and end-time
-                $newTime = true;
-                $roomObj->start_time = $start_time;
-                $roomObj->end_time = $end_time;
-                if($newTime == true){
-                    $roomObj->updateClassTime();
-                }
-            }
-            
-        }
-
-    }else{// New days
-        if($room_id != $original_room_id || $subject_id != $original_subject_id || $section_id != $original_section_id || $teacher_assigned != $original_teacher_assigned){
-            $newClass = true;
-            $roomObj->room_id = $room_id; 
-            $roomObj->subject_id = $subject_id;
-            $roomObj->section_id = $section_id;
-            $roomObj->teacher_assigned = $teacher_assigned;
-            if($newClass == true){
-                $roomObj->updateClassDetails();
-            }
-        }
-        
-        if($start_time != $original_start_time || $end_time != $original_end_time){// Check if start-time and end-time is different from original start-time and end-time
-            $newTime = true;
-            $roomObj->start_time = $start_time;
-            $roomObj->end_time = $end_time;
-            if($newTime == true){
-                $roomObj->updateClassTime();
-            }
-        }
-        
-        foreach($newDaysSelected as $selected_day){
-            $roomObj->class_time_id = $class_time_id;
-            $roomObj->day_id = $selected_day;
-            $roomObj->insertClassDay();
-
-            $roomObj->insertStatus();
-        } selected 
+        echo json_encode([
+            'status' => 'error',
+            'existing_classErr' => $existing_classErr,
+            'start_timeErr' => $start_timeErr,
+            'end_timeErr' => $end_timeErr,
+            'day_idErr' => $day_idErr
+        ]);
+        exit;
 
     }
+    
+    $class_time_id = $roomObj->updateClassTime();
+
+    $class_day_id = $roomObj->updateClassDay();
+    
+    
+    // // First check if original day is still selected
+    // foreach($day_id as $selected_day) {
+    //     if($selected_day == $original_day_id) {
+    //         $originalDayStillSelected = true;
+    //     } else {
+    //         $newDaysSelected[] = $selected_day;
+    //     }
+    // }
+
+
+    // $newRoom = $newSubject = $newSection = $newTeacher = false;
+    // if($originalDayStillSelected) { // Original day is still selected
+
+    //     if(count($newDaysSelected) > 0) { // Original day plus new days selected
+    //         $newDay = true;
+    //         if( $original_class_id != $class_id && $original_subject_id != $subject_id){
+                
+    //             $roomObj->subject_id = $subject_id;
+                
+    //                 $roomObj->updateClassDetails();
+    //             }
+    //         }
+            
+    //         if($start_time != $original_start_time || $end_time != $original_end_time){// Check if start-time and end-time is different from original start-time and end-time
+    //             $roomObj->start_time = $start_time;
+    //             $roomObj->end_time = $end_time;
+    //             if($newTime == true){
+    //                 $roomObj->updateClassTime();
+    //             }
+    //         }
+            
+    //         foreach($newDaysSelected as $selected_day){
+    //             $roomObj->class_time_id = $class_time_id;
+    //             $roomObj->day_id = $selected_day;
+    //             $class_day_id = $roomObj->insertClassDay();
+            
+    //             $roomObj->class_day_id = $class_day_id;
+    //             $roomObj->insertStatus();
+    //         }
+
+    //     }else{// Only original day selected
+    //         if($room_id != $original_room_id || $subject_id != $original_subject_id || $section_id != $original_section_id || $teacher_assigned != $original_teacher_assigned){
+    //             $newClass = true;
+    //             $roomObj->room_id = $room_id; 
+    //             $roomObj->subject_id = $subject_id;
+    //             $roomObj->section_id = $section_id;
+    //             $roomObj->teacher_assigned = $teacher_assigned;
+    //             if($newClass == true){
+    //                 $roomObj->updateClassDetails();
+    //             }
+    //         }
+            
+    //         if($start_time != $original_start_time || $end_time != $original_end_time){// Check if start-time and end-time is different from original start-time and end-time
+    //             $newTime = true;
+    //             $roomObj->start_time = $start_time;
+    //             $roomObj->end_time = $end_time;
+    //             if($newTime == true){
+    //                 $roomObj->updateClassTime();
+    //             }
+    //         }
+            
+    //     }
+
+    // }else{// New days
+    //     if($room_id != $original_room_id || $subject_id != $original_subject_id || $section_id != $original_section_id || $teacher_assigned != $original_teacher_assigned){
+    //         $newClass = true;
+    //         $roomObj->room_id = $room_id; 
+    //         $roomObj->subject_id = $subject_id;
+    //         $roomObj->section_id = $section_id;
+    //         $roomObj->teacher_assigned = $teacher_assigned;
+    //         if($newClass == true){
+    //             $roomObj->updateClassDetails();
+    //         }
+    //     }
+        
+    //     if($start_time != $original_start_time || $end_time != $original_end_time){// Check if start-time and end-time is different from original start-time and end-tim
+    //         $roomObj->start_time = $start_time;
+    //         $roomObj->end_time = $end_time;
+
+
+
+
+    //         if($newTime == true){
+    //             $roomObj->updateClassTime();
+    //         }
+    //     }
+        
+    //     foreach($newDaysSelected as $selected_day){
+    //         $roomObj->class_time_id = $class_time_id;
+    //         $roomObj->day_id = $selected_day;
+    //         $roomObj->insertClassDay();
+
+    //         $roomObj->insertStatus();
+    //     } selected 
+
+    // }
     
 
     if(TRUE){

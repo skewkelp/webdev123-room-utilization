@@ -1,43 +1,52 @@
 <?php
+session_start();
 
 require_once('../tools/functions.php');
 require_once('../classes/room-status.class.php');
 
-//(class-details)room-id, subject-id, section-id, teacher-assigned, 
-//(class-time)start-time, end-time, day
-//
-//this var refers to room_
-$room_id = $subject_id = $section_id = $teacher_assigned = $start_time = $end_time = $day_id = '';
-$room_idErr = $subject_idErr = $section_idErr = $teacher_assignedErr = $start_timeErr = $end_timeErr = $day_idErr = '';
+//var of semester cols
+$semester_PK = '';
+$semester = $school_year = '';
+
+//var to split the composite PK
+$splitclass_PK = $splitsemester_PK = '';
+
+$subject_id = $class_id = '';
+
+$class_PK = $start_time = $end_time = '';
+$class_PKErr = $start_timeErr = $end_timeErr = $day_idErr = '';
 
 $roomObj = new RoomStatus();
 
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
-    
-    $room_id = clean_input($_POST['room-id']);
-    $subject_id = clean_input($_POST['subject-id']);
-    $section_id = clean_input($_POST['section-id']);
-    $teacher_assigned = clean_input($_POST['teacher-assigned']);
+    $semester_PK = clean_input($_SESSION['selected_semester_id']);
+    $splitsemester_PK = explode('|', $semester_PK);
+    $semester = $splitsemester_PK[0];
+    $school_year = $splitsemester_PK[1];
+
+    // First check if class-id exists in POST
+    if(empty($_POST['class-id'])){
+        $class_PKErr = 'Class is required.';
+    }else{
+        $class_PK = clean_input($_POST['class-id']);
+        $splitclass_PK = explode('|', $class_PK);
+        
+        // Check if we got both values after splitting
+        if(count($splitclass_PK) !== 2) {
+            $class_PKErr = 'Invalid class selection format';
+        }else{
+            $class_id = $splitclass_PK[0];
+            $subject_id = $splitclass_PK[1];
+        }
+    }
+
     $start_time = clean_input($_POST['start-time']);
     $end_time = clean_input($_POST['end-time']);
-    // $day_id = isset($_POST['day-id']) ? $_POST['day-id'] : [];
     $day_id = isset($_POST['day-id']) ? $_POST['day-id'] : [];
     
-    if(empty($room_id)){
-        $room_idErr = 'Room is required.';
+    if(empty($class_PK)){
+        $class_PKErr = 'Class is required.';
     } 
-
-    if(empty($subject_id)){
-        $subject_idErr = 'Subject is required.';
-    }
-
-    if(empty($section_id)){
-        $section_idErr = 'Section is required.';
-    }
-
-    if(empty($teacher_assigned)){
-        $teacher_assignedErr = 'Teacher is required.';
-    }
 
     if(empty($start_time)){
         $start_timeErr = 'Start time is required is required.';
@@ -87,92 +96,72 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     // }   
 
     // If there are validation errors, return them as JSON
-    if(!empty($room_idErr) || !empty($subject_idErr) || !empty($section_idErr)  || !empty($teacher_assignedErr) || !empty($start_timeErr) || !empty($end_timeErr) || !empty($day_idErr)){
+    if(!empty($class_PKErr) || !empty($start_timeErr) || !empty($end_timeErr) || !empty($day_idErr)){
         echo json_encode([
             'status' => 'error',
-            'room_idErr' => $room_idErr,
-            'subject_idErr' => $subject_idErr,
-            'section_idErr' => $section_idErr,
-            'teacher_assignedErr' => $teacher_assignedErr,
+            'class_PKErr' => $class_PKErr,
             'start_timeErr' => $start_timeErr,
             'end_timeErr' => $end_timeErr,
             'day_idErr' => $day_idErr
         ]);
         exit;
     }
-
-    $roomObj->room_id = $room_id;
+    
+    $roomObj->class_id = $class_id;
     $roomObj->subject_id = $subject_id;
-    $roomObj->section_id = $section_id;
-    $roomObj->teacher_assigned = $teacher_assigned;
     $roomObj->start_time = $start_time;
     $roomObj->end_time = $end_time;
-    $roomObj->day_id = $day_id;
+    $roomObj->semester = $semester;
+    $roomObj->school_year = $school_year;
 
-
-    $class_id = $class_time_id = '';
-    $newTime = $newClass = $newDay = true;
-
-    if($roomObj->checkExistingClassDetails() != null){//not new class
-        $newClass = false;
-        $class_id = $roomObj->checkExistingClassDetails();
-
-    }else{
-        $class_id = $roomObj->insertClassDetails();
+    $occupied_class_id = $occupied_start_time = $occupied_end_time = [];
+    $checker = 0;
+    foreach($day_id as $selected_day){
+        $roomObj->day_id = $selected_day;
+        $existingTime = $roomObj->checkExistingClassTime();
+        if($existingTime != null){
+            $occupied_class_id[] = $existingTime[0];
+            $occupied_day_name[] = $existingTime[1];
+            $occupied_start_time[] = $existingTime[2];
+            $occupied_end_time[] = $existingTime[3];
+            $checker++;
+        }
     }
 
-    if($roomObj->checkExistingClassTimeID() != null){//not new time
-        $newTime =false;
-        $class_time_id = $roomObj->checkExistingClassTimeID();
-    }else{
-        $class_time_id = $roomObj->insertClassTime();
+    if($checker > 0){
+
+        if($checker == 1){
+            $existing_classErr = 'This schedule overlaps with class ID '; 
+        }else{
+            $existing_classErr = 'This schedule overlaps with multiple classes: ' . "\n"; 
+        }
+        
+        $index = 0;      
+        foreach($occupied_class_id as $class_id){
+            $existing_classErr .= $class_id . ' on ' . $occupied_day_name[$index] . ' from ' . $occupied_start_time[$index] . ' to ' . $occupied_end_time[$index] . "\n";
+            $index++;
+        }
+
+        echo json_encode([
+            'status' => 'error',
+            'existing_classErr' => $existing_classErr
+        ]);
+        exit;
     }
 
-    $roomObj->newClass = $newClass;
-    $roomObj->newTime = $newTime;
-    $roomObj->newDay = $newDay;
-
-    $roomObj->class_id = $class_id;
-    $roomObj->class_time_id = $class_time_id;
-
+    $class_time_id = $roomObj->insertClassTime();
     foreach($day_id as $selected_day){
         $roomObj->class_time_id = $class_time_id;
         $roomObj->day_id = $selected_day;
+
+
         $class_day_id = $roomObj->insertClassDay();
     }
 
     
 
-    
-
-    
-    // if($roomObj->checkExistingClassDetails() != null){
-    //     //Checks if there is an existing class time id of the new start-time and end-time
-    //     $newClass = true;
-    //     $class_id = $roomObj->checkExistingClassDetails();
-    // }
-
-    // if($roomObj->checkExistingClassTimeID() != null){
-    //     //Checks if there is an existing class time id of the new start-time and end-time
-    //     $newTime = true;
-    //     $class_time_id = $roomObj->checkExistingClassTimeID();
-    // }
-
-    
-    // $roomObj->newClass = $newClass;
-    // $roomObj->class_id = $class_id; 
-
-    // $roomObj->newTime = $newTime;
-    // $roomObj->class_time_id = $class_time_id;
-    
-
-    if(TRUE){
-        echo json_encode(['status' => 'success', 'debug' => [
-            'class_id created' => $roomObj->log_cid,
-            'class_time_id created' => $roomObj->log_ctid,
-            'Day_id inserted' => $roomObj->log_day,
-            'class_day_id created' => $roomObj->log_cdid
-        ]]);
+    if(TRUE){   
+        echo json_encode(['status' => 'success']);
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Something went wrong when adding the new class status.']);
     }
