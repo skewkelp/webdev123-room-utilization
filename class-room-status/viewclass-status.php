@@ -17,9 +17,69 @@ require_once '../tools/functions.php';  // Add this line
         $split_PK = explode('|', $semester_PK);
         $roomObj->semester = $split_PK[0];
         $roomObj->school_year = $split_PK[1];
-        ?>
+    ?>
 
-    
+    <div class="row admin">
+        <div class="col-12">
+            <div class="page-title-box">
+                <h1 class="page-title">SUBJECT LIST</h1>
+            </div>
+        </div>
+    </div>
+    <div class="row admin">
+        <div class="col-12">
+            <div class="card p-4">
+                
+                <div class="card-body p-1 pt-2">
+                    <div class="d-flex ct1 flex-row align-items-start gap-5">
+                        
+                        <div class="input-group w-25">
+                            <input type="text" id="search-class-details" class="form-control form-control-light" placeholder="Search class details...">
+                            <span class="input-group-text bg-primary border-primary text-white brand-bg-color">
+                                <i class="bi bi-search"></i>
+                            </span>
+                        </div>
+
+                        <a id="change-semester" href="#" class="btn admin btn-primary open-modal-button">Change Prospectus</a>
+                        
+                        <div class="input-group w-25">
+                            <select name="" id="">
+                                <option value="">2024-2025</option>
+                            </select>
+                        </div>
+
+                        <!-- 1. Add Class Details   -->
+                        <a id="add-subject-details" href="#" class="btn admin btn-primary open-modal-button">Add Subject</a>
+                    </div>
+
+                    <div class="table-responsive">
+                        <!-- 2. Table Class Details -->
+                        <table id="table-class-details" class="table table-centered table-nowrap table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Subject</th>
+                                    <th>Section</th>
+                                    <th>Teacher</th>
+                                    <th>Room</th>
+                                    <th style="width: 30%;">Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                               
+                            </tbody>
+                        </table>
+                    </div> <!-- end table-responsive-->
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+
+   
     <div class="row admin">
         <div class="col-12">
             <div class="page-title-box">
@@ -55,7 +115,6 @@ require_once '../tools/functions.php';  // Add this line
                                     <th>Subject</th>
                                     <th>Section</th>
                                     <th>Teacher</th>
-                                    <th>Room</th>
                                     <th style="width: 30%;">Action</th>
                                 </tr>
                             </thead>
@@ -73,7 +132,6 @@ require_once '../tools/functions.php';  // Add this line
                                         <td><?= $arr['subject_'] ?></td>
                                         <td><?= $arr['section_'] ?></td>
                                         <td><?= $arr['teacher_'] ?></td>
-                                        <td><?= $arr['room_'] ?></td>
                                         <td class="text-nowrap" style="">
                                             <a href="" class="btn admin w-50 edit-class-details" data-id="<?= $arr['id']?>">Edit</a>
                                             <a href="" class="btn admin w-50 delete delete-class-details" data-id="<?= $arr['id']?>">Delete</a>
@@ -150,15 +208,12 @@ require_once '../tools/functions.php';  // Add this line
                                     <label for="room-status-filter" class="me-2 label-text">Status:</label>
                                     <select id="room-status-filter" class="form-select">
                                         <option value="choose">Choose...</option>
+                                        <option value="OCCUPIED">OCCUPIED</option>
+                                        <option value="AVAILABLE">AVAILABLE</option>
+                                        
                                         <!-- <option value="">All</option> -->
-                                        <?php
-                                        $statusList = $roomObj->fetchstatusOption();
-                                        foreach ($statusList as $sl) {
-                                        ?>
-                                            <option value="<?= $sl['status_desc'] ?>"><?= $sl['status_desc'] ?></option>
-                                        <?php
-                                        }
-                                        ?>
+                                        
+                                       
                                     </select>
                                 </div>
                             </div>
@@ -194,14 +249,9 @@ require_once '../tools/functions.php';  // Add this line
                                     <label for="subject-type-filter" class="me-2 label-text">Subject Type:</label>
                                     <select id="subject-type-filter" class="form-select">
                                         <option value="choose">Choose...</option>
+                                        <option value="LEC">LEC</option>                                      
+                                        <option value="LEC">LAB</option>                                      
                                         <!-- <option value="">All</option> -->
-                                        <?php
-                                        $subjectType = $roomObj->fetchsubtypeOption();
-                                        foreach ($subjectType as $stype) {
-                                        ?>
-                                            <option value="<?= $stype['subject_type'] ?>"><?= $stype['subject_type'] ?></option>                                        <?php
-                                        }
-                                        ?>
                                     </select>
                                 </div>
 
@@ -222,8 +272,8 @@ require_once '../tools/functions.php';  // Add this line
                                     $courses = $roomObj->fetchCourse(); // Fetch courses for radio buttons
                                     foreach ($courses as $crs) {
                                     ?>
-                                        <label for="<?= $crs['_name'] ?>">
-                                            <input type="radio" name="options" id="<?= $crs['_name'] ?>" value="<?= $crs['id'] ?>" onclick="updateSelectOptions()"> <?= $crs['_name'] ?>
+                                        <label for="<?= $crs['course_name'] ?>">
+                                            <input type="radio" name="options" id="<?= $crs['course_name'] ?>" value="<?= $crs['course_abbr'] ?>" onclick="updateSelectOptions()"> <?= $crs['course_name'] ?>
                                         </label>
                                     <?php
                                     }
@@ -277,15 +327,16 @@ require_once '../tools/functions.php';  // Add this line
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Room Name</th>
+                                    <th>Room</th>
                                     <th>Room Type</th>
-                                    <th>Subject Code</th>
+                                    <th>Subject</th>
                                     <th>Subject Type</th>
-                                    <th>Section Name</th>
+                                    <th>Section</th>
                                     <th>Start Time</th>
                                     <th>End Time</th>
                                     <th>Teacher</th>
                                     <th>Status</th>
+                                    <th>Remarks</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -308,13 +359,14 @@ require_once '../tools/functions.php';  // Add this line
                                         <td><?= $arr['end_time'] ?></td>
                                         <td><?= $arr['faculty_name'] ?></td>
                                         <td><?= $arr['room_status'] ?></td>
+                                        <td><?= $arr['remarks'] ?></td>
                                         <td class="text-nowrap">
                                             <a href="" class="btn room-schedule">Schedule</a>
-                                            <a href="" class="btn staff room-status" data-id="<?= $arr['class_status_id'] ?>">Occupy</a>
+                                            <a href="" class="btn staff room-status" data-classid="{$arr['class_id']}" data-classday="{$arr['class_day']}" data-subjecttype="{$arr['subject_type']}">Occupy</a>
                                             <?php if (hasPermission('admin')): ?>
-                                                <a href="" class="btn admin edit-room-status" data-id="<?= $arr['class_status_id'] ?>">Edit</a>
+                                                <a href="" class="btn admin edit-room-status" data-classid="{$arr['class_id']}" data-classday="{$arr['class_day']}" data-subjecttype="{$arr['subject_type']}">Edit</a>
                                                 <a href="" class="btn admin display-row">Display</a> <!-- hidden or displayed  -->
-                                                <a href="" class="btn admin delete delete-room-status"data-id="<?= $arr['class_status_id'] ?>">X</a>
+                                                <a href="" class="btn admin delete delete-room-status" data-classid="{$arr['class_id']}" data-classday="{$arr['class_day']}" data-subjecttype="{$arr['subject_type']}">X</a>
                                             <?php endif; ?>
                                         </td>
                                     </tr>

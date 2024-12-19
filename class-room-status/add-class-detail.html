@@ -11,8 +11,7 @@
      
             <div style="padding-left: 8px;">
                 <div class="mb-2">
-                    <div class="alert alert-danger d-none" id="existing-class-error"></div>
-                    <input type="hidden" id="existing-class-id"/>
+                    <div class="alert alert-danger d-none" id="general-error"></div>
                 </div>
 
                 <div class="mb-2">
@@ -23,7 +22,7 @@
 
                 <br>
                 
-                <div class="mb-2">
+                <div class="mb-0">
                     <P class="form-label">Subject</P>
                     <div class="dropdown">
                         <input type="text" class="form-control dropdown-input" placeholder="Select or search..." id="dropdown-subject" name="subject">
@@ -33,6 +32,25 @@
                         </div>
                         <div class="invalid-feedback"></div>
                     </div>
+                </div>
+
+                <br>
+
+                <div class="ms-5 mb-2">
+                    <div class="mb-0 me-2 d-flex gap-2 subject-type">
+                        <P class="form-label mb-0 me-2">Subject Type:</P><br>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <label for="subject-type" class="form-label mb-0 me-2">LEC</label>
+                            <input type="checkbox" id="subject-type" value="LEC" name="subject-type[]">
+                        </div>
+                        
+                        <div class="d-flex justify-content-center align-items-center">
+                            <label for="subject-type" class="form-label mb-0 me-2">LAB</label>
+                            <input type="checkbox" id="subject-type" value="LAB" name="subject-type[]">
+                        </div>
+                    </div>
+    
+                    <div class="invalid-feedback"></div>
                 </div>
 
                 <br>
@@ -63,19 +81,7 @@
                     </div>
                 </div>
 
-                <br>
 
-                <div class="mb-2">
-                    <P class="form-label">Room</P>
-                    <div class="dropdown">
-                        <input type="text" class="form-control dropdown-input" placeholder="Select or search..." id="dropdown-room" name="room" >
-                        <input type="hidden" id="hidden-room-id" name="room-id"/>
-                        <div class="dropdown-list" id="dropdown-list-name">
-                            <!-- Options will be populated here by JavaScript -->
-                        </div>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
             </div>
 
           </div>

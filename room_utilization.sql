@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 13, 2024 at 12:27 AM
+-- Generation Time: Dec 17, 2024 at 02:23 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `testdelete`
+-- Database: `room_util_db`
 --
 
 -- --------------------------------------------------------
@@ -28,73 +28,31 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `account` (
-  `id` int(11) NOT NULL,
+  `account_id` varchar(10) NOT NULL,
   `first_name` varchar(50) NOT NULL,
   `last_name` varchar(50) NOT NULL,
-  `username` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `role` enum('student','teacher','admin') NOT NULL,
-  `is_staff` tinyint(1) NOT NULL DEFAULT 0,
-  `is_admin` tinyint(1) NOT NULL DEFAULT 0
+  `username` varchar(10) NOT NULL,
+  `password` varchar(64) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `account`
 --
 
-INSERT INTO `account` (`id`, `first_name`, `last_name`, `username`, `password`, `role`, `is_staff`, `is_admin`) VALUES
-(1, 'Rhamirl', 'Jaafar', 'rham', '$2y$10$42jGvgsU9zoKdFwm18wqQe0nzO78jZvk1m1vMvx8BJYsLTHPuBaCa', 'admin', 1, 1),
-(2, 'aziz', 'amin', 'amin123', '$2y$10$snPP2mhvYzbHhLYvQNqtcODt/ISqzoVkxK/THlbFFn26SFZ9yOT7u', 'student', 1, 1),
-(5, 'first', 'teacher', 'teacher1', '$2y$10$mvrv6cbnYmTAwXO.lK6UxevwEWqjCdk5bSMi1EJVt.8P2fD0BGMXO', 'teacher', 1, 0),
-(6, 'second', 'teacher', 'teacher2', '$2y$10$cInqcsJW1Wh6mqDji3OO1eXC6nEtUE0AF6D3Ha1XPn0qdYbRD..S.', 'teacher', 1, 0),
-(7, 'admin', 'admin', 'admin', '$2y$10$DtLHko2brenK97L3eR1zK.L8B0QhfQNzSsdA0Nc7Np/CAJI5nzO6S', 'admin', 1, 1),
-(10, 'student1', 'student1', 'student1', '$2y$10$EOLv7FyDijpLSgutm0Y0nuuSndlxWgYs0jyE7hSYF3Vht3/dTg.ke', 'student', 0, 0);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `category`
---
-
-CREATE TABLE `category` (
-  `id` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `category`
---
-
-INSERT INTO `category` (`id`, `name`) VALUES
-(1, 'Toys'),
-(2, 'Gadget');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `class_day`
---
-
-CREATE TABLE `class_day` (
-  `id` int(11) NOT NULL,
-  `day_id` int(11) NOT NULL,
-  `class_time_id` int(11) NOT NULL,
-  `time_modified` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `class_day`
---
-
-INSERT INTO `class_day` (`id`, `day_id`, `class_time_id`, `time_modified`) VALUES
-(28, 2, 16, '2024-12-12 14:24:30'),
-(32, 1, 20, '2024-12-12 21:56:04'),
-(33, 1, 21, '2024-12-12 22:16:12'),
-(34, 1, 22, '2024-12-12 22:18:35'),
-(35, 1, 23, '2024-12-12 22:18:48'),
-(36, 1, 24, '2024-12-12 22:25:44'),
-(37, 1, 25, '2024-12-12 22:26:51'),
-(40, 5, 28, '2024-12-12 22:43:58');
+INSERT INTO `account` (`account_id`, `first_name`, `last_name`, `username`, `password`) VALUES
+('201001234', 'admin', 'admin', 'aa20100123', '$2y$10$v8G82MPHA9tVQ8MeA/Y3ueGwkU/fDuvrjaKbxGnUawZQWzCJYnJhG'),
+('201201234', 'First', '1Teacher', 'ab20120123', '$2y$10$Mu6Slb4LvL3PFg2GFxQdIuN4G2Z7TTHzntou8UO9xy2JLKDJlC.Hi'),
+('201201235', 'second', '2Teacher', 'ac20120123', '$2y$10$IPbH/v9f4BdQvUoIGFTQWO5VOgAlV0CiIbx6ivpnaoUi5ZIRjHrZe'),
+('201201236', 'Three', '3Teacher', 'ac20120123', '$2y$10$AdlYsQkf7IEpl7m/PqdpMerMckMuOjKrhwejSGOQC/71l/MyGvsZ2'),
+('201201237', 'Four', '4Teacher', 'ac20120123', '$2y$10$8AKq8IrzS43QSam8tgU3HOYdohuZKvVrQRVW0IGARhC9t3J/2g1Ly'),
+('201201238', 'Five', '5Teacher', 'ac20120123', '$2y$10$UckU.gomnOEr5rGvRkK0YeyL6dqvpnVUqpLI9vg7oAT0w8kV.0u1K'),
+('201201239', 'Six', '6Teacher', 'ac20120123', '$2y$10$N6ErDbEght/qAvn6YAjppukBTL3LyiK7gUtp8/.ztWeWzTpH.JoPm'),
+('201201240', 'Seven', '7Teacher', 'ad20120124', '$2y$10$OYbo0dwLT.99s5TqMiJXduhWZADjedEr8d52yGv/yT.Roo0Q7o0ZG'),
+('201201241', 'Eight', '8Teacher', 'ad20100124', '$2y$10$X0UXr2OgDXO5OGoQbnGg6OoOw8VgfJPTTRzMp5Sqn65Qq9JAWie66'),
+('201201242', 'Nine', '9Teacher', 'ad20100124', '$2y$10$2KGHfNje9U2kiOIjyLj72u96eeSJHTKHkHPXxFdCCqUBztca5xo.W'),
+('201201243', 'Ten', '10Teacher', 'ad20100124', '$2y$10$JxBMFSAAsGsVXqd7yl7A8uBab2w7MR2apSMOMaNa6jxwHNN/gHuaG'),
+('202101234', 'one', '1student', 'qb20210123', '$2y$10$NvltRXyxoFsLinhRx.R64uCeoG3sJzLS1TIYn6Ut073oZ6LTjrtCq'),
+('202101235', 'two', '2student', 'qb20210123', '$2y$10$p7.r0sUAxaWg1lG1pGQjUuNPBUF6DYvYcbnsJMK4M..rv4FbdsZUm');
 
 -- --------------------------------------------------------
 
@@ -103,53 +61,102 @@ INSERT INTO `class_day` (`id`, `day_id`, `class_time_id`, `time_modified`) VALUE
 --
 
 CREATE TABLE `class_details` (
-  `id` varchar(11) NOT NULL,
-  `subject_id` int(11) NOT NULL,
-  `section_id` int(11) NOT NULL,
+  `class_id` varchar(10) NOT NULL,
+  `subject_id` varchar(10) NOT NULL,
+  `subject_type` varchar(10) NOT NULL,
+  `course_abbr` varchar(10) NOT NULL,
+  `year_level` int(11) NOT NULL,
+  `section` varchar(1) NOT NULL,
   `teacher_assigned` int(11) NOT NULL,
-  `room_id` int(11) NOT NULL,
+  `time_created` timestamp NOT NULL DEFAULT current_timestamp(),
   `semester` enum('1','2') NOT NULL,
-  `school_year` varchar(10) NOT NULL,
-  `time_modified` timestamp NOT NULL DEFAULT current_timestamp()
+  `school_year` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `class_details`
 --
 
-INSERT INTO `class_details` (`id`, `subject_id`, `section_id`, `teacher_assigned`, `room_id`, `semester`, `school_year`, `time_modified`) VALUES
-('BSCS123001', 1, 1, 1, 1, '2', '2024-2025', '2024-12-12 11:33:58'),
-('BSCS123001', 2, 1, 1, 1, '2', '2024-2025', '2024-12-12 11:35:58'),
-('BSCS123003', 1, 2, 1, 1, '2', '2024-2025', '2024-12-12 11:35:24');
+INSERT INTO `class_details` (`class_id`, `subject_id`, `subject_type`, `course_abbr`, `year_level`, `section`, `teacher_assigned`, `time_created`, `semester`, `school_year`) VALUES
+('BSCS123451', 'CC100', 'LAB', 'CS', 1, 'A', 2, '2024-12-15 22:33:20', '1', '2024-2025'),
+('BSCS123451', 'CC100', 'LECTURE', 'CS', 1, 'A', 1, '2024-12-15 22:32:12', '1', '2024-2025'),
+('BSCS123461', 'CC101', 'LAB', 'CS', 1, 'B', 4, '2024-12-15 22:41:21', '1', '2024-2025'),
+('BSCS123461', 'CC101', 'LECTURE', 'CS', 1, 'B', 3, '2024-12-15 22:41:21', '1', '2024-2025'),
+('BSCS124571', 'CC103', 'LAB', 'CS', 2, 'A', 8, '2024-12-15 22:41:21', '1', '2024-2025'),
+('BSCS124571', 'CC103', 'LECTURE', 'CS', 2, 'A', 7, '2024-12-15 22:41:21', '1', '2024-2025'),
+('BSCS124581', 'CC104', 'LAB', 'CS', 2, 'A', 9, '2024-12-15 22:41:21', '1', '2024-2025'),
+('BSCS124581', 'CC104', 'LECTURE', 'CS', 2, 'A', 9, '2024-12-15 22:41:21', '1', '2024-2025'),
+('BSCS124591', 'MAD121', 'LECTURE', 'CS', 2, 'A', 10, '2024-12-15 22:41:21', '1', '2024-2025'),
+('BSCS124601', 'SIPP125', 'LECTURE', 'CS', 2, 'A', 5, '2024-12-15 22:41:21', '1', '2024-2025');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `class_time`
+-- Table structure for table `class_logs`
 --
 
-CREATE TABLE `class_time` (
-  `id` int(11) NOT NULL,
-  `class_id` varchar(11) NOT NULL,
-  `subject_id` int(11) NOT NULL,
-  `start_time` time NOT NULL,
-  `end_time` time NOT NULL,
+CREATE TABLE `class_logs` (
+  `log_id` int(11) NOT NULL,
+  `class_id` varchar(10) NOT NULL,
+  `subject_id` varchar(10) NOT NULL,
+  `subject_type` varchar(10) NOT NULL,
+  `day` enum('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday') NOT NULL,
   `time_modified` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `class_time`
+-- Dumping data for table `class_logs`
 --
 
-INSERT INTO `class_time` (`id`, `class_id`, `subject_id`, `start_time`, `end_time`, `time_modified`) VALUES
-(16, 'BSCS123001', 1, '11:11:00', '14:22:00', '2024-12-12 14:24:30'),
-(20, 'BSCS123001', 1, '07:30:00', '08:30:00', '2024-12-12 21:56:04'),
-(21, 'BSCS123003', 1, '07:07:00', '08:08:00', '2024-12-12 22:16:12'),
-(22, 'BSCS123001', 2, '11:11:00', '14:22:00', '2024-12-12 22:18:35'),
-(23, 'BSCS123003', 1, '11:11:00', '14:22:00', '2024-12-12 22:18:48'),
-(24, 'BSCS123003', 1, '11:11:00', '14:22:00', '2024-12-12 22:25:44'),
-(25, 'BSCS123001', 1, '11:11:00', '14:22:00', '2024-12-12 22:26:51'),
-(28, 'BSCS123003', 1, '11:11:00', '14:22:00', '2024-12-12 22:43:58');
+INSERT INTO `class_logs` (`log_id`, `class_id`, `subject_id`, `subject_type`, `day`, `time_modified`) VALUES
+(1, 'BSCS123451', 'CC100', 'LECTURE', 'Monday', '2024-12-08 23:06:38'),
+(2, 'BSCS123451', 'CC100', 'LAB', 'Wednesday', '2024-12-11 02:06:38'),
+(3, 'BSCS123461', 'CC101', 'LECTURE', 'Monday', '2024-12-09 01:06:38'),
+(4, 'BSCS123461', 'CC101', 'LAB', 'Wednesday', '2024-12-11 05:06:38'),
+(5, 'BSCS124571', 'CC103', 'LECTURE', 'Tuesday', '2024-12-10 06:36:38'),
+(6, 'BSCS124571', 'CC103', 'LAB', 'Friday', '2024-12-12 23:06:38'),
+(7, 'BSCS124581', 'CC104', 'LECTURE', 'Wednesday', '2024-12-10 23:06:38'),
+(8, 'BSCS124581', 'CC104', 'LAB', 'Wednesday', '2024-12-11 09:06:38'),
+(9, 'BSCS124591', 'MAD121', 'LECTURE', 'Monday', '2024-12-09 07:06:38'),
+(10, 'BSCS124601', 'SIPP125', 'LECTURE', 'Thursday', '2024-12-12 03:36:38');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `class_schedule`
+--
+
+CREATE TABLE `class_schedule` (
+  `class_id` varchar(10) NOT NULL,
+  `subject_id` varchar(10) NOT NULL,
+  `subject_type` varchar(10) NOT NULL,
+  `day` enum('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday') NOT NULL,
+  `start_time` time NOT NULL,
+  `end_time` time NOT NULL,
+  `status` enum('OCCUPIED','AVAILABLE') NOT NULL,
+  `remarks` varchar(255) NOT NULL,
+  `room_code` varchar(10) NOT NULL,
+  `room_no` int(11) NOT NULL,
+  `time_created` timestamp NOT NULL DEFAULT current_timestamp(),
+  `semester` enum('1','2') NOT NULL,
+  `school_year` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `class_schedule`
+--
+
+INSERT INTO `class_schedule` (`class_id`, `subject_id`, `subject_type`, `day`, `start_time`, `end_time`, `status`, `remarks`, `room_code`, `room_no`, `time_created`, `semester`, `school_year`) VALUES
+('BSCS123451', 'CC100', 'LAB', 'Wednesday', '10:00:00', '11:00:00', 'OCCUPIED', '', 'LR', 1, '2024-12-15 23:02:08', '1', '2024-2025'),
+('BSCS123451', 'CC100', 'LECTURE', 'Monday', '07:00:00', '09:00:00', 'OCCUPIED', '', 'LR', 1, '2024-12-15 23:02:08', '1', '2024-2025'),
+('BSCS123461', 'CC101', 'LAB', 'Wednesday', '13:00:00', '14:00:00', 'OCCUPIED', '', 'LAB', 1, '2024-12-15 23:02:08', '1', '2024-2025'),
+('BSCS123461', 'CC101', 'LECTURE', 'Monday', '09:00:00', '12:00:00', 'OCCUPIED', '', 'LR', 1, '2024-12-15 23:02:08', '1', '2024-2025'),
+('BSCS124571', 'CC103', 'LAB', 'Friday', '07:00:00', '09:00:00', 'OCCUPIED', '', 'LAB', 1, '2024-12-15 23:02:08', '1', '2024-2025'),
+('BSCS124571', 'CC103', 'LECTURE', 'Tuesday', '00:00:00', '16:00:00', 'OCCUPIED', '', 'LR', 1, '2024-12-15 23:02:08', '1', '2024-2025'),
+('BSCS124581', 'CC104', 'LAB', 'Wednesday', '17:00:00', '19:00:00', 'OCCUPIED', '', 'LAB', 1, '2024-12-15 23:02:08', '1', '2024-2025'),
+('BSCS124581', 'CC104', 'LECTURE', 'Wednesday', '07:00:00', '10:00:00', 'OCCUPIED', '', 'LR', 3, '2024-12-15 23:02:08', '1', '2024-2025'),
+('BSCS124591', 'MAD121', 'LECTURE', 'Monday', '15:00:00', '17:00:00', 'OCCUPIED', '', 'LAB', 1, '2024-12-15 23:02:08', '1', '2024-2025'),
+('BSCS124601', 'SIPP125', 'LECTURE', 'Thursday', '11:30:00', '13:00:00', 'OCCUPIED', '', 'LAB', 1, '2024-12-15 23:02:08', '1', '2024-2025');
 
 -- --------------------------------------------------------
 
@@ -158,19 +165,19 @@ INSERT INTO `class_time` (`id`, `class_id`, `subject_id`, `start_time`, `end_tim
 --
 
 CREATE TABLE `course_details` (
-  `id` int(11) NOT NULL,
-  `_name` varchar(20) NOT NULL,
-  `_description` varchar(50) NOT NULL
+  `course_abbr` varchar(10) NOT NULL,
+  `course_name` varchar(20) NOT NULL,
+  `course_description` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `course_details`
 --
 
-INSERT INTO `course_details` (`id`, `_name`, `_description`) VALUES
-(1, 'BSCS', 'Bachelor of Science in Computing Studies'),
-(2, 'BSIT', 'Bachelor of Science in Information Technology'),
-(3, 'ACT', 'Associate in Computer Technology');
+INSERT INTO `course_details` (`course_abbr`, `course_name`, `course_description`) VALUES
+('ACT', 'ACT', 'Associate in Computer Technology'),
+('CS', 'BSCS', 'Bachelor of Science in Computer Science'),
+('IT', 'BSIT', 'Bachelor of Science in Information Technology');
 
 -- --------------------------------------------------------
 
@@ -179,41 +186,25 @@ INSERT INTO `course_details` (`id`, `_name`, `_description`) VALUES
 --
 
 CREATE TABLE `faculty_list` (
-  `id` int(11) NOT NULL,
-  `account_id` int(11) NOT NULL
+  `faculty_id` int(11) NOT NULL,
+  `user_id` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `faculty_list`
 --
 
-INSERT INTO `faculty_list` (`id`, `account_id`) VALUES
-(1, 5),
-(2, 6);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `product`
---
-
-CREATE TABLE `product` (
-  `id` int(11) NOT NULL,
-  `code` varchar(255) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `category_id` int(11) NOT NULL,
-  `price` decimal(10,2) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_ai` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `product`
---
-
-INSERT INTO `product` (`id`, `code`, `name`, `category_id`, `price`, `created_at`, `updated_ai`) VALUES
-(1, 'A001', 'Tree', 1, 1.00, '2024-11-14 01:25:30', '2024-11-14 01:25:30'),
-(2, 'A002', 'Tree', 1, 1.00, '2024-11-14 03:44:45', '2024-11-14 03:44:45');
+INSERT INTO `faculty_list` (`faculty_id`, `user_id`) VALUES
+(1, '201201234'),
+(2, '201201235'),
+(3, '201201236'),
+(4, '201201237'),
+(5, '201201238'),
+(6, '201201239'),
+(7, '201201240'),
+(8, '201201241'),
+(9, '201201242'),
+(10, '201201243');
 
 -- --------------------------------------------------------
 
@@ -222,24 +213,21 @@ INSERT INTO `product` (`id`, `code`, `name`, `category_id`, `price`, `created_at
 --
 
 CREATE TABLE `room_list` (
-  `id` int(11) NOT NULL,
-  `room_name` varchar(50) NOT NULL,
-  `type_id` int(11) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `room_code` varchar(10) NOT NULL,
+  `room_no` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `room_list`
 --
 
-INSERT INTO `room_list` (`id`, `room_name`, `type_id`, `created_at`, `updated_at`) VALUES
-(1, 'LR 1', 1, '2024-11-17 14:09:21', '2024-11-17 14:09:21'),
-(2, 'LR 2', 1, '2024-11-17 14:09:56', '2024-11-17 14:09:56'),
-(3, 'LAB 1', 2, '2024-11-27 14:29:55', '2024-11-27 14:29:55'),
-(4, 'LR 3', 1, '2024-11-27 22:27:59', '2024-11-27 22:27:59'),
-(5, 'LAB 2', 2, '2024-11-29 10:29:38', '2024-11-29 10:29:38'),
-(6, 'LR 5', 1, '2024-12-01 16:59:33', '2024-12-01 16:59:33');
+INSERT INTO `room_list` (`room_code`, `room_no`, `created_at`) VALUES
+('LAB', 1, '2024-12-15 22:46:38'),
+('LAB', 2, '2024-12-15 22:46:38'),
+('LR', 1, '2024-12-15 22:46:38'),
+('LR', 2, '2024-12-15 22:46:38'),
+('LR', 3, '2024-12-15 22:46:38');
 
 -- --------------------------------------------------------
 
@@ -248,46 +236,17 @@ INSERT INTO `room_list` (`id`, `room_name`, `type_id`, `created_at`, `updated_at
 --
 
 CREATE TABLE `room_type` (
-  `id` int(11) NOT NULL,
-  `room_description` varchar(255) NOT NULL,
-  `room_code` varchar(255) NOT NULL
+  `room_type_id` varchar(10) NOT NULL,
+  `room_description` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `room_type`
 --
 
-INSERT INTO `room_type` (`id`, `room_description`, `room_code`) VALUES
-(1, 'Lecture Room', 'LR'),
-(2, 'Laboratory Room', 'LAB');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `scheduled_statuses`
---
-
-CREATE TABLE `scheduled_statuses` (
-  `class_day_id` int(11) NOT NULL,
-  `status_desc_id` int(11) NOT NULL DEFAULT 2,
-  `semester` enum('1','2') NOT NULL,
-  `school_year` varchar(10) NOT NULL,
-  `time_modified` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `scheduled_statuses`
---
-
-INSERT INTO `scheduled_statuses` (`class_day_id`, `status_desc_id`, `semester`, `school_year`, `time_modified`) VALUES
-(28, 2, '2', '2024-2025', '2024-12-12 14:24:30'),
-(32, 2, '2', '2024-2025', '2024-12-12 21:56:04'),
-(33, 2, '2', '2024-2025', '2024-12-12 22:16:12'),
-(34, 2, '2', '2024-2025', '2024-12-12 22:18:35'),
-(35, 2, '2', '2024-2025', '2024-12-12 22:18:48'),
-(36, 2, '2', '2024-2025', '2024-12-12 22:25:44'),
-(37, 2, '2', '2024-2025', '2024-12-12 22:26:51'),
-(40, 2, '2', '2024-2025', '2024-12-12 22:43:58');
+INSERT INTO `room_type` (`room_type_id`, `room_description`) VALUES
+('LAB', 'Laboratory'),
+('LR', 'Learning Room');
 
 -- --------------------------------------------------------
 
@@ -296,32 +255,26 @@ INSERT INTO `scheduled_statuses` (`class_day_id`, `status_desc_id`, `semester`, 
 --
 
 CREATE TABLE `section_details` (
-  `id` int(11) NOT NULL,
-  `section_name` varchar(255) NOT NULL,
-  `course_id` int(11) NOT NULL,
-  `year_level` enum('1','2','3','4','5') NOT NULL
+  `course_abbr` varchar(10) NOT NULL,
+  `year_level` int(11) NOT NULL,
+  `section` varchar(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `section_details`
 --
 
-INSERT INTO `section_details` (`id`, `section_name`, `course_id`, `year_level`) VALUES
-(1, 'CS1A', 1, '1'),
-(2, 'CS1B', 1, '1'),
-(3, 'CS1C', 1, '1'),
-(4, 'IT1A', 2, '1'),
-(5, 'IT1B', 2, '1'),
-(6, 'IT1C', 2, '1'),
-(7, 'ACT1A', 3, '1'),
-(8, 'CS2A', 1, '2'),
-(9, 'CS2B', 1, '2'),
-(10, 'CS2C', 1, '2'),
-(11, 'IT2A', 2, '2'),
-(12, 'IT2B', 2, '2'),
-(13, 'IT2C', 2, '2'),
-(14, 'ACT2A', 3, '2'),
-(15, 'ACT2B', 3, '2');
+INSERT INTO `section_details` (`course_abbr`, `year_level`, `section`) VALUES
+('ACT', 1, 'A'),
+('CS', 1, 'A'),
+('CS', 1, 'B'),
+('CS', 1, 'C'),
+('CS', 2, 'A'),
+('CS', 2, 'B'),
+('CS', 2, 'C'),
+('IT', 1, 'A'),
+('IT', 1, 'B'),
+('IT', 1, 'C');
 
 -- --------------------------------------------------------
 
@@ -344,54 +297,12 @@ INSERT INTO `semester` (`semester`, `school_year`, `description`) VALUES
 ('1', '2025-2026', '1st Sem | 2025-2026'),
 ('1', '2026-2027', '1st Sem | 2026-2027'),
 ('1', '2027-2028', '1st Sem | 2027-2028'),
+('1', '2028-2029', '1st Sem | 2028-2029'),
 ('2', '2024-2025', '2nd Sem | 2024-2025'),
 ('2', '2025-2026', '2nd Sem | 2025-2026'),
 ('2', '2026-2027', '2nd Sem | 2026-2027'),
-('2', '2027-2028', '2nd Sem | 2027-2028');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `status_description`
---
-
-CREATE TABLE `status_description` (
-  `id` int(11) NOT NULL,
-  `description` enum('AVAILABLE','OCCUPIED') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `status_description`
---
-
-INSERT INTO `status_description` (`id`, `description`) VALUES
-(1, 'AVAILABLE'),
-(2, 'OCCUPIED');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `stocks`
---
-
-CREATE TABLE `stocks` (
-  `id` int(11) NOT NULL,
-  `product_id` int(11) NOT NULL,
-  `quantity` int(11) NOT NULL,
-  `status` varchar(100) NOT NULL,
-  `reason` varchar(255) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `stocks`
---
-
-INSERT INTO `stocks` (`id`, `product_id`, `quantity`, `status`, `reason`, `created_at`, `updated_at`) VALUES
-(1, 1, 24, 'in', '', '2024-11-14 05:44:33', '2024-11-14 05:44:33'),
-(2, 1, 24, 'out', 'Sold 24', '2024-11-14 05:57:57', '2024-11-14 05:57:57'),
-(13, 1, 24, 'in', '', '2024-11-14 07:04:35', '2024-11-14 07:04:35');
+('2', '2027-2028', '2nd Sem | 2027-2028'),
+('2', '2028-2029', '2nd Sem | 2028-2029');
 
 -- --------------------------------------------------------
 
@@ -400,68 +311,77 @@ INSERT INTO `stocks` (`id`, `product_id`, `quantity`, `status`, `reason`, `creat
 --
 
 CREATE TABLE `subject_details` (
-  `id` int(11) NOT NULL,
-  `subject_code` varchar(50) NOT NULL,
+  `subject_code` varchar(10) NOT NULL,
   `description` varchar(100) NOT NULL,
-  `type_id` int(11) NOT NULL,
-  `time_modified` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `total_units` int(11) NOT NULL,
+  `lec_units` int(11) NOT NULL,
+  `lab_units` int(11) NOT NULL,
+  `subject_prospectus_id` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `subject_details`
 --
 
-INSERT INTO `subject_details` (`id`, `subject_code`, `description`, `type_id`, `time_modified`) VALUES
-(1, 'CC103', 'Data Structures and Algorithm', 1, '2024-11-28 01:39:00'),
-(2, 'CC103', 'Data Structures and Algorithm', 2, '2024-11-28 01:39:00'),
-(3, 'CC100', 'Introduction to Computing Studies', 1, '2024-11-28 01:39:00'),
-(4, 'CC100', 'Introduction to Computing Studies', 2, '2024-11-28 01:39:00'),
-(5, 'SIPP125', 'Social Issues and Professional Practice', 1, '2024-11-30 12:10:00'),
-(6, 'NC127', 'Network Communication', 1, '2024-12-11 02:53:28'),
-(7, 'NC127', 'Network Communication', 2, '2024-12-11 02:53:28');
+INSERT INTO `subject_details` (`subject_code`, `description`, `total_units`, `lec_units`, `lab_units`, `subject_prospectus_id`) VALUES
+('CC100', 'Introduction to Computing', 3, 2, 1, '2023-2024'),
+('CC101', 'Computer Programming 1 (Fundamentals of Programming)', 4, 3, 1, '2023-2024'),
+('CC103', 'Data Structures and Algorithms', 3, 2, 1, '2023-2024'),
+('CC104', 'Information Management', 3, 2, 1, '2023-2024'),
+('CC105', 'Applications Development and Emerging Technologies', 3, 2, 1, '2023-2024'),
+('MAD121', 'Mobile Application Development', 3, 2, 1, '2023-2024'),
+('SIPP125', 'Social Issues and Professional Practice', 3, 3, 0, '2023-2024'),
+('WD123', 'Web Development 2', 3, 2, 1, '2023-2024');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `subject_type_description`
+-- Table structure for table `subject_prospectus`
 --
 
-CREATE TABLE `subject_type_description` (
-  `id` int(11) NOT NULL,
-  `type` enum('LEC','LAB','','') NOT NULL
+CREATE TABLE `subject_prospectus` (
+  `effective_school_year` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `subject_type_description`
+-- Dumping data for table `subject_prospectus`
 --
 
-INSERT INTO `subject_type_description` (`id`, `type`) VALUES
-(1, 'LEC'),
-(2, 'LAB');
+INSERT INTO `subject_prospectus` (`effective_school_year`) VALUES
+('2023-2024'),
+('2025-2026');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `_day`
+-- Table structure for table `user_list`
 --
 
-CREATE TABLE `_day` (
-  `id` int(11) NOT NULL,
-  `day` varchar(10) NOT NULL
+CREATE TABLE `user_list` (
+  `user_id` varchar(10) NOT NULL,
+  `username` varchar(20) NOT NULL,
+  `is_admin` tinyint(1) NOT NULL,
+  `is_staff` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `_day`
+-- Dumping data for table `user_list`
 --
 
-INSERT INTO `_day` (`id`, `day`) VALUES
-(0, 'Sunday'),
-(1, 'Monday'),
-(2, 'Tuesday'),
-(3, 'Wednesday'),
-(4, 'Thursday'),
-(5, 'Friday'),
-(6, 'Saturday');
+INSERT INTO `user_list` (`user_id`, `username`, `is_admin`, `is_staff`) VALUES
+('201001234', 'aa201001234', 1, 1),
+('201201234', 'ab201201234', 0, 1),
+('201201235', 'ac201201235', 0, 1),
+('201201236', 'ac201201236', 0, 1),
+('201201237', 'ac201201237', 0, 1),
+('201201238', 'ac201201238', 0, 1),
+('201201239', 'ac201201239', 0, 1),
+('201201240', 'ad201201240', 0, 1),
+('201201241', 'ad201201241', 0, 1),
+('201201242', 'ad201201242', 0, 1),
+('201201243', 'ad201201243', 0, 1),
+('202101234', 'qb202101234', 0, 0),
+('202101235', 'qb202101235', 0, 0);
 
 --
 -- Indexes for dumped tables
@@ -471,93 +391,63 @@ INSERT INTO `_day` (`id`, `day`) VALUES
 -- Indexes for table `account`
 --
 ALTER TABLE `account`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `username` (`username`),
-  ADD UNIQUE KEY `first_name` (`first_name`,`last_name`) USING BTREE;
-
---
--- Indexes for table `category`
---
-ALTER TABLE `category`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `class_day`
---
-ALTER TABLE `class_day`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `classtimeid_fk` (`class_time_id`),
-  ADD KEY `dayid_fk` (`day_id`);
+  ADD PRIMARY KEY (`account_id`);
 
 --
 -- Indexes for table `class_details`
 --
 ALTER TABLE `class_details`
-  ADD PRIMARY KEY (`id`,`subject_id`) USING BTREE,
-  ADD KEY `faculty_id_fk` (`teacher_assigned`),
-  ADD KEY `room_id_fk` (`room_id`),
-  ADD KEY `section_id_fk` (`section_id`),
-  ADD KEY `subject_id_fk` (`subject_id`),
-  ADD KEY `class_sem_id_fk` (`semester`,`school_year`);
+  ADD PRIMARY KEY (`class_id`,`subject_id`,`subject_type`),
+  ADD KEY `classdet_section_id_fk` (`course_abbr`,`year_level`,`section`),
+  ADD KEY `classdet_sub_id_fk` (`subject_id`),
+  ADD KEY `classdet_fac_id_fk` (`teacher_assigned`),
+  ADD KEY `classdet_sem_pk_fk` (`semester`,`school_year`);
 
 --
--- Indexes for table `class_time`
+-- Indexes for table `class_logs`
 --
-ALTER TABLE `class_time`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `classid_fk` (`class_id`,`subject_id`);
+ALTER TABLE `class_logs`
+  ADD PRIMARY KEY (`log_id`),
+  ADD KEY `classlog_sched_fk_pk` (`class_id`,`subject_id`,`subject_type`,`day`);
+
+--
+-- Indexes for table `class_schedule`
+--
+ALTER TABLE `class_schedule`
+  ADD PRIMARY KEY (`class_id`,`subject_id`,`subject_type`,`day`) USING BTREE,
+  ADD KEY `classsched_room_id_fk` (`room_code`,`room_no`),
+  ADD KEY `classsched_semester_id_fk` (`semester`,`school_year`);
 
 --
 -- Indexes for table `course_details`
 --
 ALTER TABLE `course_details`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`course_abbr`);
 
 --
 -- Indexes for table `faculty_list`
 --
 ALTER TABLE `faculty_list`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `accountid_fk` (`account_id`);
-
---
--- Indexes for table `product`
---
-ALTER TABLE `product`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `code` (`code`),
-  ADD KEY `cat_idfk` (`category_id`);
+  ADD PRIMARY KEY (`faculty_id`),
+  ADD KEY `fac_user_id_fk` (`user_id`);
 
 --
 -- Indexes for table `room_list`
 --
 ALTER TABLE `room_list`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `room_name` (`room_name`),
-  ADD KEY `typeid_fk` (`type_id`);
+  ADD PRIMARY KEY (`room_code`,`room_no`);
 
 --
 -- Indexes for table `room_type`
 --
 ALTER TABLE `room_type`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `room_type` (`room_code`);
-
---
--- Indexes for table `scheduled_statuses`
---
-ALTER TABLE `scheduled_statuses`
-  ADD PRIMARY KEY (`class_day_id`),
-  ADD KEY `statusdescid_fk` (`status_desc_id`),
-  ADD KEY `semester_id` (`semester`,`school_year`);
+  ADD PRIMARY KEY (`room_type_id`);
 
 --
 -- Indexes for table `section_details`
 --
 ALTER TABLE `section_details`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `class_name` (`section_name`),
-  ADD KEY `course_id_fk` (`course_id`);
+  ADD PRIMARY KEY (`course_abbr`,`year_level`,`section`);
 
 --
 -- Indexes for table `semester`
@@ -566,196 +456,97 @@ ALTER TABLE `semester`
   ADD PRIMARY KEY (`semester`,`school_year`);
 
 --
--- Indexes for table `status_description`
---
-ALTER TABLE `status_description`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `stocks`
---
-ALTER TABLE `stocks`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `productid_fk` (`product_id`);
-
---
 -- Indexes for table `subject_details`
 --
 ALTER TABLE `subject_details`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `subject_details` (`subject_code`),
-  ADD KEY `stypeid_fk` (`type_id`);
+  ADD PRIMARY KEY (`subject_code`),
+  ADD KEY `subdet_prosp_id_fk` (`subject_prospectus_id`);
 
 --
--- Indexes for table `subject_type_description`
+-- Indexes for table `subject_prospectus`
 --
-ALTER TABLE `subject_type_description`
-  ADD PRIMARY KEY (`id`);
+ALTER TABLE `subject_prospectus`
+  ADD PRIMARY KEY (`effective_school_year`);
 
 --
--- Indexes for table `_day`
+-- Indexes for table `user_list`
 --
-ALTER TABLE `_day`
-  ADD PRIMARY KEY (`id`);
+ALTER TABLE `user_list`
+  ADD PRIMARY KEY (`user_id`),
+  ADD UNIQUE KEY `username` (`username`);
 
 --
 -- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT for table `account`
+-- AUTO_INCREMENT for table `class_logs`
 --
-ALTER TABLE `account`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
-
---
--- AUTO_INCREMENT for table `category`
---
-ALTER TABLE `category`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT for table `class_day`
---
-ALTER TABLE `class_day`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
-
---
--- AUTO_INCREMENT for table `class_time`
---
-ALTER TABLE `class_time`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
-
---
--- AUTO_INCREMENT for table `course_details`
---
-ALTER TABLE `course_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+ALTER TABLE `class_logs`
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `faculty_list`
 --
 ALTER TABLE `faculty_list`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT for table `product`
---
-ALTER TABLE `product`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT for table `room_list`
---
-ALTER TABLE `room_list`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
--- AUTO_INCREMENT for table `room_type`
---
-ALTER TABLE `room_type`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT for table `section_details`
---
-ALTER TABLE `section_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
-
---
--- AUTO_INCREMENT for table `status_description`
---
-ALTER TABLE `status_description`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT for table `stocks`
---
-ALTER TABLE `stocks`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
-
---
--- AUTO_INCREMENT for table `subject_details`
---
-ALTER TABLE `subject_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
-
---
--- AUTO_INCREMENT for table `subject_type_description`
---
-ALTER TABLE `subject_type_description`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `faculty_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- Constraints for dumped tables
 --
 
 --
--- Constraints for table `class_day`
+-- Constraints for table `account`
 --
-ALTER TABLE `class_day`
-  ADD CONSTRAINT `classtimeid_fk` FOREIGN KEY (`class_time_id`) REFERENCES `class_time` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `dayid_fk` FOREIGN KEY (`day_id`) REFERENCES `_day` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `account`
+  ADD CONSTRAINT `accountid_fk` FOREIGN KEY (`account_id`) REFERENCES `user_list` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `class_details`
 --
 ALTER TABLE `class_details`
-  ADD CONSTRAINT `class_sem_id_fk` FOREIGN KEY (`semester`,`school_year`) REFERENCES `semester` (`semester`, `school_year`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `faculty_id_fk` FOREIGN KEY (`teacher_assigned`) REFERENCES `faculty_list` (`id`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `room_id_fk` FOREIGN KEY (`room_id`) REFERENCES `room_list` (`id`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `section_id_fk` FOREIGN KEY (`section_id`) REFERENCES `section_details` (`id`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `subject_id_fk` FOREIGN KEY (`subject_id`) REFERENCES `subject_details` (`id`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `classdet_fac_id_fk` FOREIGN KEY (`teacher_assigned`) REFERENCES `faculty_list` (`faculty_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `classdet_section_id_fk` FOREIGN KEY (`course_abbr`,`year_level`,`section`) REFERENCES `section_details` (`course_abbr`, `year_level`, `section`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `classdet_sem_pk_fk` FOREIGN KEY (`semester`,`school_year`) REFERENCES `semester` (`semester`, `school_year`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `classdet_sub_id_fk` FOREIGN KEY (`subject_id`) REFERENCES `subject_details` (`subject_code`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `class_time`
+-- Constraints for table `class_logs`
 --
-ALTER TABLE `class_time`
-  ADD CONSTRAINT `classid_fk` FOREIGN KEY (`class_id`,`subject_id`) REFERENCES `class_details` (`id`, `subject_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `class_logs`
+  ADD CONSTRAINT `classlog_sched_fk_pk` FOREIGN KEY (`class_id`,`subject_id`,`subject_type`,`day`) REFERENCES `class_schedule` (`class_id`, `subject_id`, `subject_type`, `day`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `class_schedule`
+--
+ALTER TABLE `class_schedule`
+  ADD CONSTRAINT `classsched_pk_fk` FOREIGN KEY (`class_id`,`subject_id`,`subject_type`) REFERENCES `class_details` (`class_id`, `subject_id`, `subject_type`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `classsched_room_id_fk` FOREIGN KEY (`room_code`,`room_no`) REFERENCES `room_list` (`room_code`, `room_no`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `classsched_semester_id_fk` FOREIGN KEY (`semester`,`school_year`) REFERENCES `semester` (`semester`, `school_year`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `faculty_list`
 --
 ALTER TABLE `faculty_list`
-  ADD CONSTRAINT `accountid_fk` FOREIGN KEY (`account_id`) REFERENCES `account` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `product`
---
-ALTER TABLE `product`
-  ADD CONSTRAINT `cat_idfk` FOREIGN KEY (`category_id`) REFERENCES `category` (`id`);
+  ADD CONSTRAINT `fac_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `user_list` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `room_list`
 --
 ALTER TABLE `room_list`
-  ADD CONSTRAINT `typeid_fk` FOREIGN KEY (`type_id`) REFERENCES `room_type` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `scheduled_statuses`
---
-ALTER TABLE `scheduled_statuses`
-  ADD CONSTRAINT `class_dayid_fk` FOREIGN KEY (`class_day_id`) REFERENCES `class_day` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `semester_id` FOREIGN KEY (`semester`,`school_year`) REFERENCES `semester` (`semester`, `school_year`),
-  ADD CONSTRAINT `statusdescid_fk` FOREIGN KEY (`status_desc_id`) REFERENCES `status_description` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `rlist_rtype_id_fk` FOREIGN KEY (`room_code`) REFERENCES `room_type` (`room_type_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `section_details`
 --
 ALTER TABLE `section_details`
-  ADD CONSTRAINT `course_id_fk` FOREIGN KEY (`course_id`) REFERENCES `course_details` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `stocks`
---
-ALTER TABLE `stocks`
-  ADD CONSTRAINT `productid_fk` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`);
+  ADD CONSTRAINT `secdet_course_id_fk` FOREIGN KEY (`course_abbr`) REFERENCES `course_details` (`course_abbr`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `subject_details`
 --
 ALTER TABLE `subject_details`
-  ADD CONSTRAINT `stypeid_fk` FOREIGN KEY (`type_id`) REFERENCES `subject_type_description` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `subdet_prosp_id_fk` FOREIGN KEY (`subject_prospectus_id`) REFERENCES `subject_prospectus` (`effective_school_year`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

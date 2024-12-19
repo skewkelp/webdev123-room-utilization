@@ -14,7 +14,7 @@ require_once '../tools/functions.php';
     <link rel="stylesheet" href="../vendor/datatable-2.1.8/datatables.min.css">
     <link rel="stylesheet" href="../css/style.css">
     <?php if(isset($_SESSION['account'])): ?>
-    <meta name="user-id" content="<?php echo $_SESSION['account']['id']; ?>">
+    <meta name="user-id" content="<?php echo $_SESSION['account']['account_id']; ?>">
     <?php endif; ?>
 </head>
 

@@ -37,7 +37,7 @@ h1{
 
 
 body{
-    background: url(img/bckg_login.png) center / cover no-repeat;
+    background: url(../img/login/bckg_login.png) center / cover no-repeat;
     background-size: 80%;
     background-color: rgba(44, 59, 20);
     justify-content: center;

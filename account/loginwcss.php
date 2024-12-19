@@ -11,16 +11,21 @@ $accountObj = new Account();
 $loginErr = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = clean_input(($_POST['username']));
+    $username = clean_input($_POST['username']);
     $password = clean_input($_POST['password']);
 
-    if ($accountObj->login($username, $password)) {
+    error_log("Login attempt - Username: " . $username);
+
+    if($accountObj->login($username, $password)) {
         $data = $accountObj->fetch($username);
+        error_log("Login successful - User data: " . print_r($data, true));
         $_SESSION['account'] = $data;
         header('location: ../admin/room-list.php');
-    } else {
+    }else{
+        error_log("Login failed");
         $loginErr = 'Invalid username/password';
     }
+
 } else {
     if (isset($_SESSION['account'])) {
         if ($_SESSION['account']['is_staff']) {
@@ -39,12 +44,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             <div class="input-Container">
                 <label for="username" class="blabel">Username</label>
-                <input type="text" class="input" id="username" name="username" placeholder="Username">
+                <input type="text" class="input" id="username" autocomplete="username" name="username" placeholder="Username">
             </div>
+
             <div class="input-Container">
                 <label for="password" class="blabel">Password</label>
                 <input type="password" class="input" id="password" name="password" placeholder="Password">
             </div>
+
             <p class="text-danger"><?= $loginErr ?></p>
             <button  class="buttonContinue" type="submit">Continue</button>
             <div class="form-check text-start my-3">

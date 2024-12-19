@@ -3,16 +3,11 @@
 require_once 'database.class.php';
 
 class Room{
-    public $id = '';
-
-    public $room_code = '';
-
-
     //room_list
-    public $room_id = '';
     public $room_name = '';
-    public $room_type = '';
+    public $room_code = '';
     public $room_no = '';
+    public $room_type = '';
 
     protected $db;
 
@@ -21,91 +16,60 @@ class Room{
     }
 
     function addRoom(){
-        $sql = "INSERT INTO room_list (room_name, type_id) VALUES (:room_name, :room_type);";
+        $sql = "INSERT INTO room_list (room_code, room_no) VALUES (:room_code, :room_no);";
         $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':room_name', $this->room_name);
-        $query->bindParam(':room_type', $this->room_type);
+        $query->bindParam(':room_code', $this->room_code);
+        $query->bindParam(':room_no', $this->room_no);
         
         return $query->execute();
     }
 
-    function add(){
-        $sql = "INSERT INTO product (code, name, category_id, price) VALUES (:code, :name, :category_id, :price);";
-        $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':code', $this->code);
-        $query->bindParam(':name', $this->name);
-        $query->bindParam(':category_id', $this->category_id);
-        $query->bindParam(':price', $this->price);
-        
-        return $query->execute();
-    }
-
-    function showAll($keyword = '', $category = ''){
-        $sql = "SELECT p.code AS product_code, p.name AS product_name, c.name AS category_name, p.price, SUM(s.quantity) AS total_stocks, SUM(CASE WHEN s.status = 'IN' THEN s.quantity ELSE 0 END) AS available_stocks
-                FROM product p
-                INNER JOIN
-                category c ON p.category_id = c.id
-                LEFT JOIN
-                stocks s ON p.id = s.product_id
-                GROUP BY
-                p.id, p.code, p.name, c.name, p.price
-                ORDER BY
-                p.name ASC;
-        ";
-        $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':keyword', $keyword);    
-        $query->bindParam(':category', $category);
-        $data = null;
-        if ($query->execute()) {
-            $data = $query->fetchAll();
-        }
-        return $data;
-    }
     
     function showAllrooms(){
         $sql = 
             "SELECT 
-                r.id, room_name,
-                CONCAT(rt.room_code, '-', rt.room_description) AS room_details
+                r.room_code AS room_code, r.room_no AS room_no,
+                CONCAT(r.room_code, ' ',r.room_no) AS room_name,
+                CONCAT(rt.room_type_id, '-', rt.room_description) AS room_details
             FROM 
                 room_list r
             LEFT JOIN
-                room_type rt ON r.type_id = rt.id
-            WHERE (CONCAT(rt.room_code, '-', rt.room_description) LIKE CONCAT('%', :room_name, '%')) 
-            AND (:room_type = '' OR rt.room_code = :room_type);
+                room_type rt ON r.room_code = rt.room_type_id
+            ;
         ";
         
         $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':room_name', $this->room_name);
-        $query->bindParam(':room_type', $this->room_type);
+        
         
         $data = null;
         if ($query->execute()){
-            $data = $query->fetchAll();
+            $data = $query->fetchAll(PDO::FETCH_ASSOC);
         }
         
         return $data;
     }
 
     
-    function editRoom(){
-        $sql = "UPDATE room_list SET room_name = :room_name, type_id = :room_type WHERE id = :room_id;";
+    function editRoom($original_room_code, $original_room_no){
+        $sql = "UPDATE room_list SET room_code = :room_code, room_no = :room_no WHERE room_code = :original_room_code AND room_no = :original_room_no;";
         $query = $this->db->connect()->prepare($sql);   
-        $query->bindParam(':room_name', $this->room_name);
-        $query->bindParam(':room_type', $this->room_type);
-        $query->bindParam(':room_id', $this->room_id);
+        $query->bindParam(':room_code', $this->room_code);
+        $query->bindParam(':room_no', $this->room_no);
+        $query->bindParam(':original_room_code', $original_room_code);
+        $query->bindParam(':original_room_no', $original_room_no);
         return $query->execute();
     }
 
     //fetch room list record
-    function fetchroomlistRecord($recordID){
-        $sql = "SELECT * FROM room_list WHERE id = :recordID;";
+    function fetchroomlistRecord($roomCode, $roomNo){
+        $sql = "SELECT *, CONCAT(room_code, ' ', room_no) AS room_name FROM room_list WHERE room_code = :room_code AND room_no = :room_no;";
         $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':recordID', $recordID);
-        $data = null;
-        if ($query->execute()) {
-            $data = $query->fetch();
-        }
+        $query->bindParam(':room_code', $roomCode);
+        $query->bindParam(':room_no', $roomNo);
+
+        $query->execute();
+        $data = $query->fetch();
+        
         return $data;
     }
 
@@ -128,21 +92,25 @@ class Room{
         return $query->execute();
     }
 
-    function roomnameExists($room_name, $excludeID = null){
-        $sql = "SELECT COUNT(*) FROM room_list WHERE room_name = :room_name";
-        if ($excludeID) {
-            $sql .= " AND id != :excludeID";
+    function roomnameExists($room_code, $room_no, $excludeCode = null, $excludeNo = null){
+        $sql = "SELECT COUNT(*) FROM room_list WHERE room_code = :room_code AND room_no = :room_no";
+        if ($excludeCode && $excludeNo) {
+            $sql .= " AND NOT (room_code = :excludeCode AND room_no = :excludeNo)";
         }
         $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':room_name', $room_name);
-        if ($excludeID) {
-            $query->bindParam(':excludeID', $excludeID);
+        $query->bindParam(':room_code', $room_code);
+        $query->bindParam(':room_no', $room_no);
+
+        if ($excludeCode && $excludeNo){
+            $query->bindParam(':excludeCode', $excludeCode);
+            $query->bindParam(':excludeNo', $excludeNo);
         }
         $query->execute();
         $count = $query->fetchColumn();
         return $count > 0;
     }
         
+
     function roomnameType(){
         $sql = "SELECT * FROM room_list 
         WHERE (
@@ -157,9 +125,9 @@ class Room{
     //fetch room type for dropdown
     public function fetchroomType(){
         $sql = 
-            "SELECT id as type_id, CONCAT(room_code,' ',room_description) AS r_type 
+            "SELECT room_type_id, CONCAT(room_type_id,' ',room_description) AS room_type_desc
             FROM room_type
-            ORDER BY r_type ASC;
+            ORDER BY room_type_desc ASC;
         
         ;";
         $query = $this->db->connect()->prepare($sql);
@@ -172,7 +140,7 @@ class Room{
 
     //for filter dropdown, room_name in room list
     public function fetchroomList(){
-        $sql = " SELECT * FROM room_list;";
+        $sql = " SELECT *, CONCAT(room_code, ' ',room_no) AS room_name FROM room_list;";
         $query = $this->db->connect()->prepare($sql);
         $data = null;
         if ($query->execute()) {

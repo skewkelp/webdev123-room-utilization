@@ -13,10 +13,10 @@ $roomObj->school_year = $split_PK[1];
 
 
 // Get the selected day from the AJAX request
-$fweek_day = isset($_POST['fweek_day']) ? $_POST['fweek_day'] : '';
+$selected_day = isset($_POST['selected_day']) ? $_POST['selected_day'] : '';
 
 // Fetch data based on the selected day
-$array = $roomObj->showAllStatus('', $fweek_day);
+$array = $roomObj->showAllStatus($selected_day);
 
 if ($array) {
     foreach ($array as $i => $arr) {
@@ -31,13 +31,14 @@ if ($array) {
             <td>{$arr['end_time']}</td>
             <td>{$arr['faculty_name']}</td>
             <td>{$arr['room_status']}</td>
+            <td>{$arr['remarks']}</td>
             <td class='text-nowrap'>
                 <a href='' class='btn room-schedule'>Schedule</a>
-                <a href='' class='btn staff room-status' data-id='{$arr['class_status_id']}'>Occupy</a>
+                <a href='' class='btn staff room-status' data-classid='{$arr['class_id']}' data-classday='{$arr['class_day']}' data-subjecttype='{$arr['subject_type']}'>Occupy</a>
                 <?php if (hasPermission('admin')): ?>
-                    <a href='' class='btn admin edit-room-status' data-id='{$arr['class_status_id']}'>Edit</a>
+                    <a href='' class='btn admin edit-room-status' data-classid='{$arr['class_id']}' data-classday='{$arr['class_day']}' data-subjecttype='{$arr['subject_type']}'>Edit</a>
                     <a href='' class='btn admin display-row'>Display</a>
-                    <a href='' class='btn admin delete delete-room-status' data-id='{$arr['class_status_id']}'>X</a>
+                    <a href='' class='btn admin delete delete-room-status' data-classid='{$arr['class_id']}' data-classday='{$arr['class_day']}' data-subjecttype='{$arr['subject_type']}'>X</a>
                 <?php endif; ?>
             </td>
             </tr>";

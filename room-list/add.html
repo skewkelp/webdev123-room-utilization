@@ -9,13 +9,17 @@
         <form action="" method="post" id="form-add-room">
           <div class="modal-body">
             <div class="mb-2">
-              <label for="room-name" class="form-label">Name</label>
+              <div class="alert alert-danger d-none" id="general-error"></div>
+            </div>
+            
+            <div class="mb-2">
+              <label for="room-name" class="form-label">Room Name</label>
               <input type="text" class="form-control" id="room-name" name="room-name">
               <div class="invalid-feedback"></div>
             </div>
         
             <div class="mb-2">
-              <label for="room-type" class="form-label">Category</label>
+              <label for="room-type" class="form-label">Room Type</label>
               <select class="form-select" id="room-type" name="room-type">
                   <option value="">--Select--</option>
               </select>

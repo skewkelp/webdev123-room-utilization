@@ -5,6 +5,23 @@ require_once '../tools/functions.php';  // Add this line
 ?>
 
 <div class="container-fluid">
+    <div class="row admin">
+        <div class="col-12">
+            <div class="page-title-box">
+                <h1 class="page-title">ADMIN</h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="row staff">
+        <div class="col-12">
+            <div class="page-title-box">
+                <h1 class="page-title">FACULTY</h1>
+            </div>
+        </div>
+    </div>
+
+
     <div class="row">
         <div class="col-12">
             <div class="page-title-box">
@@ -12,6 +29,7 @@ require_once '../tools/functions.php';  // Add this line
             </div>
         </div>
     </div>
+    
     <div class="modal-container"></div>
     <div class="row">
         <div class="col-12">
@@ -49,7 +67,7 @@ require_once '../tools/functions.php';  // Add this line
                                 $roomTypeList = $roomObj->fetchroomType();
                                 foreach ($roomTypeList as $rmt) {
                                 ?>
-                                    <option value="<?= $rmt['r_type'] ?>"><?= $rmt['r_type'] ?></option>
+                                    <option value="<?= $rmt['room_type_id'] ?>"><?= $rmt['room_type_desc'] ?></option>
                                 <?php
                                 }
                                 ?>
@@ -99,13 +117,13 @@ require_once '../tools/functions.php';  // Add this line
                                 ?>
                                     <tr>
                                         <td><?= $i ?></td>
-                                        <td><?= $arr['room_name'] ?></td>
+                                        <td><?= $arr['room_code'] . ' ' . $arr['room_no'] ?></td>
                                         <td><?= $arr['room_details'] ?></td>
                                         <td class="text-nowrap">
                                             <a href="" class="btn room-schedule">Schedule</a>
                                             <a href="" class="btn room-status">Status</a>
                                             <?php if (hasPermission('admin')): ?>
-                                            <a href="" class="btn admin edit-room" data-id="<?= $arr['id'] ?>">Edit</a>
+                                            <a href="" class="btn admin edit-room" data-roomcode="<?= $arr['room_code'] ?>" data-roomno="<?= $arr['room_no'] ?>">Edit</a>
                                             <?php endif; ?>
                                         </td>
                                     </tr>

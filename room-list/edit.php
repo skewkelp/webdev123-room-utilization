@@ -23,7 +23,11 @@
       </div>
       <form action="" method="post" id="form-edit-room">
         <div class="modal-body">
-
+          
+          <div class="mb-2">
+            <div class="alert alert-danger d-none" id="general-error"></div>
+          </div>
+          
           <div class="mb-2">
             <label for="room-name" class="form-label">Room name:</label>
             <input type="text" class="form-control" id="room-name" name="room-name" />

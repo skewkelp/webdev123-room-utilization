@@ -204,87 +204,7 @@ $(document).ready(function () {
     });
   }
 
-  // Function to load analytics view
-  function viewroomList() {
-    $.ajax({
-      type: "GET", // Use GET request
-      url: "../room-list/viewroomlist.php", // URL for the analytics view
-      dataType: "html", // Expect HTML response
-      success: function (response) {
-        $(".content-page").html(response); // Load the response into the content area
-         // Call function to load the chart
-
-        var table = $("#table-room-list").DataTable({
-          dom: "rtp",
-          pageLength: 10,
-          ordering: false
-        });
-        
-        // Bind custom input to DataTable search
-        $("#custom-search").on("keyup", function () {
-          table.search(this.value).draw(); // Search room based on input
-        });
-        
-        // Bind change event for room name filter
-        $("#roomname-filter").on("change", function () {
-          if (this.value !== "choose") {
-            table.column(1).search(this.value).draw(); // Filter by room name (column 1)
-          } else {
-            // Clear the filter for the room name column if "choose" is selected
-            table.column(1).search('').draw();
-          }
-        });
-        
-        // Bind change event for room type filter
-        $("#roomtype-filter").on("change", function () {
-          if (this.value !== "choose") {
-            table.column(2).search(this.value).draw(); // Filter by room type (column 2)
-          } else {
-            // Clear the filter for the room type column if "choose" is selected
-            table.column(2).search('').draw();
-          }
-        });
-
-        // Bind custom input to DataTable search
-        $("#custom-search").on("keyup", function () {
-          table.search(this.value).draw(); // Search room based on input
-        });
-
-        $("#add-room").on("click", function (e) {
-          e.preventDefault(); // Prevent default behavior
-          addRoom(); // Call function to add product
-        });
-
-        $(".room-status").on("click", function (e) {
-          e.preventDefault(); // Prevent default behavior
-          // editRoom(); // Call the function to load products
-        });
-
-        $(".room-schedule").on("click", function (e) {
-          e.preventDefault(); // Prevent default behavior
-          // editRoom(); // Call the function to load products
-        });
-
-        $(".edit-room").on("click", function (e) {
-          e.preventDefault(); // Prevent default behavior
-      
-          const button = $(this); // Reference to the clicked button
-          button.prop("disabled", true); // Disable the button
-      
-           // Call the AJAX function
-          // editRoom(this.dataset.id);
-
-          // Call the AJAX function
-          editRoom(this.dataset.id).always(function() {
-            button.prop("disabled", false); // Re-enable the button after AJAX completes
-          });
-
-
-        });
-        
-      },
-    });
-  }
+  
 
   // $(".room-status").on("click", function (e) {
   //   e.preventDefault(); // Prevent default behavior
@@ -386,7 +306,7 @@ $(document).ready(function () {
           $.ajax({
               type: "POST", // Use POST request
               url: "../fetch-data/fetch-scheduled-classday.php", // URL to your PHP script that handles the request
-              data: { fweek_day: selectedDay }, // Send selected day as data
+              data: { selected_day: selectedDay }, // Send selected day as data
               success: function(response) {
                   // Update the table body with the fetched data
                   $("#table-room-status tbody").html(response);
@@ -593,11 +513,94 @@ $(document).ready(function () {
   }
 
 
+  // Function to load analytics view
+  function viewroomList() {
+    $.ajax({
+      type: "GET", // Use GET request
+      url: "../room-list/viewroomlist.php", // URL for the analytics view
+      dataType: "html", // Expect HTML response
+      success: function (response) {
+        $(".content-page").html(response); // Load the response into the content area
+         // Call function to load the chart
 
+        var table = $("#table-room-list").DataTable({
+          dom: "rtp",
+          pageLength: 10,
+          ordering: false
+        });
+        
+        // Bind custom input to DataTable search
+        $("#custom-search").on("keyup", function () {
+          table.search(this.value).draw(); // Search room based on input
+        });
+        
+        // Bind change event for room name filter
+        $("#roomname-filter").on("change", function () {
+          if (this.value !== "choose") {
+            table.column(1).search(this.value).draw(); // Filter by room name (column 1)
+          } else {
+            // Clear the filter for the room name column if "choose" is selected
+            table.column(1).search('').draw();
+          }
+        });
+        
+        // Bind change event for room type filter
+        $("#roomtype-filter").on("change", function () {
+          if (this.value !== "choose") {
+            table.column(2).search(this.value).draw(); // Filter by room type (column 2)
+          } else {
+            // Clear the filter for the room type column if "choose" is selected
+            table.column(2).search('').draw();
+          }
+        });
+
+        // Bind custom input to DataTable search
+        $("#custom-search").on("keyup", function () {
+          table.search(this.value).draw(); // Search room based on input
+        });
+
+        $("#add-room").on("click", function (e) {
+          e.preventDefault(); // Prevent default behavior
+          addRoom(); // Call function to add product
+        });
+
+        $(".room-status").on("click", function (e) {
+          e.preventDefault(); // Prevent default behavior
+          // editRoom(); // Call the function to load products
+        });
+
+        $(".room-schedule").on("click", function (e) {
+          e.preventDefault(); // Prevent default behavior
+          // editRoom(); // Call the function to load products
+        });
+
+        $(".edit-room").on("click", function (e) {
+          e.preventDefault(); // Prevent default behavior
+      
+          const button = $(this); // Reference to the clicked button
+          button.prop("disabled", true); // Disable the button
+          
+          const roomCode = $(this).data('roomcode');
+          const roomNo = $(this).data('roomno');
+
+           // Call the AJAX function
+          // editRoom(this.dataset.id);
+
+          // Call the AJAX function
+          editRoom(roomCode, roomNo).always(function() {
+            button.prop("disabled", false); // Re-enable the button after AJAX completes
+          });
+
+
+        });
+        
+      },
+    });
+  }
 
   //Function for ROOM LIST, MODAL AJAX
   // Function to show the add product modal
-  function editRoom(roomId) {
+  function editRoom(roomCode, roomNo) {
     return $.ajax({
       type: "GET", // Use GET request
       url: "../room-list/edit.php?v=" + new Date().getTime(), // URL to get product data
@@ -606,12 +609,22 @@ $(document).ready(function () {
         // Assuming 'view' contains the new content you want to display
         $(".modal-container").empty().html(view); // Load the modal view
         $("#staticBackdrop").modal("show"); // Show the modal
-        $("#staticBackdroped").attr("data-id", roomId);
+        $("#staticBackdroped").attr("data-id", roomCode, roomNo);
 
         const modal = $('#staticBackdrop');
         
-        fetchroomlistRecord(roomId);
-        fetchroomType();
+        //Old fetching call 
+        // fetchroomlistRecord(roomCode, roomNo);
+        // fetchroomType();
+
+        //Promise chaining, load fetchroomType returns data/promise then runs fetchroomlistRecord once after promise received
+        fetchroomType()
+        .then(() => {
+            return fetchroomlistRecord(roomCode, roomNo);
+        })
+        .catch(error => {
+            console.error("Error in room type loading sequence:", error);
+        });
 
         $(".modal-close").on("click", function (e) {
           e.preventDefault();
@@ -621,34 +634,40 @@ $(document).ready(function () {
         // Event listener for the add product form submission
         $("#form-edit-room").on("submit", function (e) {
           e.preventDefault(); // Prevent default form submission
-          updateRoom(roomId); // Call function to save product
+          updateRoom(roomCode, roomNo); // Call function to save product
         });
       },
     });
   }
 
   //updateRoom
-  function updateRoom(roomId) {
+  function updateRoom(roomCode, roomNo) {
     $.ajax({
       type: "POST", // Use POST request
-      url: `../room-list/update-room.php?id=${roomId}`, // URL for saving room
+      url: `../room-list/update-room.php?roomCode=${roomCode}&roomNo=${roomNo}`, // URL for saving room
       data: $("form").serialize(), // Serialize the form data for submission
       dataType: "json", // Expect JSON response
       success: function (response) {
         if (response.status === "error") {
           // Handle validation errors
-          if (response.nameErr) {
+          if (response.generalErr){
+            $("#general-error").removeClass("d-none").html(response.generalErr);
+          } else {
+            $("#general-error").addClass("d-none");
+          }
+
+          if (response.room_nameErr) {
             $("#room-name").addClass("is-invalid"); // Mark field as invalid
-            $("#room-name").next(".invalid-feedback").text(response.nameErr).show(); // Show error message
+            $("#room-name").next(".invalid-feedback").text(response.room_nameErr).show(); // Show error message
           } else {
             $("#room-name").removeClass("is-invalid"); // Remove invalid class if no error
           }
           
-          if (response.typeErr) {
+          if (response.room_typeErr) {
             $("#room-type").addClass("is-invalid");
             $("#room-type")
               .next(".invalid-feedback")
-              .text(response.typeErr)
+              .text(response.room_typeErr)
               .show();
           } else {
             $("#room-type").removeClass("is-invalid");
@@ -703,18 +722,24 @@ $(document).ready(function () {
       success: function (response) {
         if (response.status === "error") {
           // Handle validation errors
-          if (response.nameErr){
+          if (response.generalErr){
+            $("#general-error").removeClass("d-none").html(response.generalErr);
+          } else {
+            $("#general-error").addClass("d-none");
+          }
+
+          if (response.room_nameErr){
             $("#room-name").addClass("is-invalid"); // Mark field as invalid
-            $("#room-name").next(".invalid-feedback").text(response.nameErr).show(); // Show error message
+            $("#room-name").next(".invalid-feedback").text(response.room_nameErr).show(); // Show error message
           } else {
             $("#room-name").removeClass("is-invalid"); // Remove invalid class if no error
           }
           
-          if (response.typeErr) {
+          if (response.room_typeErr) {
             $("#room-type").addClass("is-invalid");
             $("#room-type")
               .next(".invalid-feedback")
-              .text(response.typeErr)
+              .text(response.room_typeErr)
               .show();
           } else {
             $("#room-type").removeClass("is-invalid");
@@ -753,7 +778,6 @@ $(document).ready(function () {
         fetchSubject();//fetchsubject
         fetchSection();//fetchsection
         fetchTeacher();//fetchTeacher list
-        fetchroomName();//fetchroomname
 
         $(".modal-close").on("click", function (e) {
           e.preventDefault();
@@ -788,15 +812,15 @@ $(document).ready(function () {
       success: function (response) {
         console.log("Response received:", response);
         if (response.status === "error") {
-          // Handle validation errors
+          // Handle validation errors 
 
           //Check if class id is already existing
-          if (response.existing_classErr){
-            $("#existing-class-error").removeClass("d-none").text(response.existing_classErr);
+          if (response.generalErr){
+            $("#general-error").removeClass("d-none").html(response.generalErr);
           } else {
-            $("#existing-class-error").addClass("d-none");
+            $("#general-error").addClass("d-none");
           }
-
+          
           if (response.class_idErr){
             $("#class-id").addClass("is-invalid");
             $("#class-id").siblings(".invalid-feedback").text(response.class_idErr).show();
@@ -810,6 +834,14 @@ $(document).ready(function () {
           } else {
             $("#dropdown-subject").removeClass("is-invalid");
           }
+
+          if(response.subject_typeErr){
+            $(".subject-type").addClass("is-invalid");
+            $(".subject-type").siblings(".invalid-feedback").text(response.subject_typeErr).show();
+          } else {
+            $(".subject-type").removeClass("is-invalid");
+          }
+
 
           if (response.section_idErr){
             $("#dropdown-section").addClass("is-invalid");
@@ -825,12 +857,7 @@ $(document).ready(function () {
             $("#dropdown-teacher").removeClass("is-invalid");
           }
 
-          if(response.room_idErr){
-            $("#dropdown-room").addClass("is-invalid");
-            $("#dropdown-room").siblings(".invalid-feedback").text(response.room_idErr).show();
-          } else {
-            $("#dropdown-room").removeClass("is-invalid");
-          }
+        
 
         } else if (response.status === "success") {
           // On success, hide modal and reset form
@@ -1408,7 +1435,7 @@ $(document).ready(function () {
 
   // Function to fetch room type
   function fetchroomType(){
-    $.ajax({
+    return $.ajax({
       url: "../fetch-data/fetch-roomtype.php", // URL for fetching categories
       type: "GET", // Use GET request
       dataType: "json", // Expect JSON response
@@ -1420,8 +1447,8 @@ $(document).ready(function () {
         $.each(data, function (index, room) {
           $("#room-type").append(
             $("<option>", {
-              value: room.type_id, // Value attribute
-              text: room.r_type // Displayed text
+              value: room.room_type_id, // Value attribute
+              text: room.room_type_desc // Displayed text
             })
           );
         });
@@ -1434,15 +1461,14 @@ $(document).ready(function () {
   }
 
   //function to fetch record list of room
-  function fetchroomlistRecord(roomId) {
-    $.ajax({
-      url: `../fetch-data/fetch-room.php?id=${roomId}`, // URL for fetching room
+  function fetchroomlistRecord(roomCode, roomNo) {
+    return $.ajax({
+      url: `../fetch-data/fetch-room.php?roomCode=${roomCode}&roomNo=${roomNo}`, // URL for fetching room
       dataType: "json", // Expect JSON response
       success: function (room) {
-        $("#room-name").val(room.room_name); // val(name of var initialized within fetch-room.php  .   refers to room.class.php query var)
-        $("#room-type").val(room.type_id).trigger("change"); //
+        $("#room-name").val(`${room.room_name}`); // val(name of var initialized within fetch-room.php  .   refers to room.class.php query var)
+        $("#room-type").val(`${room.room_code}`).trigger("change"); //
       },
-
       error: function (xhr, status, error) {
         alert('Failed to fetch roomlist.');
         console.error("Error fetching roomlist:", status, error);
@@ -1543,7 +1569,7 @@ $(document).ready(function () {
           $.each(data, function (index, subject) {
             dropdownList.append(
               $("<div>", {
-                text: subject.subject_for, // Displayed text
+                text: subject.subject_id, // Displayed text
                 'data-value': subject.subject_id // Value attribute
               })
             );
@@ -1624,8 +1650,8 @@ $(document).ready(function () {
         $.each(data, function (index, section) {
           dropdownList.append(
             $("<div>", {
-              text: section.section_name, // Displayed text
-              'data-value': section.id // Value attribute
+              text: `${section.course_abbr}${section.year_level}${section.section}`, // Displayed text
+              'data-value': `${section.course_abbr}|${section.year_level}|${section.section}` // Value attribute
             })
           );
         });

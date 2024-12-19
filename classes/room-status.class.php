@@ -14,9 +14,9 @@ class RoomStatus{
     public $room_name = '';
     public $room_type = '';
     
-    
+
+    //subject_Details PK
     public $subject_code = '';
-    public $subject_type = '';
     
     
     public $class_name = '';
@@ -25,8 +25,15 @@ class RoomStatus{
     
     // Properties for class details
     public $class_id = ''; // PK class_details
+    public $subject_type = '';//PK
+
     public $subject_id = '';
+
     public $section_id = '';
+    public $course_abbr = '';
+    public $year_level = '';
+    public $section = '';
+
     public $teacher_assigned = ''; 
     public $room_id = '';
 
@@ -108,14 +115,16 @@ class RoomStatus{
 
     //UPDATED 
     function insertClassDetails(){
-      
-        $sql = "INSERT INTO class_details (id, subject_id, section_id, teacher_assigned, room_id, semester, school_year) VALUES (:class_id, :subject_id, :section_id, :teacher_id, :room_id, :semester, :school_year);";
+
+        $sql = "INSERT INTO class_details (class_id, subject_type, subject_id, course_abbr, year_level, section, teacher_assigned, semester, school_year) VALUES (:class_id, :subject_type, :subject_id, :course_abbr, :year_level, :section, :teacher_id, :semester, :school_year);";
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':class_id', $this->class_id);
+        $query->bindParam(':subject_type', $this->subject_type);
         $query->bindParam(':subject_id', $this->subject_id);
-        $query->bindParam(':section_id', $this->section_id);
+        $query->bindParam(':course_abbr', $this->course_abbr);
+        $query->bindParam(':year_level', $this->year_level);
+        $query->bindParam(':section', $this->section);
         $query->bindParam(':teacher_id', $this->teacher_assigned);
-        $query->bindParam(':room_id', $this->room_id);
         $query->bindParam(':semester', $this->semester);
         $query->bindParam(':school_year', $this->school_year);
         $query->execute();
@@ -230,94 +239,62 @@ class RoomStatus{
 
     }
 
-    function showAllStatus($keyword = '', $fweek_day = '', $froom_name = '', $froom_type = '', $fsubject_code = '', $fsubject_type = '', $fsection_name = '', $fstart_time = '', $fend_time = '', $fteacher_name = '', $fstatus = ''){
+    function showAllStatus($selectedDay = null){
         $sql = 
             "SELECT
-                stat.class_day_id AS class_status_id,
-                cday.id AS cday_id,
-                d.day AS week_day,
-                room.room_name AS room_name,
+                sched.class_id AS class_id,
+                sched.subject_type AS subject_type,
+                sched.day AS class_day,
+
+                CONCAT(sched.room_code, ' ', sched.room_no) AS room_name,
                 rtype.room_description AS room_type,
-                sub.subject_code AS subject_code,
-                stdesc.type AS subject_type,
-                sec.section_name AS section_name,
-                ctime.start_time AS start_time,
-                ctime.end_time AS end_time,
+
+                class.subject_id AS subject_code,
+
+                CONCAT(class.course_abbr, class.year_level, class.section) AS section_name,
+
+                sched.start_time AS start_time,
+                sched.end_time AS end_time,
                 CONCAT(acc.last_name,', ',acc.first_name) AS faculty_name,
-                sdesc.description AS room_status
+                
+                sched.status AS room_status,
+                sched.remarks AS remarks
 
             FROM
                 semester sem
             LEFT JOIN 
-                scheduled_statuses stat ON sem.semester = stat.semester AND sem.school_year = stat.school_year
+                class_schedule sched ON sem.semester = sched.semester AND sem.school_year = sched.school_year
             LEFT JOIN 
-                status_description sdesc ON stat.status_desc_id = sdesc.id
+                class_details class ON sched.class_id = class.class_id  AND sched.subject_type = class.subject_type
+            LEFT JOIN
+                room_list room ON sched.room_code = room.room_code AND sched.room_no = room.room_no
+            LEFT JOIN
+                room_type rtype ON room.room_code = rtype.room_type_id
+            LEFT JOIN
+                faculty_list fac ON class.teacher_assigned = fac.faculty_id
             LEFT JOIN 
-                class_day cday ON stat.class_day_id = cday.id
-            LEFT JOIN
-                _day d ON cday.day_id = d.id
-            LEFT JOIN
-                class_time ctime ON cday.class_time_id = ctime.id
-            LEFT JOIN
-                class_details class ON ctime.class_id = class.id AND ctime.subject_id = class.subject_id
-            LEFT JOIN
-                room_list room ON class.room_id = room.id
-            LEFT JOIN
-                room_type rtype ON room.type_id = rtype.id
-            LEFT JOIN
-                section_details sec ON class.section_id = sec.id
-            LEFT JOIN
-                course_details course ON sec.course_id = course.id
-            LEFT JOIN
-                subject_details sub ON class.subject_id = sub.id
-            LEFT JOIN
-                subject_type_description stdesc ON sub.type_id = stdesc.id
-            LEFT JOIN
-                faculty_list fac ON class.teacher_assigned = fac.id
+                user_list user ON fac.user_id = user.user_id
             LEFT JOIN 
-                account acc ON fac.account_id = acc.id
+                account acc ON user.user_id = acc.account_id
+        
                 
             WHERE sem.semester = :semester AND sem.school_year = :school_year
-            AND(
-                room.room_name LIKE CONCAT('%', :keyword, '%') OR
-                rtype.room_description LIKE CONCAT('%', :keyword, '%') OR
-                sub.subject_code LIKE CONCAT('%', :keyword, '%') OR
-                stdesc.type LIKE CONCAT('%', :keyword, '%') OR
-                sec.section_name LIKE CONCAT('%', :keyword, '%') OR
-                ctime.start_time LIKE CONCAT('%', :keyword, '%') OR
-                ctime.end_time LIKE CONCAT('%', :keyword, '%') OR
-                CONCAT(acc.last_name,', ',acc.first_name) LIKE CONCAT('%', :keyword, '%') OR
-                sdesc.description LIKE CONCAT('%', :keyword, '%')
-            )AND(
-                d.day LIKE CONCAT('%', :fweek_day, '%') AND
-                room.room_name LIKE CONCAT('%', :froom_name, '%') AND
-                rtype.room_description LIKE CONCAT('%', :froom_type, '%') AND
-                sub.subject_code LIKE CONCAT('%', :fsubject_code, '%') AND
-                stdesc.type LIKE CONCAT('%', :fsubject_type, '%') AND
-                sec.section_name LIKE CONCAT('%', :fsection_name, '%') AND
-                ctime.start_time LIKE CONCAT('%', :fstart_time, '%') AND
-                ctime.end_time LIKE CONCAT('%', :fend_time, '%') AND
-                CONCAT(acc.last_name,', ',acc.first_name) LIKE CONCAT('%', :fteacher_name, '%') AND
-                sdesc.description LIKE CONCAT('%', :fstatus, '%')
-            )
         
         ;";
+
+        if($selectedDay){
+            $sql .= " AND sched.day = :selectedDay";
+        }
         
         $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':keyword', $keyword);
-        $query->bindParam(':fweek_day', $fweek_day);
-        $query->bindParam(':froom_name', $froom_name);
-        $query->bindParam(':froom_type', $froom_type);
-        $query->bindParam(':fsubject_code', $fsubject_code);
-        $query->bindParam(':fsubject_type', $fsubject_type);
-        $query->bindParam(':fsection_name', $fsection_name);
-        $query->bindParam(':fstart_time', $fstart_time);
-        $query->bindParam(':fend_time', $fend_time);
-        $query->bindParam(':fteacher_name', $fteacher_name);
-        $query->bindParam(':fstatus', $fstatus);
         $query->bindParam(':semester', $this->semester);
         $query->bindParam(':school_year', $this->school_year);
         
+        if($selectedDay){
+            $query->bindParam(':selectedDay', $selectedDay);
+        }
+
+
         $data = null;
         if ($query->execute()){
             $data = $query->fetchAll();
@@ -329,21 +306,19 @@ class RoomStatus{
     function showAllClassDetails(){
         $sql = 
             "SELECT 
-                cl.id AS class_id,
-                CONCAT (cl.id ,'|', cl.subject_id) AS id,
-                CONCAT(subd.subject_code,' ', stdesc.type) AS subject_, 
-                secd.section_name AS section_, 
-                CONCAT(acc.last_name,', ',acc.first_name) AS teacher_, 
-                rl.room_name AS room_ 
+                class.class_id AS class_id,
+                CONCAT (class.class_id ,'|', class.subject_type) AS id,
+                CONCAT(class.subject_id,' ', class.subject_type) AS subject_, 
+                CONCAT(class.course_abbr, class.year_level, class.section) AS section_, 
+                CONCAT(acc.last_name,', ',acc.first_name) AS teacher_ 
 
-            FROM class_details cl 
-            LEFT JOIN room_list rl ON cl.room_id = rl.id
-            LEFT JOIN section_details secd ON cl.section_id = secd.id
-            LEFT JOIN subject_details subd ON cl.subject_id = subd.id
-            LEFT JOIN subject_type_description stdesc ON subd.type_id = stdesc.id
-            LEFT JOIN faculty_list fac ON cl.teacher_assigned = fac.id
-            LEFT JOIN account acc ON fac.account_id = acc.id
-            LEFT JOIN semester sem ON cl.semester = sem.semester
+            FROM class_details class 
+            LEFT JOIN section_details sec ON class.course_abbr = sec.course_abbr AND class.year_level = sec.year_level AND class.section = sec.section
+            LEFT JOIN subject_details sub ON class.subject_id = sub.subject_code
+            LEFT JOIN faculty_list fac ON class.teacher_assigned = fac.faculty_id
+            LEFT JOIN user_list user ON fac.user_id = user.user_id
+            LEFT JOIN account acc ON user.user_id = acc.account_id
+            LEFT JOIN semester sem ON class.semester = sem.semester
 
             WHERE sem.semester = :semester AND sem.school_year = :school_year
         ;";
@@ -359,22 +334,43 @@ class RoomStatus{
         return $data;
     }
     
+    //check if subject has a LEC and LAB units
+    function checkSubjectType($subject_id, $type){
+        $sql = "SELECT subject_id, lec_units, lab_units
+            FROM subject_details sub
+            WHERE subject_code = :subject_id       
+          ";
+        if($type="LEC"){
+            $sql .= " AND lec_units > 0";
+        }else if($type="LAB"){
+            $sql .= " AND lab_units > 0";
+        }
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':subject_id', $this->subject_id);
 
+        if ($query->execute()) {
+            $data = $query->fetch();
+
+            if($type="LEC"){
+                return $data ? $data['lec_units'] : null;
+            }else if ($type="LAB"){
+                return $data ? $data['lab_units'] : null;
+            }
+        }
+        return null;
+    }
     
 
     //cannot have same class id and subject id
     function checkExistingClassDetailsPK($recordID){
         $sql = "SELECT 
-            class.id AS class_id, 
-            CONCAT(sub.subject_code,' ', stdesc.type) AS subject_,
-            sec.section_name AS section_
-        FROM section_details sec
-        RIGHT JOIN class_details class ON class.section_id = sec.id
-        LEFT JOIN subject_details sub ON class.subject_id = sub.id
-        LEFT JOIN subject_type_description stdesc ON sub.type_id = stdesc.id
-
-        WHERE class.id = :class_id
-        AND class.subject_id = :subject_id 
+            class.class_id AS class_id, 
+            CONCAT(class.subject_id,' ', class.subject_type) AS subject_,
+            CONCAT(class.course_abbr, class.year_level, class.section) AS section_
+        FROM class_details class
+        
+        WHERE class.class_id = :class_id
+        AND (class.subject_id = :subject_id AND class.subject_type)
         ;";
 
         $query = $this->db->connect()->prepare($sql);
@@ -391,9 +387,9 @@ class RoomStatus{
  
     //CHECK IF EXISTING SUBJECT EXIST ON A SECTION
     function checkSubjectSectionExisting($excludeID){
-        $sql = "SELECT class.id AS class_id
+        $sql = "SELECT class.class_id AS class_id
         FROM class_details class
-        WHERE subject_id = :subject_id AND section_id = :section_id";
+        WHERE subject_id = :subject_id AND (course_abbr = :course_abbr AND year_level = :year_level AND section = :section)";
         
         if($excludeID != null){
             $sql .= " AND class.id != :class_id";
@@ -401,7 +397,9 @@ class RoomStatus{
 
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':subject_id', $this->subject_id);
-        $query->bindParam(':section_id', $this->section_id);
+        $query->bindParam(':course_abbr', $this->course_abbr);
+        $query->bindParam(':year_level', $this->year_level);
+        $query->bindParam(':section', $this->section);
         
         if($excludeID != null){
             $query->bindParam(':class_id', $excludeID);   
@@ -416,16 +414,12 @@ class RoomStatus{
 
     function checkClassIDExisting($recordID){
         $sql = "SELECT 
-            DISTINCT class.id AS class_id, 
-            sec.section_name AS section_
+            DISTINCT class.class_id AS class_id, 
+            CONCAT(class.course_abbr, class.year_level, class.section) AS section_
 
-        FROM section_details sec
-        RIGHT JOIN class_details class ON class.section_id = sec.id
-        LEFT JOIN subject_details sub ON class.subject_id = sub.id
-        LEFT JOIN subject_type_description stdesc ON sub.type_id = stdesc.id
+        FROM class_details class 
 
-
-        WHERE class.id = :class_id
+        WHERE class.class_id = :class_id
         ;";
 
         $query = $this->db->connect()->prepare($sql);
@@ -441,28 +435,47 @@ class RoomStatus{
 
 
     //CHECK IF EXISTING SUBJECT_NAME AND SECTION_NAME ALREADY EXIST, condition for class id when it can be unique
+    // function checkConditionClassDetailPK(){
+    //     $sql = "SELECT
+    //         DISTINCT sub.subject_code AS subject_code,
+    //         class.class_id AS class_id,
+    //         sec.section_name AS section_name
+
+    //     FROM class_details class
+    //     LEFT JOIN subject_details sub ON class.subject_id = sub.id
+    //     LEFT JOIN subject_type_description stdesc ON sub.type_id = stdesc.id
+    //     LEFT JOIN section_details sec ON class.section_id = sec.id
+
+    //     WHERE sub.subject_code = :subject_code AND class.section_id = :section_id
+    //     ;";
+
+    //     $query = $this->db->connect()->prepare($sql);
+    //     $query->bindParam(':subject_code', $this->subject_code);
+    //     $query->bindParam(':section_id', $this->section_id);
+    //     $query->execute();
+    //     $data = $query->fetch();
+    //     return $data ? ['class_id' => $data['class_id'], 'subject_code' => $data['subject_code'], 'section_name' => $data['section_name']] : null;
+    // }
     function checkConditionClassDetailPK(){
         $sql = "SELECT
-            DISTINCT sub.subject_code AS subject_code,
-            class.id AS class_id,
-            sec.section_name AS section_name
+            DISTINCT class.subject_id AS subject_id,
+            class.class_id AS class_id,
+            CONCAT(class.course_abbr, class.year_level, class.section) AS section_name
 
         FROM class_details class
-        LEFT JOIN subject_details sub ON class.subject_id = sub.id
-        LEFT JOIN subject_type_description stdesc ON sub.type_id = stdesc.id
-        LEFT JOIN section_details sec ON class.section_id = sec.id
 
-        WHERE sub.subject_code = :subject_code AND class.section_id = :section_id
+        WHERE class.subject_id = :subject_id AND (class.course_abbr = :course_abbr AND class.year_level = :year_level AND class.section = :section)
         ;";
 
         $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':subject_code', $this->subject_code);
-        $query->bindParam(':section_id', $this->section_id);
+        $query->bindParam(':subject_id', $this->subject_id);
+        $query->bindParam(':course_abbr', $this->course_abbr);
+        $query->bindParam(':year_level', $this->year_level);
+        $query->bindParam(':section', $this->section);
         $query->execute();
         $data = $query->fetch();
-        return $data ? ['class_id' => $data['class_id'], 'subject_code' => $data['subject_code'], 'section_name' => $data['section_name']] : null;
+        return $data ? ['class_id' => $data['class_id'], 'subject_id' => $data['subject_id'], 'section_name' => $data['section_name']] : null;
     }
-   
 
     //CHECK IF AN EXISTING ROW ALREADY EXIST ON TABLE
     function checkExistingClassTime($exclude_class_id = null, $exclude_subject_id = null){
@@ -720,7 +733,7 @@ class RoomStatus{
     //fetch room type for dropdown
     public function fetchroomType(){
         $sql = 
-            "SELECT id as type_id, room_description AS r_type 
+            "SELECT room_type_id as type_id, room_description AS r_type 
             FROM room_type
             ORDER BY r_type ASC;
         
@@ -735,7 +748,7 @@ class RoomStatus{
 
     //for filter dropdown, room_name in room list
     public function fetchroomList(){
-        $sql = " SELECT * FROM room_list;";
+        $sql = " SELECT *, CONCAT(room_code, ' ', room_no) AS room_name FROM room_list;";
         $query = $this->db->connect()->prepare($sql);
         $data = null;
         if ($query->execute()) {
@@ -759,8 +772,8 @@ class RoomStatus{
     //for filter dropdown search subject code
     public function fetchsubjectOption(){
         $sql = 
-        " SELECT sub.id AS subject_id, CONCAT(sub.subject_code,' ', _desc.type) AS subject_for
-        FROM subject_details sub LEFT JOIN subject_type_description _desc ON sub.type_id = _desc.id;";
+        " SELECT sub.subject_code AS subject_id
+        FROM subject_details sub;";
         $query = $this->db->connect()->prepare($sql);
         $data = null;
         if ($query->execute()) {
@@ -812,9 +825,10 @@ class RoomStatus{
 
      //for filter dropdown search Teacher
     public function fetchteacherOption(){
-        $sql = "SELECT fac.id AS faculty_id, CONCAT(acc.last_name,', ',acc.first_name) AS teacher_name 
+        $sql = "SELECT fac.faculty_id AS faculty_id, CONCAT(acc.last_name,', ',acc.first_name) AS teacher_name 
         FROM faculty_list fac 
-        LEFT JOIN account acc ON fac.account_id = acc.id ;";
+        LEFT JOIN user_list user ON fac.user_id = user.user_id
+        LEFT JOIN account acc ON user.user_id = acc.account_id;";
         $query = $this->db->connect()->prepare($sql);
         $data = null;
         if ($query->execute()) {
@@ -847,8 +861,7 @@ class RoomStatus{
 
     //for filter dropdown section
     public function fetchsectionOption(){
-        $sql = "SELECT * FROM section_details 
-        ;";
+        $sql = "SELECT * FROM section_details;";
         $query = $this->db->connect()->prepare($sql);
         $data = null;
         if ($query->execute()) {
@@ -874,7 +887,7 @@ class RoomStatus{
     
     //fetch course for radio button
     public function fetchCourse(){
-        $sql = "SELECT id, _name FROM course_details;";
+        $sql = "SELECT course_abbr, course_name FROM course_details;";
         $query = $this->db->connect()->prepare($sql);
         $data = null;
         if ($query->execute()) {
