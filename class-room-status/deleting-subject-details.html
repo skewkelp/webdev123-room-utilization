@@ -1,4 +1,3 @@
-
 <!-- Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" data-id="">
     <div class="modal-dialog modal-dialog-centered">
@@ -10,14 +9,12 @@
             <form action="" method="post" id="form-delete">
                 <div class="mb-2 modal-body d-flex flex-column delete">
                     <div class="icon delete"></div>
-                        <p class="form-label">WARNING! Deleting this schedule will completely delete this from the database and the website.</p>
-                        <input type="hidden" id="class-id" name="class-id">
-                        <input type="hidden" id="subject-type" name="subject-type">
-                        <input type="hidden" id="class-day" name="class-day">
+                        <p class="form-label">WARNING! Deleting this Subject will completely delete this data from the database. All Class details with this subject will be left with null values.</p>
                     </div>
                     <div class="modal-footer delete">
-                    <button type="button" class="btn btn-secondary modal-close" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary brand-bg-color">Delete</button>
+                        <button type="button" class="btn btn-secondary modal-close" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary brand-bg-color">Delete</button>
+                    </div>
                 </div>
             </form>
         </div>

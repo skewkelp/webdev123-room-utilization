@@ -7,15 +7,15 @@
                 <i class="bi status-icon">
                     <img src="../img/sidebar-icon/roomlist-icon.png" alt="" width="27.5px" height="27.5px">
                 </i>
-                <span class="sidebar-button-text ms-2">RoomList</span>
+                <span class="sidebar-button-text ms-2">Room List</span>
             </a>
         </li>
         <li class="nav-item">
-            <a href="room-status" id="roomstatus-link" class="nav-link">
+            <a href="class-status" id="classlist-link" class="nav-link">
                 <i class="bi status-icon">
                     <img src="../img/sidebar-icon/status-icon.png" alt="" width="27.5px" height="27.5px">
                 </i>
-                <span class="sidebar-button-text ms-2">Room Status</span>
+                <span class="sidebar-button-text ms-2">Class Status</span>
             </a>
         </li>
         <li class="nav-item">
@@ -24,6 +24,15 @@
                     <img src="../img/sidebar-icon/schedule-icon.png" alt="" width="27.5px" height="27.5px">
                 </i>
                 <span class="sidebar-button-text ms-2">Schedule</span>
+            </a>
+        </li>
+
+        <li class="nav-item admin">
+            <a href="user-list" id="userlist-link" class="nav-link">
+                <i class="bi schedule-icon">
+                    <img src="../img/sidebar-icon/user-list-thin-svgrepo-com.svg" alt="" width="27.5px" height="27.5px">
+                </i>
+                <span class="sidebar-button-text ms-2">User List</span>
             </a>
         </li>
         

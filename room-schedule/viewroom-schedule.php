@@ -1,5 +1,4 @@
 <?php
-// Add these at the top of viewroomlist.php
 require_once '../tools/functions.php';  // Add this line
   
 ?>
@@ -16,80 +15,138 @@ require_once '../tools/functions.php';  // Add this line
     <div class="row">
         <div class="col-12">
             <div class="card p-4">
-                <?php
-                    require_once '../classes/room-status.class.php';
-                    session_start();
-                    $roomObj = new RoomStatus();   
-                ?>
-                
                 <div class="card-body p-1 pt-2">
-                    <div class="d-flex ct1 flex-row align-items-start gap-5">
-                        <div class="input-group w-100">
-                            <input type="text" class="form-control form-control-light" id="custom-search" placeholder="Search ...">
-                            <span class="input-group-text bg-primary border-primary text-white brand-bg-color">
-                                <i class="bi bi-search"></i>
-                            </span>
-                        </div>
-                        <?php if (hasPermission('admin')): ?>
-                            <a id="add-room-status" href="#" class="btn admin btn-primary open-modal-button">Add Room Status</a>
-                        <?php endif; ?>
-                    </div>
-                    <div class="table-responsive">
-                        <table id="table-room-schedule" class="table table-centered table-nowrap table-hover mb-0">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Room Name</th>
-                                    <th>Room Type</th>
-                                    <th>Subject Code</th>
-                                    <th>Subject Type</th>
-                                    <th>Section Name</th>
-                                    <th>Start Time</th>
-                                    <th>End Time</th>
-                                    <th>Teacher</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
+                    
+                    <form id="filter-room" class="d-flex ct1 flex-row align-items-start justify-content-between">
+                        <div class="w-25">
+                            <label for="room">Room Name:</label>
+                            <select id="room" class="form-control">
+                                <option value="">Select Room</option>
                                 <?php
-                                    $i = 1;
-                                    $array = $roomObj->showAllStatus();
-                                    
-                                    foreach ($array as $arr) {
-                                ?>
-                                    <tr>
-                                        <td><?= $i ?></td>
-                                        <td><?= $arr['room_name'] ?></td>
-                                        <td><?= $arr['room_type'] ?></td>
-                                        <td><?= $arr['subject_code'] ?></td>
-                                        <td><?= $arr['subject_type'] ?></td>
-                                        <td><?= $arr['section_name'] ?></td>
-                                        <td><?= $arr['start_time'] ?></td>
-                                        <td><?= $arr['end_time'] ?></td>
-                                        <td><?= $arr['faculty_name'] ?></td>
-                                        <td><?= $arr['room_status'] ?></td>
-                                        <td class="text-nowrap">
-                                            <a href="" class="btn room-schedule">Schedule</a>
-                                            <a href="" class="btn staff room-status">Occupy</a>
-                                            <?php if (hasPermission('admin')): ?>
-                                                <a href="" class="btn admin edit-room-status" data-id="<?= $arr['class_status_id'] ?>">Edit</a>
-                                                <a href="" class="btn admin display-row">Display</a> <!-- hidden or displayed  -->
-                                                <a href="" class="btn admin delete delete-room-status"data-id="<?= $arr['class_status_id'] ?>">X</a>
-                                            <?php endif; ?>
-                                        </td>
-                                    </tr>
-                                <?php
-                                    $i++;
-                                    
+                                require_once '../classes/room.class.php';
+                                $roomObj = new Room();
+                                $rooms = $roomObj->fetchroomList();
+                                foreach ($rooms as $room) {
+                                    echo "<option value='{$room['room_name']}'>{$room['room_name']}</option>";
                                 }
                                 ?>
-                            </tbody>
-                        </table>
+                            </select>
+                        </div>
+                        
+                        <!-- Room Name Title -->
+                        <div class="text-center">
+                            <h4 class="room-name-title">ROOM NAME</h4>
+                        </div>
+
+                        <!-- Filter Button -->
+                        <div class="">
+                            <button type="submit" class="btn btn-primary user">Filter</button>
+                        </div>
+                    </form>
+
+                    <div class="table-responsive">
+                    <table id="table-room-schedule" class="table table-centered table-nowrap table-hover mb-0">
+                        <thead>
+                            <tr>
+                            <th width="100">Time</th>
+                            <th>Monday</th>
+                            <th>Tuesday</th>
+                            <th>Wednesday</th>
+                            <th>Thursday</th>
+                            <th>Friday</th>
+                            <th>Saturday</th>
+                            </tr>
+                        </thead>
+                        <tbody id="schedule-data">
+                        </tbody>
+                    </table>
                     </div> <!-- end table-responsive-->
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+
+<style>
+.schedule-cell {
+    padding: 0 !important;
+    vertical-align: middle !important;
+    width: 14.28%;
+    position: relative;
+    border: 1px solid #dee2e6;
+    height: 80px;
+}
+
+
+.time-slot {
+    font-weight: bold;
+    text-align: center;
+    background-color: #f8f9fa;
+    vertical-align: middle !important;
+    width: 100px;
+    padding: 8px !important;
+}
+
+.schedule-content {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8px;
+}
+
+.subject {
+    font-weight: bold;
+    margin-bottom: 3px;
+    font-size: 0.9em;
+    text-align: center;
+    color: white;
+}
+
+.section {
+    margin-bottom: 2px;
+    font-size: 0.85em;
+    text-align: center;
+    color: white;
+}
+
+.teacher {
+    font-size: 0.8em;
+    font-style: italic;
+    color: white;
+    text-align: center;
+}
+
+.room-name-title {
+
+    color: black;
+    padding: 8px 20px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+#schedule-table {
+    table-layout: fixed;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#schedule-table th {
+    text-align: center;
+    background-color:rgb(247, 11, 11);
+    padding: 10px;
+    border: 1px solid #dee2e6;
+}
+
+#schedule-table td {
+    border: 1px solid #dee2e6;
+}
+
+.schedule-cell.occupied {
+    background-color: rgb(103, 138, 48) !important;
+}
+
+</style>

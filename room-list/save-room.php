@@ -63,8 +63,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
     $roomObj->room_code = $room_code;
     $roomObj->room_no = $room_no;
-    $roomObj->original_room_code = $original_room_code;
-    $roomObj->original_room_no = $original_room_no;
+
     
     if($roomObj->addRoom()){
         echo json_encode(['status' => 'success']);

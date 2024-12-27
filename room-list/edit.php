@@ -35,12 +35,24 @@
           </div>
 
           <div class="mb-2">
+            <P class="form-label">Room Type</P>
+            <div class="dropdown">
+                <input type="text" class="form-control dropdown-input" placeholder="Search and Select..." id="dropdown-room-type" name="room-type-desc" >
+                <input type="hidden" id="hidden-room-type-id" name="room-type"/>
+                <div class="dropdown-list" id="dropdown-list-room-type">
+                    <!-- Options will be populated here by JavaScript -->
+                </div>
+                <div class="invalid-feedback"></div>
+            </div>
+          </div>
+
+          <!-- <div class="mb-2">
             <label for="room-type" class="form-label">Room type:</label>
             <select class="form-select" id="room-type" name="room-type">
               <option value="">--Select--</option>
             </select>
             <div class="invalid-feedback"></div>
-          </div>
+          </div> -->
 
         </div>
 

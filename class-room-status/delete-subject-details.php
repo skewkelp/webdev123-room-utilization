@@ -3,18 +3,18 @@
 require_once('../tools/functions.php');
 require_once('../classes/room-status.class.php');
 
-$class_id = $subject_id = '';
+$subject_code = $prospectus_id = '';
 
 $roomObj = new RoomStatus();
 
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
-    $class_id = clean_input($_POST['class-id']);
-    $subtype_id = clean_input($_POST['subtype-id']);
+    $subject_code = clean_input($_GET['subjectID']);
+    $prospectus_id = clean_input($_GET['prospectusID']);
 
-    $roomObj->class_id = $class_id;
-    $roomObj->subject_type = $subtype_id;
+    $roomObj->subject_code = $subject_code;
+    $roomObj->prospectus_id = $prospectus_id;
 
-    if($roomObj->deleteClassDetails()){
+    if($roomObj->deleteSubjectDetails()){
         echo json_encode(['status' => 'success', 'debug' => [
             'class_id deleted' => $roomObj->log_cid,
         ]]);

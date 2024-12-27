@@ -62,7 +62,12 @@ class Room{
 
     //fetch room list record
     function fetchroomlistRecord($roomCode, $roomNo){
-        $sql = "SELECT *, CONCAT(room_code, ' ', room_no) AS room_name FROM room_list WHERE room_code = :room_code AND room_no = :room_no;";
+        $sql = "SELECT 
+            room.room_code AS room_code, 
+            CONCAT(room.room_code,'-',rtype.room_description) AS room_type, 
+            CONCAT(room.room_code, ' ', room.room_no) AS room_name 
+        FROM room_list room LEFT JOIN room_type rtype ON room.room_code = rtype.room_type_id
+        WHERE room.room_code = :room_code AND room.room_no = :room_no;";
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':room_code', $roomCode);
         $query->bindParam(':room_no', $roomNo);
@@ -92,6 +97,7 @@ class Room{
         return $query->execute();
     }
 
+    
     function roomnameExists($room_code, $room_no, $excludeCode = null, $excludeNo = null){
         $sql = "SELECT COUNT(*) FROM room_list WHERE room_code = :room_code AND room_no = :room_no";
         if ($excludeCode && $excludeNo) {
@@ -109,23 +115,11 @@ class Room{
         $count = $query->fetchColumn();
         return $count > 0;
     }
-        
-
-    function roomnameType(){
-        $sql = "SELECT * FROM room_list 
-        WHERE (
-            (type_id = 1 AND room_name LIKE 'LR%') OR 
-            (type_id = 2 AND room_name LIKE 'LAB%')
-          
-        );";
-        
-    }
     
-
     //fetch room type for dropdown
     public function fetchroomType(){
         $sql = 
-            "SELECT room_type_id, CONCAT(room_type_id,' ',room_description) AS room_type_desc
+            "SELECT room_type_id, CONCAT(room_type_id,'-',room_description) AS room_type_desc, room_description AS rtype_desc
             FROM room_type
             ORDER BY room_type_desc ASC;
         
@@ -140,7 +134,9 @@ class Room{
 
     //for filter dropdown, room_name in room list
     public function fetchroomList(){
-        $sql = " SELECT *, CONCAT(room_code, ' ',room_no) AS room_name FROM room_list;";
+        $sql = " SELECT *, CONCAT(room_code, ' ',room_no) AS room_name 
+        FROM room_list
+        ;";
         $query = $this->db->connect()->prepare($sql);
         $data = null;
         if ($query->execute()) {

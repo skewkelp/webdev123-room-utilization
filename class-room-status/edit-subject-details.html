@@ -1,0 +1,63 @@
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Edit Subject Details</h5>
+          <button type="button" class="btn-close modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div> 
+        <form action="" method="post" id="form-edit">
+            <div class="modal-body">
+                <input type="hidden" id="original-subject-code" name="original-subject-code">
+                <input type="hidden" id="original-description" name="original-description">
+                
+                <input type="hidden" id="original-lec-units" name="original-lec-units">
+                <input type="hidden" id="original-lab-units" name="original-lab-units">
+                <input type="hidden" id="original-total-units" name="original-total-units">
+                <input type="hidden" id="prospectus" name="prospectus">
+
+                <div style="padding-left: 8px;">
+                    <div class="mb-2">
+                        <div class="alert alert-danger d-none" id="general-error"></div>
+                    </div>
+
+                    <div class="mb-2">
+                        <label for="class-id" class="form-label">Subject Code</label>
+                        <input type="text" class="form-control" id="subject-code" name="subject-code" placeholder="CC100...">
+                        <div class="invalid-feedback"></div>
+                        <i id="example-class">Example: CC100</i>
+                    </div>
+
+                    <br>
+                    
+                    <div class="mb-2">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" placeholder="Description..." maxlength="100"></textarea>
+                        <div class="invalid-feedback"></div>
+                    </div>
+
+                    <br>
+                    
+                    <div class="mb-2">
+                        <label for="lab-units" class="form-label">Lab Units:</label>
+                        <input type="number" class="form-control" id="lab-units" name="lab-units" placeholder="0.0" step="1" min="0" max="8">
+                        <div class="invalid-feedback"></div>
+                    </div>
+
+                    <br>
+                    
+                    <div class="mb-2">
+                        <label for="lec-units" class="form-label">Lec Units:</label>
+                        <input type="number" class="form-control" id="lec-units" name="lec-units" placeholder="0.0" sstep="1" min="0" max="8">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+            </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary modal-close" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary brand-bg-color">Edit Class Details</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>

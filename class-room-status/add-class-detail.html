@@ -15,9 +15,10 @@
                 </div>
 
                 <div class="mb-2">
-                    <label for="class-id" class="form-label">Class ID</label>
+                    <label for="class-id" class="form-label">Class Code ID</label>
                     <input type="text" class="form-control" id="class-id" name="class-id" placeholder="BSCS000000" title="Please enter a code in the format: 3-4 uppercase letters followed by 6 digits (e.g., ABC123456 or ABCD123456)">
                     <div class="invalid-feedback"></div>
+                    <i id="example-class">Example: BSCS123456</i>
                 </div>
 
                 <br>
@@ -40,13 +41,13 @@
                     <div class="mb-0 me-2 d-flex gap-2 subject-type">
                         <P class="form-label mb-0 me-2">Subject Type:</P><br>
                         <div class="d-flex justify-content-center align-items-center">
-                            <label for="subject-type" class="form-label mb-0 me-2">LEC</label>
-                            <input type="checkbox" id="subject-type" value="LEC" name="subject-type[]">
+                            <label for="LEC" class="form-label mb-0 me-2">LEC</label>
+                            <input type="checkbox" id="LEC" value="LEC" name="subject-type[]">
                         </div>
                         
                         <div class="d-flex justify-content-center align-items-center">
-                            <label for="subject-type" class="form-label mb-0 me-2">LAB</label>
-                            <input type="checkbox" id="subject-type" value="LAB" name="subject-type[]">
+                            <label for="LAB" class="form-label mb-0 me-2">LAB</label>
+                            <input type="checkbox" id="LAB" value="LAB" name="subject-type[]">
                         </div>
                     </div>
     
@@ -75,6 +76,21 @@
                         <input type="text" class="form-control dropdown-input" placeholder="Select or search..." id="dropdown-teacher" name="teacher" >
                         <input type="hidden" id="hidden-teacher-assigned" name="teacher-assigned"/>
                         <div class="dropdown-list" id="dropdown-list-teacher">
+                            <!-- Options will be populated here by JavaScript -->
+                        </div>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                
+                <br>
+                
+                <div class="mb-2" id="div-teacher" style="display: none;">
+                    <input type="hidden" id="determiner" name="determiner" value="false">
+                    <P class="form-label">Teacher Assigned (LAB)</P>
+                    <div class="dropdown">
+                        <input type="text" class="form-control dropdown-input" placeholder="Select or search..." id="dropdown-teacher-lab" name="teacher-lab">
+                        <input type="hidden" id="hidden-teacher-assigned-lab" name="teacher-assigned-lab" disabled/>
+                        <div class="dropdown-list" id="dropdown-list-teacher-lab">
                             <!-- Options will be populated here by JavaScript -->
                         </div>
                         <div class="invalid-feedback"></div>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 17, 2024 at 02:23 AM
+-- Generation Time: Dec 26, 2024 at 06:23 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -31,7 +31,7 @@ CREATE TABLE `account` (
   `account_id` varchar(10) NOT NULL,
   `first_name` varchar(50) NOT NULL,
   `last_name` varchar(50) NOT NULL,
-  `username` varchar(10) NOT NULL,
+  `username` varchar(20) NOT NULL,
   `password` varchar(64) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -40,19 +40,19 @@ CREATE TABLE `account` (
 --
 
 INSERT INTO `account` (`account_id`, `first_name`, `last_name`, `username`, `password`) VALUES
-('201001234', 'admin', 'admin', 'aa20100123', '$2y$10$v8G82MPHA9tVQ8MeA/Y3ueGwkU/fDuvrjaKbxGnUawZQWzCJYnJhG'),
-('201201234', 'First', '1Teacher', 'ab20120123', '$2y$10$Mu6Slb4LvL3PFg2GFxQdIuN4G2Z7TTHzntou8UO9xy2JLKDJlC.Hi'),
-('201201235', 'second', '2Teacher', 'ac20120123', '$2y$10$IPbH/v9f4BdQvUoIGFTQWO5VOgAlV0CiIbx6ivpnaoUi5ZIRjHrZe'),
-('201201236', 'Three', '3Teacher', 'ac20120123', '$2y$10$AdlYsQkf7IEpl7m/PqdpMerMckMuOjKrhwejSGOQC/71l/MyGvsZ2'),
-('201201237', 'Four', '4Teacher', 'ac20120123', '$2y$10$8AKq8IrzS43QSam8tgU3HOYdohuZKvVrQRVW0IGARhC9t3J/2g1Ly'),
-('201201238', 'Five', '5Teacher', 'ac20120123', '$2y$10$UckU.gomnOEr5rGvRkK0YeyL6dqvpnVUqpLI9vg7oAT0w8kV.0u1K'),
-('201201239', 'Six', '6Teacher', 'ac20120123', '$2y$10$N6ErDbEght/qAvn6YAjppukBTL3LyiK7gUtp8/.ztWeWzTpH.JoPm'),
-('201201240', 'Seven', '7Teacher', 'ad20120124', '$2y$10$OYbo0dwLT.99s5TqMiJXduhWZADjedEr8d52yGv/yT.Roo0Q7o0ZG'),
-('201201241', 'Eight', '8Teacher', 'ad20100124', '$2y$10$X0UXr2OgDXO5OGoQbnGg6OoOw8VgfJPTTRzMp5Sqn65Qq9JAWie66'),
-('201201242', 'Nine', '9Teacher', 'ad20100124', '$2y$10$2KGHfNje9U2kiOIjyLj72u96eeSJHTKHkHPXxFdCCqUBztca5xo.W'),
-('201201243', 'Ten', '10Teacher', 'ad20100124', '$2y$10$JxBMFSAAsGsVXqd7yl7A8uBab2w7MR2apSMOMaNa6jxwHNN/gHuaG'),
-('202101234', 'one', '1student', 'qb20210123', '$2y$10$NvltRXyxoFsLinhRx.R64uCeoG3sJzLS1TIYn6Ut073oZ6LTjrtCq'),
-('202101235', 'two', '2student', 'qb20210123', '$2y$10$p7.r0sUAxaWg1lG1pGQjUuNPBUF6DYvYcbnsJMK4M..rv4FbdsZUm');
+('201001234', 'admin', 'admin', 'aa201001234', '$2y$10$v8G82MPHA9tVQ8MeA/Y3ueGwkU/fDuvrjaKbxGnUawZQWzCJYnJhG'),
+('201201234', 'First', '1Teacher', 'ab201201234', '$2y$10$Mu6Slb4LvL3PFg2GFxQdIuN4G2Z7TTHzntou8UO9xy2JLKDJlC.Hi'),
+('201201235', 'second', '2Teacher', 'ac201201235', '$2y$10$IPbH/v9f4BdQvUoIGFTQWO5VOgAlV0CiIbx6ivpnaoUi5ZIRjHrZe'),
+('201201236', 'Three', '3Teacher', 'ac201201236', '$2y$10$AdlYsQkf7IEpl7m/PqdpMerMckMuOjKrhwejSGOQC/71l/MyGvsZ2'),
+('201201237', 'Four', '4Teacher', 'ac201201237', '$2y$10$8AKq8IrzS43QSam8tgU3HOYdohuZKvVrQRVW0IGARhC9t3J/2g1Ly'),
+('201201238', 'Five', '5Teacher', 'ac201201238', '$2y$10$UckU.gomnOEr5rGvRkK0YeyL6dqvpnVUqpLI9vg7oAT0w8kV.0u1K'),
+('201201239', 'Six', '6Teacher', 'ac201201239', '$2y$10$N6ErDbEght/qAvn6YAjppukBTL3LyiK7gUtp8/.ztWeWzTpH.JoPm'),
+('201201240', 'Seven', '7Teacher', 'ad201201240', '$2y$10$OYbo0dwLT.99s5TqMiJXduhWZADjedEr8d52yGv/yT.Roo0Q7o0ZG'),
+('201201241', 'Eight', '8Teacher', 'ad201001241', '$2y$10$X0UXr2OgDXO5OGoQbnGg6OoOw8VgfJPTTRzMp5Sqn65Qq9JAWie66'),
+('201201242', 'Nine', '9Teacher', 'ad201001242', '$2y$10$2KGHfNje9U2kiOIjyLj72u96eeSJHTKHkHPXxFdCCqUBztca5xo.W'),
+('201201243', 'Ten', '10Teacher', 'ad201001243', '$2y$10$JxBMFSAAsGsVXqd7yl7A8uBab2w7MR2apSMOMaNa6jxwHNN/gHuaG'),
+('202101234', 'student1', 'student1', 'qb202101234', '$2y$10$Af5IP72la6ehBOjvv9lZVuWGwiXZ.mX0bhS9tZAi6xFKku8Q3OC56'),
+('202101235', 'student2', 'student2', 'qb202101235', '$2y$10$oR.dfekXyeBafr6YPYGgtuUy3fPiS359ubvmQ1htwgZLZgwOpkpVy');
 
 -- --------------------------------------------------------
 
@@ -62,8 +62,8 @@ INSERT INTO `account` (`account_id`, `first_name`, `last_name`, `username`, `pas
 
 CREATE TABLE `class_details` (
   `class_id` varchar(10) NOT NULL,
-  `subject_id` varchar(10) NOT NULL,
   `subject_type` varchar(10) NOT NULL,
+  `subject_id` varchar(10) NOT NULL,
   `course_abbr` varchar(10) NOT NULL,
   `year_level` int(11) NOT NULL,
   `section` varchar(1) NOT NULL,
@@ -77,17 +77,19 @@ CREATE TABLE `class_details` (
 -- Dumping data for table `class_details`
 --
 
-INSERT INTO `class_details` (`class_id`, `subject_id`, `subject_type`, `course_abbr`, `year_level`, `section`, `teacher_assigned`, `time_created`, `semester`, `school_year`) VALUES
-('BSCS123451', 'CC100', 'LAB', 'CS', 1, 'A', 2, '2024-12-15 22:33:20', '1', '2024-2025'),
-('BSCS123451', 'CC100', 'LECTURE', 'CS', 1, 'A', 1, '2024-12-15 22:32:12', '1', '2024-2025'),
-('BSCS123461', 'CC101', 'LAB', 'CS', 1, 'B', 4, '2024-12-15 22:41:21', '1', '2024-2025'),
-('BSCS123461', 'CC101', 'LECTURE', 'CS', 1, 'B', 3, '2024-12-15 22:41:21', '1', '2024-2025'),
-('BSCS124571', 'CC103', 'LAB', 'CS', 2, 'A', 8, '2024-12-15 22:41:21', '1', '2024-2025'),
-('BSCS124571', 'CC103', 'LECTURE', 'CS', 2, 'A', 7, '2024-12-15 22:41:21', '1', '2024-2025'),
-('BSCS124581', 'CC104', 'LAB', 'CS', 2, 'A', 9, '2024-12-15 22:41:21', '1', '2024-2025'),
-('BSCS124581', 'CC104', 'LECTURE', 'CS', 2, 'A', 9, '2024-12-15 22:41:21', '1', '2024-2025'),
-('BSCS124591', 'MAD121', 'LECTURE', 'CS', 2, 'A', 10, '2024-12-15 22:41:21', '1', '2024-2025'),
-('BSCS124601', 'SIPP125', 'LECTURE', 'CS', 2, 'A', 5, '2024-12-15 22:41:21', '1', '2024-2025');
+INSERT INTO `class_details` (`class_id`, `subject_type`, `subject_id`, `course_abbr`, `year_level`, `section`, `teacher_assigned`, `time_created`, `semester`, `school_year`) VALUES
+('BSCS123003', 'LEC', 'CC100', 'ACT', 1, 'A', 1, '2024-12-23 10:34:37', '1', '2024-2025'),
+('BSCS123212', 'LEC', 'SIPP125', 'CS', 2, 'C', 2, '2024-12-19 23:07:45', '1', '2024-2025'),
+('BSCS123451', 'LAB', 'CC100', 'CS', 1, 'A', 2, '2024-12-15 22:33:20', '1', '2024-2025'),
+('BSCS123451', 'LEC', 'CC100', 'CS', 1, 'A', 1, '2024-12-15 22:32:12', '1', '2024-2025'),
+('BSCS123461', 'LAB', 'CC101', 'CS', 1, 'B', 4, '2024-12-15 22:41:21', '1', '2024-2025'),
+('BSCS123461', 'LEC', 'CC101', 'CS', 1, 'B', 3, '2024-12-15 22:41:21', '1', '2024-2025'),
+('BSCS124571', 'LAB', 'CC103', 'CS', 2, 'A', 8, '2024-12-15 22:41:21', '1', '2024-2025'),
+('BSCS124571', 'LEC', 'CC103', 'CS', 2, 'A', 7, '2024-12-15 22:41:21', '1', '2024-2025'),
+('BSCS124581', 'LAB', 'CC104', 'CS', 2, 'A', 9, '2024-12-15 22:41:21', '1', '2024-2025'),
+('BSCS124581', 'LEC', 'CC104', 'CS', 2, 'A', 9, '2024-12-15 22:41:21', '1', '2024-2025'),
+('BSCS124591', 'LEC', 'MAD121', 'CS', 2, 'A', 10, '2024-12-15 22:41:21', '1', '2024-2025'),
+('BSCS124601', 'LEC', 'SIPP125', 'CS', 2, 'A', 5, '2024-12-15 22:41:21', '1', '2024-2025');
 
 -- --------------------------------------------------------
 
@@ -98,7 +100,6 @@ INSERT INTO `class_details` (`class_id`, `subject_id`, `subject_type`, `course_a
 CREATE TABLE `class_logs` (
   `log_id` int(11) NOT NULL,
   `class_id` varchar(10) NOT NULL,
-  `subject_id` varchar(10) NOT NULL,
   `subject_type` varchar(10) NOT NULL,
   `day` enum('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday') NOT NULL,
   `time_modified` timestamp NOT NULL DEFAULT current_timestamp()
@@ -108,17 +109,16 @@ CREATE TABLE `class_logs` (
 -- Dumping data for table `class_logs`
 --
 
-INSERT INTO `class_logs` (`log_id`, `class_id`, `subject_id`, `subject_type`, `day`, `time_modified`) VALUES
-(1, 'BSCS123451', 'CC100', 'LECTURE', 'Monday', '2024-12-08 23:06:38'),
-(2, 'BSCS123451', 'CC100', 'LAB', 'Wednesday', '2024-12-11 02:06:38'),
-(3, 'BSCS123461', 'CC101', 'LECTURE', 'Monday', '2024-12-09 01:06:38'),
-(4, 'BSCS123461', 'CC101', 'LAB', 'Wednesday', '2024-12-11 05:06:38'),
-(5, 'BSCS124571', 'CC103', 'LECTURE', 'Tuesday', '2024-12-10 06:36:38'),
-(6, 'BSCS124571', 'CC103', 'LAB', 'Friday', '2024-12-12 23:06:38'),
-(7, 'BSCS124581', 'CC104', 'LECTURE', 'Wednesday', '2024-12-10 23:06:38'),
-(8, 'BSCS124581', 'CC104', 'LAB', 'Wednesday', '2024-12-11 09:06:38'),
-(9, 'BSCS124591', 'MAD121', 'LECTURE', 'Monday', '2024-12-09 07:06:38'),
-(10, 'BSCS124601', 'SIPP125', 'LECTURE', 'Thursday', '2024-12-12 03:36:38');
+INSERT INTO `class_logs` (`log_id`, `class_id`, `subject_type`, `day`, `time_modified`) VALUES
+(1, 'BSCS123451', 'LEC', 'Wednesday', '2024-12-08 23:06:38'),
+(2, 'BSCS123451', 'LAB', 'Wednesday', '2024-12-11 02:06:38'),
+(3, 'BSCS123461', 'LEC', 'Monday', '2024-12-09 01:06:38'),
+(4, 'BSCS123461', 'LAB', 'Wednesday', '2024-12-11 05:06:38'),
+(6, 'BSCS124571', 'LAB', 'Friday', '2024-12-12 23:06:38'),
+(7, 'BSCS124581', 'LEC', 'Wednesday', '2024-12-10 23:06:38'),
+(8, 'BSCS124581', 'LAB', 'Wednesday', '2024-12-11 09:06:38'),
+(9, 'BSCS124591', 'LEC', 'Monday', '2024-12-09 07:06:38'),
+(10, 'BSCS124601', 'LEC', 'Thursday', '2024-12-12 03:36:38');
 
 -- --------------------------------------------------------
 
@@ -128,7 +128,6 @@ INSERT INTO `class_logs` (`log_id`, `class_id`, `subject_id`, `subject_type`, `d
 
 CREATE TABLE `class_schedule` (
   `class_id` varchar(10) NOT NULL,
-  `subject_id` varchar(10) NOT NULL,
   `subject_type` varchar(10) NOT NULL,
   `day` enum('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday') NOT NULL,
   `start_time` time NOT NULL,
@@ -146,17 +145,19 @@ CREATE TABLE `class_schedule` (
 -- Dumping data for table `class_schedule`
 --
 
-INSERT INTO `class_schedule` (`class_id`, `subject_id`, `subject_type`, `day`, `start_time`, `end_time`, `status`, `remarks`, `room_code`, `room_no`, `time_created`, `semester`, `school_year`) VALUES
-('BSCS123451', 'CC100', 'LAB', 'Wednesday', '10:00:00', '11:00:00', 'OCCUPIED', '', 'LR', 1, '2024-12-15 23:02:08', '1', '2024-2025'),
-('BSCS123451', 'CC100', 'LECTURE', 'Monday', '07:00:00', '09:00:00', 'OCCUPIED', '', 'LR', 1, '2024-12-15 23:02:08', '1', '2024-2025'),
-('BSCS123461', 'CC101', 'LAB', 'Wednesday', '13:00:00', '14:00:00', 'OCCUPIED', '', 'LAB', 1, '2024-12-15 23:02:08', '1', '2024-2025'),
-('BSCS123461', 'CC101', 'LECTURE', 'Monday', '09:00:00', '12:00:00', 'OCCUPIED', '', 'LR', 1, '2024-12-15 23:02:08', '1', '2024-2025'),
-('BSCS124571', 'CC103', 'LAB', 'Friday', '07:00:00', '09:00:00', 'OCCUPIED', '', 'LAB', 1, '2024-12-15 23:02:08', '1', '2024-2025'),
-('BSCS124571', 'CC103', 'LECTURE', 'Tuesday', '00:00:00', '16:00:00', 'OCCUPIED', '', 'LR', 1, '2024-12-15 23:02:08', '1', '2024-2025'),
-('BSCS124581', 'CC104', 'LAB', 'Wednesday', '17:00:00', '19:00:00', 'OCCUPIED', '', 'LAB', 1, '2024-12-15 23:02:08', '1', '2024-2025'),
-('BSCS124581', 'CC104', 'LECTURE', 'Wednesday', '07:00:00', '10:00:00', 'OCCUPIED', '', 'LR', 3, '2024-12-15 23:02:08', '1', '2024-2025'),
-('BSCS124591', 'MAD121', 'LECTURE', 'Monday', '15:00:00', '17:00:00', 'OCCUPIED', '', 'LAB', 1, '2024-12-15 23:02:08', '1', '2024-2025'),
-('BSCS124601', 'SIPP125', 'LECTURE', 'Thursday', '11:30:00', '13:00:00', 'OCCUPIED', '', 'LAB', 1, '2024-12-15 23:02:08', '1', '2024-2025');
+INSERT INTO `class_schedule` (`class_id`, `subject_type`, `day`, `start_time`, `end_time`, `status`, `remarks`, `room_code`, `room_no`, `time_created`, `semester`, `school_year`) VALUES
+('BSCS123451', 'LAB', 'Wednesday', '10:00:00', '11:00:00', 'OCCUPIED', '', 'LR', 1, '2024-12-15 23:02:08', '1', '2024-2025'),
+('BSCS123451', 'LEC', 'Wednesday', '08:00:00', '09:00:00', 'OCCUPIED', '', 'LR', 1, '2024-12-15 23:02:08', '1', '2024-2025'),
+('BSCS123461', 'LAB', 'Wednesday', '13:00:00', '14:00:00', 'OCCUPIED', '', 'LAB', 1, '2024-12-15 23:02:08', '1', '2024-2025'),
+('BSCS123461', 'LEC', 'Monday', '09:00:00', '12:00:00', 'OCCUPIED', '', 'LR', 1, '2024-12-15 23:02:08', '1', '2024-2025'),
+('BSCS124571', 'LAB', 'Thursday', '06:00:00', '08:00:00', 'OCCUPIED', '', 'LR', 4, '2024-12-25 13:46:18', '1', '2024-2025'),
+('BSCS124571', 'LAB', 'Friday', '07:00:00', '09:00:00', 'OCCUPIED', '', 'LAB', 1, '2024-12-15 23:02:08', '1', '2024-2025'),
+('BSCS124571', 'LEC', 'Monday', '06:00:00', '07:00:00', 'OCCUPIED', '', 'LR', 4, '2024-12-25 13:46:18', '1', '2024-2025'),
+('BSCS124571', 'LEC', 'Saturday', '11:30:00', '13:00:00', 'OCCUPIED', '', 'LR', 5, '2024-12-25 10:12:57', '1', '2024-2025'),
+('BSCS124581', 'LAB', 'Wednesday', '17:00:00', '19:00:00', 'OCCUPIED', '', 'LAB', 1, '2024-12-15 23:02:08', '1', '2024-2025'),
+('BSCS124581', 'LEC', 'Wednesday', '07:00:00', '10:00:00', 'OCCUPIED', '', 'LR', 3, '2024-12-15 23:02:08', '1', '2024-2025'),
+('BSCS124591', 'LEC', 'Monday', '15:00:00', '17:00:00', 'OCCUPIED', '', 'LAB', 1, '2024-12-15 23:02:08', '1', '2024-2025'),
+('BSCS124601', 'LEC', 'Thursday', '11:30:00', '13:00:00', 'OCCUPIED', '', 'LAB', 1, '2024-12-15 23:02:08', '1', '2024-2025');
 
 -- --------------------------------------------------------
 
@@ -227,7 +228,9 @@ INSERT INTO `room_list` (`room_code`, `room_no`, `created_at`) VALUES
 ('LAB', 2, '2024-12-15 22:46:38'),
 ('LR', 1, '2024-12-15 22:46:38'),
 ('LR', 2, '2024-12-15 22:46:38'),
-('LR', 3, '2024-12-15 22:46:38');
+('LR', 3, '2024-12-15 22:46:38'),
+('LR', 4, '2024-12-23 04:21:38'),
+('LR', 5, '2024-12-18 02:30:28');
 
 -- --------------------------------------------------------
 
@@ -246,7 +249,7 @@ CREATE TABLE `room_type` (
 
 INSERT INTO `room_type` (`room_type_id`, `room_description`) VALUES
 ('LAB', 'Laboratory'),
-('LR', 'Learning Room');
+('LR', 'Lecture Room');
 
 -- --------------------------------------------------------
 
@@ -313,9 +316,9 @@ INSERT INTO `semester` (`semester`, `school_year`, `description`) VALUES
 CREATE TABLE `subject_details` (
   `subject_code` varchar(10) NOT NULL,
   `description` varchar(100) NOT NULL,
-  `total_units` int(11) NOT NULL,
-  `lec_units` int(11) NOT NULL,
-  `lab_units` int(11) NOT NULL,
+  `total_units` decimal(10,2) NOT NULL,
+  `lec_units` decimal(10,2) NOT NULL,
+  `lab_units` decimal(10,2) NOT NULL,
   `subject_prospectus_id` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -324,14 +327,14 @@ CREATE TABLE `subject_details` (
 --
 
 INSERT INTO `subject_details` (`subject_code`, `description`, `total_units`, `lec_units`, `lab_units`, `subject_prospectus_id`) VALUES
-('CC100', 'Introduction to Computing', 3, 2, 1, '2023-2024'),
-('CC101', 'Computer Programming 1 (Fundamentals of Programming)', 4, 3, 1, '2023-2024'),
-('CC103', 'Data Structures and Algorithms', 3, 2, 1, '2023-2024'),
-('CC104', 'Information Management', 3, 2, 1, '2023-2024'),
-('CC105', 'Applications Development and Emerging Technologies', 3, 2, 1, '2023-2024'),
-('MAD121', 'Mobile Application Development', 3, 2, 1, '2023-2024'),
-('SIPP125', 'Social Issues and Professional Practice', 3, 3, 0, '2023-2024'),
-('WD123', 'Web Development 2', 3, 2, 1, '2023-2024');
+('CC100', 'Introduction to Computing', 3.00, 2.00, 1.00, '2023-2024'),
+('CC101', 'Computer Programming 1 (Fundamentals of Programming)', 4.00, 3.00, 1.00, '2023-2024'),
+('CC103', 'Data Structures and Algorithms', 3.00, 2.00, 1.00, '2023-2024'),
+('CC104', 'Information Management', 3.00, 2.00, 1.00, '2023-2024'),
+('CC105', 'Applications Development and Emerging Technologies', 3.00, 2.00, 1.00, '2023-2024'),
+('MAD121', 'Mobile Application Development', 3.00, 2.00, 1.00, '2023-2024'),
+('SIPP125', 'Social Issues and Professional Practice', 3.00, 3.00, 0.00, '2023-2024'),
+('WD123', 'Web Development 2', 3.00, 2.00, 1.00, '2023-2024');
 
 -- --------------------------------------------------------
 
@@ -397,7 +400,7 @@ ALTER TABLE `account`
 -- Indexes for table `class_details`
 --
 ALTER TABLE `class_details`
-  ADD PRIMARY KEY (`class_id`,`subject_id`,`subject_type`),
+  ADD PRIMARY KEY (`class_id`,`subject_type`) USING BTREE,
   ADD KEY `classdet_section_id_fk` (`course_abbr`,`year_level`,`section`),
   ADD KEY `classdet_sub_id_fk` (`subject_id`),
   ADD KEY `classdet_fac_id_fk` (`teacher_assigned`),
@@ -408,13 +411,13 @@ ALTER TABLE `class_details`
 --
 ALTER TABLE `class_logs`
   ADD PRIMARY KEY (`log_id`),
-  ADD KEY `classlog_sched_fk_pk` (`class_id`,`subject_id`,`subject_type`,`day`);
+  ADD KEY `classlog_sched_pk_fk` (`class_id`,`subject_type`,`day`);
 
 --
 -- Indexes for table `class_schedule`
 --
 ALTER TABLE `class_schedule`
-  ADD PRIMARY KEY (`class_id`,`subject_id`,`subject_type`,`day`) USING BTREE,
+  ADD PRIMARY KEY (`class_id`,`subject_type`,`day`) USING BTREE,
   ADD KEY `classsched_room_id_fk` (`room_code`,`room_no`),
   ADD KEY `classsched_semester_id_fk` (`semester`,`school_year`);
 
@@ -514,13 +517,13 @@ ALTER TABLE `class_details`
 -- Constraints for table `class_logs`
 --
 ALTER TABLE `class_logs`
-  ADD CONSTRAINT `classlog_sched_fk_pk` FOREIGN KEY (`class_id`,`subject_id`,`subject_type`,`day`) REFERENCES `class_schedule` (`class_id`, `subject_id`, `subject_type`, `day`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `classlog_sched_pk_fk` FOREIGN KEY (`class_id`,`subject_type`,`day`) REFERENCES `class_schedule` (`class_id`, `subject_type`, `day`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `class_schedule`
 --
 ALTER TABLE `class_schedule`
-  ADD CONSTRAINT `classsched_pk_fk` FOREIGN KEY (`class_id`,`subject_id`,`subject_type`) REFERENCES `class_details` (`class_id`, `subject_id`, `subject_type`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `classsched_class_id_fk` FOREIGN KEY (`class_id`,`subject_type`) REFERENCES `class_details` (`class_id`, `subject_type`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `classsched_room_id_fk` FOREIGN KEY (`room_code`,`room_no`) REFERENCES `room_list` (`room_code`, `room_no`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `classsched_semester_id_fk` FOREIGN KEY (`semester`,`school_year`) REFERENCES `semester` (`semester`, `school_year`) ON DELETE CASCADE ON UPDATE CASCADE;
 

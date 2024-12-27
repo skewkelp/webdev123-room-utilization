@@ -148,7 +148,15 @@ class Account
         return $data;
     }
 
-
+    function showuserList(){
+        $sql = "SELECT * FROM user_list";
+        $query = $this->db->connect()->prepare($sql);
+        $data = null;
+        if ($query->execute()) {
+            $data = $query->fetchAll();
+        }
+        return $data;
+    }
 }
 
 // $obj = new Account();

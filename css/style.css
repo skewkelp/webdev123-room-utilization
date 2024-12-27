@@ -55,6 +55,10 @@ update test
 
 
   --admin-btn-background-color: #FFC107;
+  --admin-btn-color: black;
+  --admin-btn-background-hover: #FFA000;
+  /* --admin-btn-background-hover: #FF8F00; */
+
   --delete-btn-background-color: red;
   --delete-btn-color: white;
   --delete-border-radius-sm: 0.75rem;
@@ -227,6 +231,11 @@ body{
   background-color: var(--btn-hover-background-color);
 }
 
+.btn-main{
+  background-color: var(--brand-color)!important;
+
+}
+
 .user{
   background-color: var(--user-btn-background-color)!important;
   color: var(--user-btn-color) !important;
@@ -236,9 +245,17 @@ body{
 
 .btn.admin{
   background-color: var(--admin-btn-background-color)!important;
-}.btn.staff{
+  color: var(--admin-btn-color)!important;
+}.btn.admin:hover{
+  background-color: var(--admin-btn-background-hover)!important;
+
+}
+
+
+.btn.staff{
   background-color: var(--staff-btn-background-color)!important;
 }
+
 
 .btn.delete{
   background-color: var(--delete-btn-background-color)!important;
@@ -484,7 +501,10 @@ a.nav-link{
   font-weight: 700;
 }
 
+.class-scheduled{
+  border: 2px solid black !important;
 
+}
 
 .card {
   --ct-card-spacer-y: 1.5rem;

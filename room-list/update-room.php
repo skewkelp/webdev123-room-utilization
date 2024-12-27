@@ -10,6 +10,7 @@ $original_room_no = $_GET['roomNo'];
 
 $generalErr = '';
 
+$room_desc = '';
 $room_name = $room_type = '';
 $room_nameErr = $room_typeErr = '';
 
@@ -34,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
+    $room_desc = clean_input($_POST['room-type-desc']);
     $room_type = clean_input($_POST['room-type']);
 
     if(!preg_match('/^[A-Z]+ \d+$/', $room_name)){
@@ -42,10 +44,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $room_nameErr = 'Room name already exists';
     }
 
-    
-    if (empty($room_type)) {
+    if(!empty($room_type) && empty($room_desc)) {
+        $room_typeErr = 'Select a room type from the dropdown list.';
+    }else if(empty($room_type)) {
         $room_typeErr = 'Room type is required.';
     }
+
 
     // If there are validation errors, return them as JSON
     if(!empty($generalErr) || !empty($room_nameErr) || !empty($room_typeErr)){
@@ -69,6 +73,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $roomObj->room_code = $room_code;
     $roomObj->room_no = $room_no;
+    $roomObj->original_room_code = $original_room_code;
+    $roomObj->original_room_no = $original_room_no;
 
     if ($roomObj->editRoom($original_room_code, $original_room_no)) {
         echo json_encode(['status' => 'success']);

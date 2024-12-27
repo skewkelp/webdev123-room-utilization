@@ -8,13 +8,18 @@
         </div> 
         <form action="" method="post" id="form-add">
           <div class="modal-body">
+            
 
             <P class="form-label h1-label">Class Details:</P>
             <div style="padding-left: 8px;">
                 <div class="mb-2">
+                    <div class="alert alert-danger d-none" id="general-error"></div>
+                </div>
+                
+                <div class="mb-2">
                     <P class="form-label">Class ID</P>
                     <div class="dropdown">
-                        <input type="text" class="form-control dropdown-input" placeholder="Select or search..." id="dropdown-class-id" name="class-id" >
+                        <input type="text" class="form-control dropdown-input" placeholder="Select or search..." id="dropdown-class-id" name="class" >
                         <input type="hidden" id="hidden-class-id" name="class-id"/>
                         <div class="dropdown-list" id="dropdown-list-class-id">
                             <!-- Options will be populated here by JavaScript -->
@@ -26,50 +31,195 @@
 
             <br>
 
+            <div class="ms-5 mb-2">
+                <div class="mb-0 me-2 d-flex gap-2 subject-type">
+                    <input type="hidden" id="determiner-type" name="determiner-type" value="false">
+                    <P class="form-label mb-0 me-2">Subject Type:</P><br>
+                    <div class="d-flex justify-content-center align-items-center">
+                        <label for="LEC" class="form-label mb-0 me-2">LEC</label>
+                        <input type="checkbox" id="LEC" value="LEC" name="subject-type[]">
+                    </div>
+                    
+                    <div class="d-flex justify-content-center align-items-center">
+                        <label for="LAB" class="form-label mb-0 me-2">LAB</label>
+                        <input type="checkbox" id="LAB" value="LAB" name="subject-type[]">
+                    </div>
+                </div>
+
+                <div class="invalid-feedback"></div>
+            </div>
+
+
+            <br>
+            <hr>
+            
             <P class="form-label h1-label">Class Schedule:</P>
             <div style="padding-left: 8px;">
                 <div class="mb-2">
-                    <div class="alert alert-danger d-none" id="existing-class-error"></div>
-                    <input type="hidden" id="existing-class-id"/>
+                    <div class="alert alert-danger d-none" id="general-error-1"></div>
                 </div>
                 
-                <div class="mb-2">
-                    <label for="start-time" class="form-label">Start-Time</label>
-                    <input type="time" class="form-control" id="start-time" name="start-time" >
-                    <div class="invalid-feedback"></div>
-                </div>
-                <br>
-
-                <div class="mb-2">
-                    <label for="end-time" class="form-label">End-Time</label>
-                    <input type="time" class="form-control" id="end-time" name="end-time">
-                    <div class="invalid-feedback"></div>
-                </div>
-                <br>
-                
-                <P class="form-label">Day</P>
-                <div class="mb-2 d-flex flex-column gap-1">
-                    <div class="mb-2 d-flex gap-3 day-id"> 
-                        <label for="1" class="form-label">M</label>
-                        <input type="checkbox" id="1" value="1" name="day-id[]">
-
-                        <label for="2" class="form-label">T</label>
-                        <input type="checkbox" id="2" value="2" name="day-id[]">
-
-                        <label for="3" class="form-label">W</label>
-                        <input type="checkbox" id="3" value="3" name="day-id[]">
-
-                        <label for="4" class="form-label">Th</label>
-                        <input type="checkbox" id="4" value="4" name="day-id[]">
-
-                        <label for="5" class="form-label">F</label>
-                        <input type="checkbox" id="5" value="5" name="day-id[]">
-
-                        <label for="6" class="form-label">Sa</label>
-                        <input type="checkbox" id="6" value="6" name="day-id[]">
+                <div class="mb-2 d-flex gap-3">
+                    <P class="form-label h1-label div-time" style="display: none;">LEC:</P>
+                    <div class="mb-2 flex-fill">
+                        <label for="start-time-1" class="form-label">Start-Time</label>
+                        <input type="time" class="form-control" id="start-time-1" name="start-time-1" >
+                        <div class="invalid-feedback"></div>
                     </div>
-                    <div class="invalid-feedback"></div>
+                    <br>
+    
+                    <div class="mb-2 flex-fill">
+                        <label for="end-time-1" class="form-label">End-Time</label>
+                        <input type="time" class="form-control" id="end-time-1" name="end-time-1">
+                        <div class="invalid-feedback"></div>
+                    </div>
                 </div>
+
+                
+                <div class="mb-2 d-flex gap-3">
+                    <div class="d-flex gap-2">
+                        <p class="form-label div-time" style="display: none;">LEC:</p>
+                        <P class="form-label">Day</P>
+                    </div>
+
+                    <div class="mb-2 d-flex flex-column gap-1">
+                        <div class="mb-2 d-flex gap-4 day-id-1" style="padding-left: 8px;"> 
+                            <div class="d-flex flex-column justify-content-center align-items-center">
+                                <label for="1" class="form-label">M</label>
+                                <input type="checkbox" id="1" value="Monday" name="day-id-1[]">
+                            </div>
+                            
+                            <div class="d-flex flex-column justify-content-center align-items-center">
+                                <label for="2" class="form-label">T</label>
+                                <input type="checkbox" id="2" value="Tuesday" name="day-id-1[]">
+                            </div>
+                            
+                            <div class="d-flex flex-column justify-content-center align-items-center">
+                                <label for="3" class="form-label">W</label>
+                                <input type="checkbox" id="3" value="Wednesday" name="day-id-1[]">
+                            </div>
+    
+                            <div class="d-flex flex-column justify-content-center align-items-center">
+                                <label for="4" class="form-label">Th</label>
+                                <input type="checkbox" id="4" value="Thursday" name="day-id-1[]">
+                            </div>
+    
+                            <div class="d-flex flex-column justify-content-center align-items-center">
+                                <label for="5" class="form-label">F</label>
+                                <input type="checkbox" id="5" value="Friday" name="day-id-1[]">
+                            </div>
+    
+                            <div class="d-flex flex-column justify-content-center align-items-center">
+                                <label for="6" class="form-label">Sa</label>
+                                <input type="checkbox" id="6" value="Saturday" name="day-id-1[]">
+                            </div>
+                        </div>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+
+                                
+                <div class="mb-2">
+                    <div class="d-flex gap-2">
+                        <P class="form-label">Room </P>
+                        <!-- <p class="form-label div-time" style="display: none;">LEC:</p> -->
+                    </div>
+
+                    <div class="dropdown">
+                        <input type="text" class="form-control dropdown-input" placeholder="Select or search..." id="dropdown-room" name="room-input-1" >
+                        <input type="hidden" id="hidden-room-id" name="room-id-1"/>
+                        <div class="dropdown-list" id="dropdown-list-name">
+                            <!-- Options will be populated here by JavaScript -->
+                        </div>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+
+                <br>
+                <hr class="div-time" style="display: none;">
+                <br>
+
+                <div class="mb-2 div-time" style="display: none;">
+                    <div class="alert alert-danger d-none" id="general-error-2"></div>
+                </div>
+
+                <div class="mb-2 d-flex gap-3 div-time" style="display: none;">
+                    <P class="form-label h1-label div-time" style="display: none;">LAB:</P>
+                    <div class="mb-2 flex-fill div-time" style="display: none;">
+                        <label for="start-time-2" class="form-label">Start-Time</label>
+                        <input type="time" class="form-control" id="start-time-2" name="start-time-2" >
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    <br>
+    
+                    <div class="mb-2 flex-fill div-time" style="display: none;">
+                        <label for="end-time-2" class="form-label">End-Time</label>
+                        <input type="time" class="form-control" id="end-time-2" name="end-time-2">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                
+
+                <div class="mb-2 gap-3 div-day" style="display: none;">
+                    <div class="d-flex gap-2">
+                        <p class="form-label div-time" style="display: none;">LAB:</p>
+                        <P class="form-label">Day</P>
+                    </div>
+                    <div class="mb-2 d-flex flex-column gap-1" >
+                        <div class="mb-2 d-flex gap-4 day-id-2" style="padding-left: 8px;"> 
+                            <div class="d-flex flex-column justify-content-center align-items-center">
+                                <label for="1" class="form-label">M</label>
+                                <input type="checkbox" id="1-input-2" value="Monday" name="day-id-2[]">
+                            </div>
+                            
+                            <div class="d-flex flex-column justify-content-center align-items-center">
+                                <label for="2" class="form-label">T</label>
+                                <input type="checkbox" id="2-input-2" value="Tuesday" name="day-id-2[]">
+                            </div>
+                            
+                            <div class="d-flex flex-column justify-content-center align-items-center">
+                                <label for="3" class="form-label">W</label>
+                                <input type="checkbox" id="3-input-2" value="Wednesday" name="day-id-2[]">
+                            </div>
+
+                            <div class="d-flex flex-column justify-content-center align-items-center">
+                                <label for="4" class="form-label">Th</label>
+                                <input type="checkbox" id="4-input-2" value="Thursday" name="day-id-2[]">
+                            </div>
+
+                            <div class="d-flex flex-column justify-content-center align-items-center">
+                                <label for="5" class="form-label">F</label>
+                                <input type="checkbox" id="5-input-2" value="Friday" name="day-id-2[]">
+                            </div>
+
+                            <div class="d-flex flex-column justify-content-center align-items-center">
+                                <label for="6" class="form-label">Sa</label>
+                                <input type="checkbox" id="6-input-2" value="Saturday" name="day-id-2[]">
+                            </div>
+                        </div>
+                        <div class="invalid-feedback"></div>
+                    </div>
+
+                </div>
+
+                <br>
+
+                <div class="mb-2 div-time" id="div-room" style="display: none;">
+                    <div class="d-flex gap-2">
+                        <P class="form-label">Room </P>
+                        <!-- <p class="form-label div-time" style="display: none;">LAB:</p> -->
+                    </div>
+                    
+                    <div class="dropdown">
+                        <input type="text" class="form-control dropdown-input" placeholder="Select or search..." id="dropdown-room-2" name="room-input-2">
+                        <input type="hidden" id="hidden-room-id-2" name="room-id-2" disabled/>
+                        <div class="dropdown-list" id="dropdown-list-name-2">
+                            <!-- Options will be populated here by JavaScript -->
+                        </div>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                
             </div>
 
           </div>
