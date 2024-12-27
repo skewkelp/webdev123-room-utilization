@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 26, 2024 at 06:23 AM
+-- Generation Time: Dec 27, 2024 at 04:57 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -63,11 +63,11 @@ INSERT INTO `account` (`account_id`, `first_name`, `last_name`, `username`, `pas
 CREATE TABLE `class_details` (
   `class_id` varchar(10) NOT NULL,
   `subject_type` varchar(10) NOT NULL,
-  `subject_id` varchar(10) NOT NULL,
+  `subject_id` varchar(10) DEFAULT NULL,
   `course_abbr` varchar(10) NOT NULL,
   `year_level` int(11) NOT NULL,
   `section` varchar(1) NOT NULL,
-  `teacher_assigned` int(11) NOT NULL,
+  `teacher_assigned` int(11) DEFAULT NULL,
   `time_created` timestamp NOT NULL DEFAULT current_timestamp(),
   `semester` enum('1','2') NOT NULL,
   `school_year` varchar(10) NOT NULL
@@ -89,7 +89,9 @@ INSERT INTO `class_details` (`class_id`, `subject_type`, `subject_id`, `course_a
 ('BSCS124581', 'LAB', 'CC104', 'CS', 2, 'A', 9, '2024-12-15 22:41:21', '1', '2024-2025'),
 ('BSCS124581', 'LEC', 'CC104', 'CS', 2, 'A', 9, '2024-12-15 22:41:21', '1', '2024-2025'),
 ('BSCS124591', 'LEC', 'MAD121', 'CS', 2, 'A', 10, '2024-12-15 22:41:21', '1', '2024-2025'),
-('BSCS124601', 'LEC', 'SIPP125', 'CS', 2, 'A', 5, '2024-12-15 22:41:21', '1', '2024-2025');
+('BSCS124601', 'LEC', 'SIPP125', 'CS', 2, 'A', 5, '2024-12-15 22:41:21', '1', '2024-2025'),
+('BSCS202401', 'LEC', 'SIPP125', 'CS', 1, 'A', 3, '2024-12-26 07:29:53', '1', '2024-2025'),
+('BSCS202501', 'LEC', 'SAMPLE', 'CS', 1, 'A', 1, '2024-12-27 05:17:01', '1', '2024-2025');
 
 -- --------------------------------------------------------
 
@@ -333,6 +335,7 @@ INSERT INTO `subject_details` (`subject_code`, `description`, `total_units`, `le
 ('CC104', 'Information Management', 3.00, 2.00, 1.00, '2023-2024'),
 ('CC105', 'Applications Development and Emerging Technologies', 3.00, 2.00, 1.00, '2023-2024'),
 ('MAD121', 'Mobile Application Development', 3.00, 2.00, 1.00, '2023-2024'),
+('SAMPLE', 'Sample', 2.00, 1.00, 1.00, '2023-2024'),
 ('SIPP125', 'Social Issues and Professional Practice', 3.00, 3.00, 0.00, '2023-2024'),
 ('WD123', 'Web Development 2', 3.00, 2.00, 1.00, '2023-2024');
 
@@ -402,9 +405,9 @@ ALTER TABLE `account`
 ALTER TABLE `class_details`
   ADD PRIMARY KEY (`class_id`,`subject_type`) USING BTREE,
   ADD KEY `classdet_section_id_fk` (`course_abbr`,`year_level`,`section`),
-  ADD KEY `classdet_sub_id_fk` (`subject_id`),
   ADD KEY `classdet_fac_id_fk` (`teacher_assigned`),
-  ADD KEY `classdet_sem_pk_fk` (`semester`,`school_year`);
+  ADD KEY `classdet_sem_pk_fk` (`semester`,`school_year`),
+  ADD KEY `classdet_sub_id_fk` (`subject_id`);
 
 --
 -- Indexes for table `class_logs`
@@ -511,7 +514,7 @@ ALTER TABLE `class_details`
   ADD CONSTRAINT `classdet_fac_id_fk` FOREIGN KEY (`teacher_assigned`) REFERENCES `faculty_list` (`faculty_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `classdet_section_id_fk` FOREIGN KEY (`course_abbr`,`year_level`,`section`) REFERENCES `section_details` (`course_abbr`, `year_level`, `section`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `classdet_sem_pk_fk` FOREIGN KEY (`semester`,`school_year`) REFERENCES `semester` (`semester`, `school_year`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `classdet_sub_id_fk` FOREIGN KEY (`subject_id`) REFERENCES `subject_details` (`subject_code`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `classdet_sub_id_fk` FOREIGN KEY (`subject_id`) REFERENCES `subject_details` (`subject_code`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- Constraints for table `class_logs`
