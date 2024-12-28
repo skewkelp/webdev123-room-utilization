@@ -15,7 +15,7 @@ class Schedule {
                         sched.class_id AS class_id,
                         CONCAT(sched.room_code, ' ',sched.room_no) AS room_name,
                         CONCAT(class.course_abbr, class.year_level, class.section) AS section_name,
-                        sd.subject_code AS subject_code,
+                        CONCAT(class.subject_id,' ', class.subject_type) AS subject_code,
                         sd.description AS subject_name,
                         CONCAT(a.first_name, ' ', a.last_name) AS instructor_name,
                         sched.start_time AS start_time,

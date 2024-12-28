@@ -781,71 +781,120 @@ $(document).ready(function () {
           ];
       
           var daySlots = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-      
-          var tableBody = $('#schedule-data');
+          
+          let tableHead = $('#schedule-header');
+          let tableBody = $('#schedule-data');
           tableBody.empty(); // Clear existing content
-      
-          // Array to track filled cells
-          var filledCells = {};
-      
+          tableHead.empty();
+
+          for (let i = 0; i < 1; i++) {
+            let time = 'Time';
+            let tableRow = $('<tr></tr>');
+            tableRow.append('<th class="border-start border-end">' + time + '</th>');
+
+            for (let j = 0; j < daySlots.length; j++) {
+              let day = daySlots[j];
+              tableRow.append('<th class="border-start border-end" data-day="' + day + '">' + day + '</th>');
+
+            }
+            tableHead.append(tableRow);
+          }
+
+          if(!schedules){
+            for (let i = 0; i < timeSlots.length; i++) {
+              let time = timeSlots[i];
+              let tableRow = $('<tr></tr>');
+              tableRow.attr('data-time', time);
+              tableRow.append('<td class="border-start border-end">' + time + '</td>');
+
+              for (let j = 0; j < daySlots.length; j++) {
+                let day = daySlots[j];
+                let tableCell = $('<td></td>');
+                tableCell.addClass('border-start border-end');
+                tableCell.attr('data-day', day);
+
+                tableRow.append(tableCell);
+              }
+              tableBody.append(tableRow);
+            }
+            $('.room-name-title').text('SELECT A ROOM TO FILTER');
+
+            return;
+          }
+
+          tableBody.empty(); // Clear existing content
+
+          let filledCells = {};
+          let classCount = 0;
+
           for (var i = 0; i < timeSlots.length; i++) {
-            var time = timeSlots[i];
-            var tableRow = $('<tr></tr>');
+            let time = timeSlots[i];
+            let tableRow = $('<tr></tr>');
             tableRow.attr('data-time', time);
             tableRow.append('<td class="border-start border-end">' + time + '</td>');
-    
+
             for (var j = 0; j < daySlots.length; j++) {
-              var day = daySlots[j];
-              var tableCell = $('<td></td>');
+              let day = daySlots[j];
+              
+              // Skip if this cell is already filled
+              if (filledCells[day + '-' + i]) {
+                continue; // Skip this day if the time slot is filled
+              }
+
+              let tableCell = $('<td></td>');
               tableCell.addClass('border-start border-end');
               tableCell.attr('data-day', day);
-  
-              var foundClass = false;
+
+              let foundClass = false;
               for (var k = 0; k < schedules.length; k++) {
-                var schedule = schedules[k];
+                let schedule = schedules[k];
                 if (schedule.class_day.toLowerCase() === day.toLowerCase() &&
                   time >= schedule.start_time && time < schedule.end_time) {
                   
-                  // Check if this cell has already been filled
-                  if (!filledCells[day + '-' + i]) {
-                    // Calculate rowspan
-                    var rowSpan = 1; // Start with 1 for the current cell
-                    for (var l = i + 1; l < timeSlots.length; l++) {
-                      if (timeSlots[l] >= schedule.start_time && timeSlots[l] < schedule.end_time) {
-                        rowSpan++;
-                        filledCells[day + '-' + l] = true; // Mark this cell as filled
-                      } else {
-                        break; // Stop if we reach a time not in the range
-                      }
+                  // Calculate rowspan
+                  let rowSpan = 1;
+                  for (var l = i + 1; l < timeSlots.length; l++) {
+                    if (timeSlots[l] >= schedule.start_time && timeSlots[l] < schedule.end_time) {
+                      rowSpan++;
+                      filledCells[day + '-' + l] = true; // Mark this cell as filled
+                    } else {
+                      break; // Stop if we reach a time not in the range
                     }
+                  }
 
-                    // Render the cell with rowspan
-                    tableCell.attr('rowspan', rowSpan);
-                    tableCell.html(schedule.subject_code + '<br>' + schedule.section_name + '<br>' + schedule.instructor_name);
-                    tableCell.addClass('class-scheduled'); // Add class name for styling
-                    // tableCell.css('border', '2px solid black'); // Set border
-                    foundClass = true;
+                  // Render the cell with rowspan
+                  tableCell.attr('rowspan', rowSpan);
+                  tableCell.html(schedule.subject_code + '<br>' + schedule.section_name + '<br>' + schedule.instructor_name);
+                  tableCell.addClass('class-scheduled');
+                  foundClass = true;
 
-                    // Mark all subsequent rows as filled
-                    for (var m = 1; m < rowSpan; m++) {
-                        filledCells[day + '-' + (i + m)] = true; // Mark subsequent rows
-                    }
+                  classCount++;
+                  // Mark all subsequent rows as filled
+                  for (var m = 1; m < rowSpan; m++) {
+                    filledCells[day + '-' + (i + m)] = true; // Mark subsequent rows
                   }
                   break; // Exit the loop after placing the class
                 }
               }
-  
+
               if (!foundClass) {
-                  tableCell.html(''); // Empty cell if no class is scheduled
+                tableCell.html(''); // Empty cell if no class is scheduled
               }
-  
+
+              if(classCount == 0){//schedule feed, empty
+                $("#schedule-count").show();
+              }else{
+                $("#schedule-count").hide();
+              }
+
               tableRow.append(tableCell);
             }
-    
+
             tableBody.append(tableRow);
           }
+          
         } 
-
+        
         
         $("#filter-room").on("submit", function (e) {
           e.preventDefault(); // Prevent default behavior
@@ -859,10 +908,11 @@ $(document).ready(function () {
         });
 
         // const selectRoom = document.getElementById("room");
-      
+        populateTable();//call to load time
 
 
-        var table = $("#table-room-schedule").DataTable({
+
+        let table = $("#table-room-schedule").DataTable({
             dom: "rtp", // Set DataTable options
             pageLength: 29, // Default page length
             ordering: false,
@@ -874,13 +924,8 @@ $(document).ready(function () {
             }
         });
    
-    
-        // Bind custom input to DataTable search
-        $("#custom-search").on("keyup", function () {
-          table.search(this.value).draw(); // Search room based on input
-        });
+   
 
-       
       },
       error: function(xhr, status, error) {
         alert("Failed to load room schedule content!");

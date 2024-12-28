@@ -18,8 +18,8 @@ require_once '../tools/functions.php';  // Add this line
                 <div class="card-body p-1 pt-2">
                     
                     <form id="filter-room" class="d-flex ct1 flex-row align-items-start justify-content-between">
-                        <div class="w-25">
-                            <label for="room">Room Name:</label>
+                        <div class="d-flex align-items-center w-25 gap-2">
+                            <label for="room" class="text-nowrap">Room Name:</label>
                             <select id="room" class="form-control">
                                 <option value="">Select Room</option>
                                 <?php
@@ -43,23 +43,23 @@ require_once '../tools/functions.php';  // Add this line
                             <button type="submit" class="btn btn-primary user">Filter</button>
                         </div>
                     </form>
-
                     <div class="table-responsive">
-                    <table id="table-room-schedule" class="table table-centered table-nowrap table-hover mb-0">
-                        <thead>
-                            <tr>
-                            <th width="100">Time</th>
-                            <th>Monday</th>
-                            <th>Tuesday</th>
-                            <th>Wednesday</th>
-                            <th>Thursday</th>
-                            <th>Friday</th>
-                            <th>Saturday</th>
-                            </tr>
-                        </thead>
-                        <tbody id="schedule-data">
-                        </tbody>
-                    </table>
+                        <table id="table-room-schedule" class="table table-centered table-nowrap table-hover mb-0">
+                            <thead id="schedule-header">
+                                <!-- <tr>
+                                    <th>Time</th>
+                                    <th>Monday</th>
+                                    <th>Tuesday</th>
+                                    <th>Wednesday</th>
+                                    <th>Thursday</th>
+                                    <th>Friday</th>
+                                    <th>Saturday</th>
+                                </tr> -->
+                            </thead>
+                            <tbody id="schedule-data">
+                                <div id="schedule-count" class="alert text-danger" style="display: none;">There are no class scheduled for this room.</div>
+                            </tbody>
+                        </table>
                     </div> <!-- end table-responsive-->
                 </div>
             </div>
