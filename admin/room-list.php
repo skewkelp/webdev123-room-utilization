@@ -6,6 +6,7 @@ session_start();
 // echo "</pre>";
 // exit;
 require_once '../tools/functions.php';
+$page_title = "room-list";
 
 if(!isset($_SESSION['account'])) {
     header('location: ../account/loginwcss.php');
@@ -18,8 +19,6 @@ if(!isset($_SESSION['account'])) {
 //     header('location: ../account/loginwcss.php');
 //     exit();
 // }
-
-$page_title = "room-list";
 
 require_once '../includes/_head.php';
 ?>

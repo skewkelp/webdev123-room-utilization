@@ -25,7 +25,7 @@ $(document).ready(function () {
           $('.restricted').addClass('d-none');
       }
     } catch (error) {
-      console.error('Error in hideRestrictedElements:', error);
+      console.error('Error in hideRestrictedElements function in admin.js:', error);
     }
   }   
 
@@ -116,30 +116,19 @@ $(document).ready(function () {
   // Event listener for the claslist-link
   $("#classlist-link").on("click", function (e) {
     e.preventDefault();
-    
+    let functionRef = viewroomStatus;
+
     // Check if semester is picked for this session
-    $.ajax({
-      url: '../fetch-data/check-semester-picked.php',
-      method: 'GET',
-      dataType: 'json',
-      success: function(response) { 
-        if (response.semesterPicked) {
-          viewroomStatus();
-        } else {
-          semesterLoad();
-        }
-      },
-      error: function() {
-        // Fallback to semester picker on error
-        semesterLoad();
-      }
-    });
+    checkSemester(functionRef);
   });
 
   //Event listener for the roomschedule-link
   $("#roomschedule-link").on("click", function (e) {
     e.preventDefault(); // Prevent default behavior
-    viewroomSchedule(); // Call the function to load products
+    let functionRef = viewroomSchedule;
+    
+    // Check if semester is picked for this session
+    checkSemester(functionRef);
   });
 
   $("#profile-link").on("click", function (e) {
@@ -170,44 +159,36 @@ $(document).ready(function () {
     $("#roomlist-link").trigger("click"); // Default to dashboard if no specific page
   }
 
-  // Function to load analytics view
-  function viewProfile() {
+  //Check if semester is selected
+  function checkSemester(pageFunctionRef){
     $.ajax({
-      type: "GET", // Use GET request
-      url: "../profile/viewProfile.php", // URL for the analytics view
-      dataType: "html", // Expect HTML response
-      success: function (response) {
-        $(".content-page").html(response); // Load the response into the content area
-         // Call function to load the chart
+      url: '../fetch-data/check-semester-picked.php',
+      method: 'GET',
+      dataType: 'json',
+      success: function(response) { 
+        if (response.semesterPicked){
+          if(pageFunctionRef == viewroomStatus){
+            viewroomStatus();
 
-         $("#table-profile").DataTable({
-          dom: "rtp",
-          pageLength: 10,
-          ordering: false
-        });
-
-        $(".edit-room").on("click", function (e) {
-          e.preventDefault(); // Prevent default behavior
-      
-          const button = $(this); // Reference to the clicked button
-          button.prop("disabled", true); // Disable the button
-
-        });
-        
+          }else if(pageFunctionRef == viewroomSchedule){
+            viewroomSchedule();
+          }
+          
+        }else{
+          chooseSemester(pageFunctionRef);
+        }
       },
-      error: function(xhr, status, error) {
-        alert("Failed to load view profile content!");
-        console.error("Error loading content on viewProfile.php:", status, error);
+      error: function() {
+        // Fallback to semester picker on error
+        chooseSemester();
       }
-
     });
   }
 
-
-  function semesterLoad() {
+  function chooseSemester(pageFunctionRef) {
     $.ajax({
       type: "GET",
-      url: "../class-room-status/choose-semester.php",
+      url: "../admin/choose-semester.php",
       dataType: "html",
       success: function (response) {
         $(".content-page").html(response);
@@ -230,7 +211,7 @@ $(document).ready(function () {
         $("#form-semester").on("submit", function (e) {
           e.preventDefault();
           // Save semester choice
-          semesterPick($(this)); // Pass the form element to the function
+          selectedSemester($(this), pageFunctionRef); // Pass the form element to the function
         });
       },
       error: function(xhr, status, error) {
@@ -240,9 +221,10 @@ $(document).ready(function () {
     });
   }
 
-  function semesterPick(form){
+  
+  function selectedSemester(form, pageFunctionRef){
     $.ajax({
-      url: '../class-room-status/save-semester.php',
+      url: '../admin/save-semester.php',
       method: 'POST',
       data: form.serialize(), // Now properly serializes the form data
       dataType: 'json',
@@ -256,7 +238,12 @@ $(document).ready(function () {
             $("#dropdown-semester").removeClass("is-invalid");
           }
         } else if (response.status === 'success') {
-          viewroomStatus();
+          if(pageFunctionRef == viewroomStatus){
+            viewroomStatus();
+
+          }else if(pageFunctionRef == viewroomSchedule){
+            viewroomSchedule();
+          }
         }
       },
       error: function(xhr, status, error) {
@@ -266,10 +253,43 @@ $(document).ready(function () {
       
     });
   }
-  
 
+
+  // Function to load analytics view
+  function viewProfile() {
+    $.ajax({
+      type: "GET", // Use GET request
+      url: "../profile/viewProfile.php", // URL for the analytics view
+      dataType: "html", // Expect HTML response
+      success: function (response) {
+        $(".content-page").html(response); // Load the response into the content area
+          // Call function to load the chart
+
+          $("#table-profile").DataTable({
+          dom: "rtp",
+          pageLength: 10,
+          ordering: false
+        });
+
+        $(".edit-room").on("click", function (e) {
+          e.preventDefault(); // Prevent default behavior
+      
+          const button = $(this); // Reference to the clicked button
+          button.prop("disabled", true); // Disable the button
+
+        });
+        
+      },
+      error: function(xhr, status, error) {
+        alert("Failed to load view profile content!");
+        console.error("Error loading content on viewProfile.php:", status, error);
+      }
+
+    });
+  }
+  
   // Function to load room status view
-  function viewroomStatus() {
+  function viewroomStatus(){
     $.ajax({
       type: "GET", // Use GET request
       url: "../class-room-status/viewclass-status.php", // URL for the analytics view
@@ -280,7 +300,9 @@ $(document).ready(function () {
         //FOR SUBJECT TABLE --start
         const selectProspectus = document.getElementById("dropdown-subject-prospectus");
         var countDefault = false;
-        
+
+        $('#prospectus-text').text(selectProspectus.value);
+
         function setProspectus() {
           $.ajax({
             type: "POST", // Use POST request
@@ -396,7 +418,14 @@ $(document).ready(function () {
 
         // initialize
         setProspectus();
-        selectProspectus.addEventListener("change", fetchSubjectByProspectus);
+        
+        selectProspectus.addEventListener("change", function() {
+          fetchSubjectByProspectus(); // Call the function to fetch subjects
+          $('#prospectus-text').text(selectProspectus.value); // Update the text
+      });
+
+
+
         initializeSubjectDetails();
          // initializeDataTable();
         //--end
@@ -748,10 +777,26 @@ $(document).ready(function () {
         
         $.fn.dataTable.ext.errMode = 'none'; // Suppress DataTables error messages
 
+        const semesterPK = $("#filter-room").data('semester');
+        const semesterArr = semesterPK.split('|');
+        var semester = semesterArr[0];
+        let schoolYear = semesterArr[1];
+        let semesterText = '';
 
-        function getAllSchedules(roomID){
+        if(semester == '1'){
+          semesterText = '1st Sem|';
+        }else if(semester == '2'){
+          semesterText = '2nd Sem|';
+        }else{
+          console.error("Error, semesterText is empty on function viewroomschedule():", error);
+        }
+
+        $('#chosen-semester').text(semesterText + schoolYear);
+
+
+        function getAllSchedules(roomID, semesterPK){
           $.ajax({
-            url: `../fetch-schedule/fetch-class-schedule.php?selectedRoom=${roomID}`, 
+            url: `../fetch-schedule/fetch-class-schedule.php?selectedRoom=${roomID}&semesterPK=${semesterPK}`, 
             dataType: "json",
             success: function(data) {
               console.log('Fetched data:', data);
@@ -772,12 +817,14 @@ $(document).ready(function () {
         // Example usage
         }
 
+        
+
         function populateTable(schedules) {
           var timeSlots = [
-              '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00', '10:30',
-              '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
-              '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30',
-              '19:00', '19:30', '20:00'
+            '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00', '10:30',
+            '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
+            '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30',
+            '19:00', '19:30', '20:00'
           ];
       
           var daySlots = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -790,11 +837,11 @@ $(document).ready(function () {
           for (let i = 0; i < 1; i++) {
             let time = 'Time';
             let tableRow = $('<tr></tr>');
-            tableRow.append('<th class="border-start border-end">' + time + '</th>');
+            tableRow.append('<th class="border-start border-end dt-column-title">' + time + '</th>');
 
             for (let j = 0; j < daySlots.length; j++) {
               let day = daySlots[j];
-              tableRow.append('<th class="border-start border-end" data-day="' + day + '">' + day + '</th>');
+              tableRow.append('<th class="border-start border-end dt-column-title" data-day="' + day + '">' + day + '</th>');
 
             }
             tableHead.append(tableRow);
@@ -817,7 +864,7 @@ $(document).ready(function () {
               }
               tableBody.append(tableRow);
             }
-            $('.room-name-title').text('SELECT A ROOM TO FILTER');
+            $('#room-name-title').text('SELECT A ROOM TO FILTER');
 
             return;
           }
@@ -895,19 +942,19 @@ $(document).ready(function () {
           
         } 
         
-        
+
         $("#filter-room").on("submit", function (e) {
           e.preventDefault(); // Prevent default behavior
           const roomID = $('#room').val();
+        
           if (roomID) {
-            $('.room-name-title').text($('#room option:selected').text());
+            $('#room-name-title').text($('#room option:selected').text());
             // Update room name title
-            getAllSchedules(roomID);
+            getAllSchedules(roomID, semesterPK);
           }
            // Call function to add product
         });
 
-        // const selectRoom = document.getElementById("room");
         populateTable();//call to load time
 
 
@@ -951,18 +998,14 @@ $(document).ready(function () {
         });
         
         // Bind custom input to DataTable search
-        $("#custom-search").on("keyup", function () {
-          table.search(this.value).draw(); // Search room based on input
-        });
-        
-        // Bind custom input to DataTable search
-        $("#custom-search").on("keyup", function () {
+        $("#search-subject").on("keyup", function () {
           table.search(this.value).draw(); // Search room based on input
         });
 
+        
         $("#add-user").on("click", function (e) {
           e.preventDefault(); // Prevent default behavior
-          addRoom(); // Call function to add product
+          addUser(); // Call function to add product
         });
 
 

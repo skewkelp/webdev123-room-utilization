@@ -9,7 +9,7 @@ class Schedule {
     }
 
     // Function to get all schedules with related information
-    public function getAllSchedules($roomCode = null, $roomNo = null) {
+    public function getAllSchedules($roomCode, $roomNo, $semester, $schoolYear) {
         try {
             $sql = "SELECT 
                         sched.class_id AS class_id,
@@ -35,26 +35,21 @@ class Schedule {
                         user_list ul ON fl.user_id = ul.user_id
                     LEFT JOIN 
                         account a ON ul.user_id = a.account_id
-                    
-                    ";
 
-            if($roomCode != null && $roomNo != null){
-                $sql .= " WHERE rl.room_code = :roomCode AND rl.room_no = :roomNo
+                    WHERE rl.room_code = :roomCode AND rl.room_no = :roomNo AND (class.semester = :semester AND class.school_year = :schoolYear)
                     GROUP BY sched.class_id, room_name, sd.subject_code, sd.description, 
                              a.first_name, a.last_name, sched.start_time, sched.end_time
-                    ORDER BY room_name, sched.start_time";
-            }else{
-                $sql .= " GROUP BY sched.class_id, room_name, sd.subject_code, sd.description, 
-                             a.first_name, a.last_name, sched.start_time, sched.end_time
-                    ORDER BY room_name, sched.start_time";
-            }
+                    ORDER BY room_name, sched.start_time
+                    ";
+
 
             $query = $this->db->connect()->prepare($sql);
 
-            if($roomCode != null && $roomNo != null){
-                $query->bindParam(':roomCode', $roomCode);
-                $query->bindParam(':roomNo', $roomNo);
-            }
+            $query->bindParam(':roomCode', $roomCode);
+            $query->bindParam(':roomNo', $roomNo);
+            $query->bindParam(':semester', $semester);
+            $query->bindParam(':schoolYear', $schoolYear);
+            
 
             $query->execute();
             return $query->fetchAll(PDO::FETCH_ASSOC);
@@ -64,6 +59,8 @@ class Schedule {
         }
     }
 
+
+    //unused---
     // Function to get schedule by ID
     public function getScheduleById($class_id, $subject_type) {
         try {
@@ -226,6 +223,8 @@ class Schedule {
             return true; // Return true to indicate potential conflict in case of error
         }
     }
+
+    //---
 }
 ?>
 

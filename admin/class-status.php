@@ -1,6 +1,8 @@
 <?php
+$page_title = "roomstatus";
 session_start();
 
+require_once '../includes/_head.php';
 if (isset($_SESSION['account'])) {
     if (!$_SESSION['account']) {
         header('location: ../account/loginwcss.php');
@@ -8,8 +10,6 @@ if (isset($_SESSION['account'])) {
 } else {
     header('location: ../account/loginwcss.php');
 }
-$page_title = "roomstatus";
-require_once '../includes/_head.php';
 ?>
 
 <body id="dashboard">

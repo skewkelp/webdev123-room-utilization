@@ -36,36 +36,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 ?>
 
 <body>
-        <form action="loginwcss.php" method="post" class="form">
+    <form action="loginwcss.php" method="post" class="form">
 
-            <img class="mb-4" src="../img/box.png" alt="" width="128px" height="128px">
-            <h1>ROOM UTILIZATION</h1>
-            <!-- <h2 class="h3 mb-3 fw-normal">Login</h2> -->
+        <img class="mb-4" src="../img/box.png" alt="" width="128px" height="128px">
+        <h1>ROOM UTILIZATION</h1>
+        <!-- <h2 class="h3 mb-3 fw-normal">Login</h2> -->
 
-            <div class="input-Container">
-                <label for="username" class="blabel">Username</label>
-                <input type="text" class="input" id="username" autocomplete="username" name="username" placeholder="Username">
-            </div>
+        <div class="input-Container">
+            <label for="username" class="blabel">Username</label>
+            <input type="text" class="input" id="username" autocomplete="username" name="username" placeholder="Username">
+        </div>
 
-            <div class="input-Container">
-                <label for="password" class="blabel">Password</label>
-                <input type="password" class="input" id="password" name="password" placeholder="Password">
-            </div>
+        <div class="input-Container">
+            <label for="password" class="blabel">Password</label>
+            <input type="password" class="input" id="password" name="password" placeholder="Password">
+        </div>
 
-            <p class="text-danger"><?= $loginErr ?></p>
-            <button  class="buttonContinue" type="submit">Continue</button>
-            <div class="form-check text-start my-3">
-                <input class="form-check-input" type="checkbox" value="remember-me" id="flexCheckDefault">
-                <label class="form-check-label" for="flexCheckDefault">
-                    Remember me
-                </label>
-            </div>
-            <div class="signupContainer">
-                <a class="text-link" href="signup.php">Create an Account</a>
-            </div>
+        <p class="text-danger"><?= $loginErr ?></p>
+        <button  class="buttonContinue" type="submit">Continue</button>
+        <div class="form-check text-start my-3">
+            <input class="form-check-input" type="checkbox" value="remember-me" id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">
+                Remember me
+            </label>
+        </div>
+        <div class="signupContainer">
+            <a class="text-link" href="signup.php">Create an Account</a>
+        </div>
 
-            <p class="mt-5 mb-3 text-body-secondary">&copy; 2024–2025</p>
-        </form>
+        <p class="mt-5 mb-3 text-body-secondary">&copy; 2024–2025</p>
+    </form>
     <?php
     require_once '../includes/_footer.php';
     ?>

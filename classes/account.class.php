@@ -149,7 +149,9 @@ class Account
     }
 
     function showuserList(){
-        $sql = "SELECT * FROM user_list";
+        $sql = "SELECT * FROM user_list ulist
+        LEFT JOIN account acc ON ulist.user_id = acc.account_id
+        ";
         $query = $this->db->connect()->prepare($sql);
         $data = null;
         if ($query->execute()) {

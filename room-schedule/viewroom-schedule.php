@@ -1,6 +1,7 @@
 <?php
 require_once '../tools/functions.php';  // Add this line
-  
+session_start();
+$semester_PK = $_SESSION['selected_semester_id'];
 ?>
 
 <div class="container-fluid">
@@ -17,7 +18,7 @@ require_once '../tools/functions.php';  // Add this line
             <div class="card p-4">
                 <div class="card-body p-1 pt-2">
                     
-                    <form id="filter-room" class="d-flex ct1 flex-row align-items-start justify-content-between">
+                    <form id="filter-room" class="d-flex ct1 flex-row align-items-start justify-content-between" data-semester="<?= $semester_PK?>">
                         <div class="d-flex align-items-center w-25 gap-2">
                             <label for="room" class="text-nowrap">Room Name:</label>
                             <select id="room" class="form-control">
@@ -32,18 +33,24 @@ require_once '../tools/functions.php';  // Add this line
                                 ?>
                             </select>
                         </div>
-                        
-                        <!-- Room Name Title -->
-                        <div class="text-center">
-                            <h4 class="room-name-title">ROOM NAME</h4>
-                        </div>
-
                         <!-- Filter Button -->
                         <div class="">
                             <button type="submit" class="btn btn-primary user">Filter</button>
                         </div>
                     </form>
+                    <!-- Room Name Title -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="page-title-box">
+                            <h4 class="card-title" id="room-name-title">ROOM NAME</h4>
+                        </div>
+                        <div class="page-title-box">
+                            <h4 class="card-title" id="chosen-semester">SEMESTER</h4>
+                        </div>
+                    </div>
+                    
                     <div class="table-responsive">
+                        <div id="schedule-count" class="alert text-danger" style="display: none;">There are no class scheduled for this room.</div>
+
                         <table id="table-room-schedule" class="table table-centered table-nowrap table-hover mb-0">
                             <thead id="schedule-header">
                                 <!-- <tr>
@@ -57,7 +64,6 @@ require_once '../tools/functions.php';  // Add this line
                                 </tr> -->
                             </thead>
                             <tbody id="schedule-data">
-                                <div id="schedule-count" class="alert text-danger" style="display: none;">There are no class scheduled for this room.</div>
                             </tbody>
                         </table>
                     </div> <!-- end table-responsive-->
@@ -70,6 +76,10 @@ require_once '../tools/functions.php';  // Add this line
 
 
 <style>
+:root{
+    --brand-color: rgba(44, 59, 20);
+
+}
 .schedule-cell {
     padding: 0 !important;
     vertical-align: middle !important;
@@ -120,8 +130,7 @@ require_once '../tools/functions.php';  // Add this line
     text-align: center;
 }
 
-.room-name-title {
-
+.card-title {
     color: black;
     padding: 8px 20px;
     border-radius: 4px;
@@ -148,5 +157,14 @@ require_once '../tools/functions.php';  // Add this line
 .schedule-cell.occupied {
     background-color: rgb(103, 138, 48) !important;
 }
+
+.class-scheduled{
+    border: 3px solid black !important;
+}
+
+.dt-column-title{
+    color:black !important;
+}
+
 
 </style>

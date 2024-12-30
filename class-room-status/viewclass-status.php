@@ -17,12 +17,26 @@ require_once '../tools/functions.php';  // Add this line
         $split_PK = explode('|', $semester_PK);
         $roomObj->semester = $split_PK[0];
         $roomObj->school_year = $split_PK[1];
+
+        $semesterText = $schoolYearText = '';
+        $semesterText = clean_input($split_PK[0]);
+        $schoolYearText = clean_input($split_PK[1]);
+
+        if($semesterText == '1'){
+          $semesterText = '1st Sem|';
+        }else if(semesterText == '2'){
+          $semesterText = '2nd Sem|';
+        }else{
+          $semesterText = 'ERROR! semester not initialized';
+        }
+
     ?>
 
     <div class="row admin">
         <div class="col-12">
             <div class="page-title-box">
                 <h1 class="page-title">SUBJECT LIST</h1>
+                <h1 class="page-title" id="prospectus-text"></h1>
             </div>
         </div>
     </div>
@@ -116,6 +130,7 @@ require_once '../tools/functions.php';  // Add this line
         <div class="col-12">
             <div class="page-title-box">
                 <h1 class="page-title">CLASS DETAILS LIST</h1>
+                <h1 class="page-title"><?= $semesterText . $schoolYearText?></h1>
             </div>
         </div>
     </div>
@@ -188,6 +203,7 @@ require_once '../tools/functions.php';  // Add this line
         <div class="col-12">
             <div class="page-title-box">
                 <h1 class="page-title">CLASS STATUS LIST</h1>
+                <h1 class="page-title"><?= $semesterText . $schoolYearText?></h1>
             </div>
         </div>
     </div>
