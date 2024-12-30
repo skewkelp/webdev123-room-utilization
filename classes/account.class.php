@@ -136,15 +136,13 @@ class Account
         return $data;
     }
 
-    function showAllusers($excludeAdmin = 1){
-        $sql = "SELECT * FROM account WHERE is_admin != :excludeAdmin;";
+   function showAllusers($excludeAdmin = 1){
+        $sql = "SELECT * FROM account";
         $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':excludeAdmin', $excludeAdmin);
         $data = null;
         if ($query->execute()) {
             $data = $query->fetchAll();
         }
-
         return $data;
     }
 
