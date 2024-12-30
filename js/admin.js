@@ -6,47 +6,59 @@ $(document).ready(function () {
   function hideRestrictedElements() {
     try {
       const userPermissions = window.userPermissions || {};
-      
+
       // Log permissions for debugging
       console.debug('User Permissions:', userPermissions);
-      
+
       // Hide admin elements
       if (!userPermissions.isAdmin) {
-          $('.admin').addClass('d-none');
+        $('.admin').addClass('d-none');
       }
-      
+
       // Hide staff elements
       if (!userPermissions.isStaff) {
-          $('.staff').addClass('d-none');
+        $('.staff').addClass('d-none');
       }
-      
+
       // Hide elements requiring either permission
       if (!userPermissions.isAdmin && !userPermissions.isStaff) {
-          $('.restricted').addClass('d-none');
+        $('.restricted').addClass('d-none');
       }
     } catch (error) {
       console.error('Error in hideRestrictedElements function in admin.js:', error);
     }
-  }   
+  }
+
+  // Debounce function to limit execution frequency
+  function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
+
+  const debouncedHideRestrictedElements = debounce(hideRestrictedElements, 100);
 
   // Initial hide
   hideRestrictedElements();
- 
-  // Single ajaxComplete handler
-  $(document).ajaxComplete(function() {
-    hideRestrictedElements();
-  });
 
-  // Alternative approach using MutationObserver
+  // Single ajaxComplete handler
+  $(document).ajaxComplete(debouncedHideRestrictedElements);
+
+  // MutationObserver to watch for added nodes
   const observer = new MutationObserver(function(mutations) {
-    mutations.forEach(function(mutation) {
-      if (mutation.addedNodes.length) {
-        hideRestrictedElements();
-      }
-    });
+      mutations.forEach(function(mutation) {
+          if (mutation.addedNodes.length) {
+              debouncedHideRestrictedElements();
+          }
+      });
   });
   observer.observe(document.body, { childList: true, subtree: true });
-
   // Function to close the modal
   function closeModal(modal) {
     const modalElement = modal[0]; // Get the first DOM element from the jQuery object
@@ -413,7 +425,7 @@ $(document).ready(function () {
         //ADD PROSPECTUS
         $("#add-subject-prospectus").on("click", function (e) {
           e.preventDefault(); // Prevent default behavior
-          addsubjectDetails(selectProspectus.value);
+          // addsubjectDetails(selectProspectus.value);
         });
 
         // initialize
@@ -422,12 +434,8 @@ $(document).ready(function () {
         selectProspectus.addEventListener("change", function() {
           fetchSubjectByProspectus(); // Call the function to fetch subjects
           $('#prospectus-text').text(selectProspectus.value); // Update the text
-      });
-
-
-
+        });
         initializeSubjectDetails();
-         // initializeDataTable();
         //--end
 
         //FOR CLASS DETAILS TABLE//---start
@@ -476,8 +484,8 @@ $(document).ready(function () {
         // Get the select element
         const selectDay = document.getElementById("day");
         
-        // Function to set the current day in the dropdown, real-time
-        // Function to set the current day in the dropdown, real-time
+        // Function to set the current day in the dropdown, local real-time
+        // Function to set the current day in the dropdown, local real-time
         function setCurrentDay() {
           const options = ["Sunday","Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
           const currentDayIndex = new Date().getDay();  //
@@ -991,6 +999,12 @@ $(document).ready(function () {
         $(".content-page").html(response); // Load the response into the content area
          // Call function to load the chart
 
+        $("#add-user").on("click", function (e) {
+          e.preventDefault(); // Prevent default behavior
+          addUserList(); // Call function to add 
+        });
+
+
         var table = $("#table-user-list").DataTable({
           dom: "rtp",
           pageLength: 10,
@@ -1003,11 +1017,7 @@ $(document).ready(function () {
         });
 
         
-        $("#add-user").on("click", function (e) {
-          e.preventDefault(); // Prevent default behavior
-          addUser(); // Call function to add product
-        });
-
+        
 
         $(".edit-user").on("click", function (e) {
           e.preventDefault(); // Prevent default behavior
@@ -1015,8 +1025,8 @@ $(document).ready(function () {
           const button = $(this); // Reference to the clicked button
           button.prop("disabled", true); // Disable the button
           
-          const roomCode = $(this).data('roomcode');
-          const roomNo = $(this).data('roomno');
+          // const roomCode = $(this).data('roomcode');
+          // const roomNo = $(this).data('roomno');
 
           // Call the AJAX function
           // editRoom(roomCode, roomNo).always(function() {
@@ -1029,6 +1039,38 @@ $(document).ready(function () {
       error: function(xhr, status, error) {
         alert("Failed to load user list content!");
         console.error("Error loading content on viewuser-list.php:", status, error);
+      }
+    });
+  }
+
+ function addUserList() {
+    $.ajax({
+      type: "GET", // Use GET request
+      url: "../user-list/add-user.html?v=" + new Date().getTime(), // URL for add product view
+      dataType: "html", // Expect HTML response
+      success: function (view) {
+        $(".modal-container").html(view); // Load the modal view
+        console.log("Modal content loaded successfully.");
+        $("#staticBackdrop").modal("show");
+        const modal = $('#staticBackdrop');
+        
+        
+
+        $(".modal-close").on("click", function (e) {
+          e.preventDefault();
+          closeModal(modal); // Pass modal to closeModal function
+        }); 
+
+        // Event listener for the add product form submission
+        $("#form-add").on("submit", function (e) {
+          e.preventDefault(); // Prevent default form submission
+          saveclassDetails(); // Call function to save product
+        });
+        
+      },
+      error: function (xhr, status, error) {
+        alert("Failed to load add class details modal!");
+        console.error("Error loading modal on add-class-detail.html:", status, error);
       }
     });
   }

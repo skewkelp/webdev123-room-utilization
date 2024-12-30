@@ -1,0 +1,83 @@
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Add to User List</h5>
+          <button type="button" class="btn-close modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div> 
+        <form action="" method="post" id="form-add">
+          <div class="modal-body">
+     
+            <div style="padding-left: 8px;">
+                <div class="mb-2">
+                    <div class="alert alert-danger d-none" id="general-error"></div>
+                </div>
+                
+                <div class="mb-2">
+                    <label for="user-id" class="form-label">User-ID</label>
+                    <input type="text" class="form-control" id="user-id" name="user-id" placeholder="202401234...">
+                    <div class="invalid-feedback"></div>
+                    <i id="example-id">Example: 202401234</i>
+                </div>
+
+                <br>
+                
+                <div class="mb-2">
+                    <label for="username" class="form-label">Username</label>
+                    <input class="form-control" id="username" name="username" placeholder="ab202401234..." maxlength="20"></input>
+                    <div class="invalid-feedback"></div>
+                    <i id="example-username">Example: aa202401234</i>
+                </div>
+
+                <br>
+                
+                <div class="mb-2">
+                    <label for="user-type" class="form-label">User Type:</label>
+                    <select class="form-control" id="user-type" name="user-type">
+                        <option value="">--SELECT USER TYPE---</option>
+                        <option value="">Student</option>
+                        <option value="">Faculty</option>
+                        <option value="">Admin</option>
+                        <option value="">Admin/Faculty</option>
+                    </select>
+                    <div class="invalid-feedback"></div>
+                </div>
+
+                <br>
+                
+                <div class="mb-2">
+                    <label for="lec-units" class="form-label">Lec Units:</label>
+                    <input type="number" class="form-control" id="lec-units" name="lec-units" placeholder="0.0" sstep="1" min="0" max="8">
+                    <div class="invalid-feedback"></div>
+                </div>
+
+                <div class="ms-5 mb-2">
+                    <div class="mb-0 me-2 d-flex gap-2">
+                        <input type="hidden" id="determiner-type" name="determiner-type" value="false">
+                        <P class="form-label mb-0 me-2">User Type:</P><br>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <label for="LEC" class="form-label mb-0 me-2">LEC</label>
+                            <input type="checkbox" id="LEC" value="LEC" name="subject-type[]">
+                        </div>
+                        
+                        <div class="d-flex justify-content-center align-items-center">
+                            <label for="LAB" class="form-label mb-0 me-2">LAB</label>
+                            <input type="checkbox" id="LAB" value="LAB" name="subject-type[]">
+                        </div>
+                    </div>
+    
+                    <div class="invalid-feedback"></div>
+                </div>
+
+            </div>
+
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary modal-close" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary brand-bg-color">Add Subject Details</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>

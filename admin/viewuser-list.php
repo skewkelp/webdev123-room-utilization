@@ -44,7 +44,7 @@ require_once '../tools/functions.php';  // Add this line
                         </div>
 
                         <!-- 1. Add Class Details   -->
-                        <a id="add-user-details" href="" class="btn admin btn-primary open-modal-button">Add USER</a>
+                        <a id="add-user" href="" class="btn admin btn-primary open-modal-button">Add USER</a>
                     </div>
 
                     <div class="table-responsive">
