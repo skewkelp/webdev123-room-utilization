@@ -29,10 +29,10 @@ require_once '../tools/functions.php';  // Add this line
                             <thead>
                                 <tr>
                                     <th>ID</th>
+                                    <th>Account Id</th>
                                     <th>First Name</th>
                                     <th>Last Name</th>
                                     <th>Username</th>
-                                    <th>Role</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -45,10 +45,10 @@ require_once '../tools/functions.php';  // Add this line
                                 
                                 <tr>
                                     <td><?= $i ?></td>
+                                    <td><?= $arr['account_id'] ?></td>
                                     <td><?= $arr['first_name'] ?></td>
                                     <td><?= $arr['last_name'] ?></td>
                                     <td><?= $arr['username'] ?></td>
-                                    <td><?= $arr['role'] ?></td>
                                 </tr>
 
                                 <?php
