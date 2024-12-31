@@ -430,9 +430,10 @@ a.nav-link{
 
 /* Burger Container*/
 .btn-toggle{
+
   border: 0;
   padding: 0;
-  width: 73.25px;
+  width: 74px;
   height: 70px;
   background-color: var(--brand-color);
 }

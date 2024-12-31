@@ -22,9 +22,9 @@ require_once '../includes/_head.php';
             <!-- dynamic content here -->
         </div>
     </div>
-    <?php
-    require_once '../includes/_footer.php';
-    ?>
 </body>
+<?php
+    require_once '../includes/_footer.php';
+?>
 
 </html>

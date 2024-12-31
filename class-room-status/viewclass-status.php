@@ -380,7 +380,6 @@ require_once '../tools/functions.php';  // Add this line
                                             <a href="" class="btn staff room-status" data-classid="<?= $arr['class_id'] ?>" data-classday="<?= $arr['class_day'] ?>" data-subjecttype="<?= $arr['subject_type'] ?>">Occupy</a>
                                             <?php if (hasPermission('admin')): ?>
                                                 <a href="" class="btn admin edit-room-status" data-classid="<?= $arr['class_id'] ?>" data-classday="<?= $arr['class_day'] ?>" data-subjecttype="<?= $arr['subject_type'] ?>">Edit</a>
-                                                <a href="" class="btn admin display-status">Display</a> <!-- hidden or displayed  -->
                                                 <a href="" class="btn admin delete delete-room-status" data-classid="<?= $arr['class_id'] ?>" data-classday="<?= $arr['class_day'] ?>" data-subjecttype="<?= $arr['subject_type'] ?>">X</a>
                                             <?php endif; ?>
                                         </td>

@@ -26,9 +26,9 @@ class RoomStatus{
     
     
     public $class_name = '';
-    public $status = '';
     
-    // Properties for class details
+
+    // Properties for class schedules
     public $class_id = ''; // PK class_details
     public $subject_type = '';//PK
 
@@ -39,6 +39,7 @@ class RoomStatus{
     public $year_level = '';
     public $section = '';
     
+    public $faculty_id = ''; 
     public $teacher_assigned = ''; 
     public $room_id = '';
     
@@ -51,19 +52,17 @@ class RoomStatus{
     public $end_time = ''; 
     public $day_id = ''; //day name = 'Monday','Tuesday', etc
     
-    public $class_status_id = '';
-    
-    // Properties for IDs and logs
-    public $class_time_id = ''; // PK class_time
-    public $class_day_id = '';
-    public $log_cid = []; // Log for class IDs
-    public $log_ctid = []; // Log for class time IDs
-    public $log_cdid = []; // Log for class day IDs
-    public $log_day = []; // Log for day IDs
-    public $log_sid = []; // Log for day IDs
+    public $remarks = '';
+    public $room_status = '';
+
+
+    public $original_day_id = '';
+
+  
     public $week_day = '';
     public $id = '';
     
+
     protected $db;
     
     function __construct(){
@@ -155,7 +154,50 @@ class RoomStatus{
             return false; // Update failed
         }
     }
+    
+    function updateClassStatus(){
+        $sql = "UPDATE class_schedule
+            SET remarks = :remarks,
+                `status` = :room_status
+                
+            WHERE class_id = :class_id AND subject_type = :subject_type And `day` = :day_id
+        ;";
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':remarks', $this->remarks);
+        $query->bindParam(':room_status', $this->room_status);
  
+        $query->bindParam(':class_id', $this->class_id);
+        $query->bindParam(':subject_type', $this->subject_type);
+        $query->bindParam(':day_id', $this->day_id);
+        
+        if ($query->execute()) {
+            return true;
+        } else {
+            // Log error information
+            error_log("Update failed: " . implode(", ", $query->errorInfo()));
+            return false; // Update failed
+        }
+    }
+
+    function insertLog(){
+        $sql = "INSERT INTO class_logs
+        (class_id, subject_type, `day`) 
+        VALUES (:class_id, :subject_type, :day_id)";
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':class_id', $this->class_id);
+        $query->bindParam(':subject_type', $this->subject_type);
+        $query->bindParam(':day_id', $this->day_id);
+       
+        if ($query->execute()) {
+            return true;
+        } else {
+            // Log error information
+            error_log("Insert log failed: " . implode(", ", $query->errorInfo()));
+            return false; // Update failed
+        }
+    }
+
+    //ADD SUBJECT DETAILS
     function insertSubjectDetails(){
 
         $sql = "INSERT INTO subject_details (subject_code, `description`, total_units, lec_units, lab_units, subject_prospectus_id) VALUES (:subject_code, :description, :total_units, :lec_units, :lab_units, :prospectus_id);";
@@ -172,7 +214,7 @@ class RoomStatus{
     }
 
 
-    //UPDATED 
+    //ADD CLASS DETAILS 
     function insertClassDetails(){
 
         $sql = "INSERT INTO class_details (class_id, subject_type, subject_id, course_abbr, year_level, section, teacher_assigned, semester, school_year) VALUES (:class_id, :subject_type, :subject_id, :course_abbr, :year_level, :section, :teacher_id, :semester, :school_year);";
@@ -190,6 +232,7 @@ class RoomStatus{
         return true;
     }
 
+    //ADD CLASS SCHEDULE
     function insertScheduleDay(){
         $sql = "INSERT INTO class_schedule 
         (class_id, subject_type, `day`, start_time, end_time, room_code, room_no, semester, school_year) 
@@ -209,104 +252,55 @@ class RoomStatus{
     }
 
 
-    
-    function insertClassTime(){
-        $sql = "INSERT INTO class_time (class_id, subject_id, start_time, end_time) VALUES (:class_id, :subject_id, :start_time, :end_time);";
-        $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':class_id', $this->class_id);
-        $query->bindParam(':subject_id', $this->subject_id);
-        $query->bindParam(':start_time', $this->start_time);
-        $query->bindParam(':end_time', $this->end_time);
-        $query->execute();
-        $this->class_time_id = $this->db->connect()->lastInsertId();
-
-        return $this->class_time_id;
-    }
-
-    function insertClassDay(){
-        $sql = "INSERT INTO class_day (class_time_id, day_id) VALUES (:class_time_id, :day_id);";
-        $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':class_time_id', $this->class_time_id);
-        $query->bindParam(':day_id', $this->day_id);
-        $query->execute();
-        $this->class_day_id = $this->db->connect()->lastInsertId();
-
-        $this->insertStatus();
-
-        return true;
-    }
-
-    function insertStatus(){
-        $sql = "INSERT INTO scheduled_statuses (class_day_id, semester, school_year) VALUES (:class_day_id, :semester, :school_year);";
-        $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':class_day_id', $this->class_day_id);
-        $query->bindParam(':semester', $this->semester);
-        $query->bindParam(':school_year', $this->school_year);
-        $query->execute();
-
-        return true;
-    }
-
-
-    
-    public $original_day_id = '';
-
-   
-    function showTeacherSchedule(){
+    //SHOW FACULTY CLASSES ON FACULTY-CLASS-LIST
+    function showFacultyClassSchedules(){
         $sql = "SELECT
-                stat.class_day_id AS class_status_id,
-                cday.id AS cday_id,
-                d.day AS week_day,
-                room.room_name AS room_name,
+                sched.day AS class_day,
+                sched.class_id AS class_id,
+                sched.subject_type AS subject_type,
+                sched.day AS class_day,
+
+                CONCAT(sched.room_code, ' ', sched.room_no) AS room_name,
                 rtype.room_description AS room_type,
-                sub.subject_code AS subject_code,
-                stdesc.type AS subject_type,
-                sec.section_name AS section_name,
-                ctime.start_time AS start_time,
-                ctime.end_time AS end_time,
+
+                class.subject_id AS subject_code,
+
+                CONCAT(class.course_abbr, class.year_level, class.section) AS section_name,
+
+                sched.start_time AS start_time,
+                sched.end_time AS end_time,
                 CONCAT(acc.last_name,', ',acc.first_name) AS faculty_name,
-                sdesc.description AS room_status
+                
+                sched.status AS room_status,
+                sched.remarks AS remarks
 
             FROM
                 semester sem
             LEFT JOIN 
-                scheduled_statuses stat ON sem.semester = stat.semester AND sem.school_year = stat.school_year
+                class_schedule sched ON sem.semester = sched.semester AND sem.school_year = sched.school_year
             LEFT JOIN 
-                status_description sdesc ON stat.status_desc_id = sdesc.id
+                class_details class ON sched.class_id = class.class_id  AND sched.subject_type = class.subject_type
+            LEFT JOIN
+                room_list room ON sched.room_code = room.room_code AND sched.room_no = room.room_no
+            LEFT JOIN
+                room_type rtype ON room.room_code = rtype.room_type_id
+            LEFT JOIN
+                faculty_list fac ON class.teacher_assigned = fac.faculty_id
             LEFT JOIN 
-                class_day cday ON stat.class_day_id = cday.id
-            LEFT JOIN
-                _day d ON cday.day_id = d.id
-            LEFT JOIN
-                class_time ctime ON cday.class_time_id = ctime.id
-            LEFT JOIN
-                class_details class ON ctime.class_id = class.id AND ctime.subject_id = class.subject_id
-            LEFT JOIN
-                room_list room ON class.room_id = room.id
-            LEFT JOIN
-                room_type rtype ON room.type_id = rtype.id
-            LEFT JOIN
-                section_details sec ON class.section_id = sec.id
-            LEFT JOIN
-                course_details course ON sec.course_id = course.id
-            LEFT JOIN
-                subject_details sub ON class.subject_id = sub.id
-            LEFT JOIN
-                subject_type_description stdesc ON sub.type_id = stdesc.id
-            LEFT JOIN
-                faculty_list fac ON class.teacher_assigned = fac.id
+                user_list user ON fac.user_id = user.user_id
             LEFT JOIN 
-                account acc ON fac.account_id = acc.id
+                account acc ON user.user_id = acc.account_id
                 
-            WHERE sem.semester = :semester AND sem.school_year = :school_year
-            AND class.teacher_assigned = :teacher_id
+            WHERE sem.semester = :semester AND sem.school_year = :school_year AND fac.user_id = :faculty_id
+
+            ORDER BY FIELD(class_day, 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'), sched.start_time
         
         ;";
 
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':semester', $this->semester);
         $query->bindParam(':school_year', $this->school_year);
-        $query->bindParam(':teacher_id', $this->teacher_id);
+        $query->bindParam(':faculty_id', $this->faculty_id);
 
         $data = null;
         if ($query->execute()) {
@@ -317,6 +311,7 @@ class RoomStatus{
 
     }
 
+    //SHOW ALL SUBJECT DETAILS ON CLASS-STATUS PAGE
     function showAllSubjectDetails($selectedProspectus = null){
         $sql =
             "SELECT
@@ -353,6 +348,41 @@ class RoomStatus{
     }
 
 
+    //SHOW ALL CLASS DETAILS ON CLASS-STATUS PAGE
+    function showAllClassDetails(){
+        $sql = 
+            "SELECT 
+                class.class_id AS class_id,
+                class.subject_type AS subject_type,
+                CONCAT (class.class_id ,'|', class.subject_type) AS id,
+                CONCAT(class.subject_id,' ', class.subject_type) AS subject_, 
+                CONCAT(class.course_abbr, class.year_level, class.section) AS section_, 
+                CONCAT(acc.last_name,', ',acc.first_name) AS teacher_ 
+
+            FROM class_details class 
+            LEFT JOIN section_details sec ON class.course_abbr = sec.course_abbr AND class.year_level = sec.year_level AND class.section = sec.section
+            LEFT JOIN subject_details sub ON class.subject_id = sub.subject_code
+            LEFT JOIN faculty_list fac ON class.teacher_assigned = fac.faculty_id
+            LEFT JOIN user_list user ON fac.user_id = user.user_id
+            LEFT JOIN account acc ON user.user_id = acc.account_id
+            LEFT JOIN semester sem ON class.semester = sem.semester
+
+            WHERE sem.semester = :semester AND sem.school_year = :school_year ORDER BY section_
+        ;";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':semester', $this->semester);
+        $query->bindParam(':school_year', $this->school_year);
+
+        $data = null;
+        if ($query->execute()){
+            $data = $query->fetchAll();
+        }
+        return $data;
+    }
+    
+
+    //SHOW ALL CLASS STATUS ON CLASS-STATUS PAGE
     function showAllStatus($selectedDay = null){
         $sql = 
             "SELECT
@@ -419,38 +449,6 @@ class RoomStatus{
         return $data;
     }
 
-
-    function showAllClassDetails(){
-        $sql = 
-            "SELECT 
-                class.class_id AS class_id,
-                class.subject_type AS subject_type,
-                CONCAT (class.class_id ,'|', class.subject_type) AS id,
-                CONCAT(class.subject_id,' ', class.subject_type) AS subject_, 
-                CONCAT(class.course_abbr, class.year_level, class.section) AS section_, 
-                CONCAT(acc.last_name,', ',acc.first_name) AS teacher_ 
-
-            FROM class_details class 
-            LEFT JOIN section_details sec ON class.course_abbr = sec.course_abbr AND class.year_level = sec.year_level AND class.section = sec.section
-            LEFT JOIN subject_details sub ON class.subject_id = sub.subject_code
-            LEFT JOIN faculty_list fac ON class.teacher_assigned = fac.faculty_id
-            LEFT JOIN user_list user ON fac.user_id = user.user_id
-            LEFT JOIN account acc ON user.user_id = acc.account_id
-            LEFT JOIN semester sem ON class.semester = sem.semester
-
-            WHERE sem.semester = :semester AND sem.school_year = :school_year ORDER BY section_
-        ;";
-
-        $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':semester', $this->semester);
-        $query->bindParam(':school_year', $this->school_year);
-
-        $data = null;
-        if ($query->execute()){
-            $data = $query->fetchAll();
-        }
-        return $data;
-    }
     
     //check if subject has a LEC and LAB units
     function checkSubjectType($subject_id, $type){

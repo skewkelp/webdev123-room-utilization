@@ -125,15 +125,18 @@ $(document).ready(function () {
       var sidebar = $("#sidebar");
       var navLabel = $(".sidebar-button-text.ms-2");
       var content = $(".content-page.px-3");
+      var sidebartitle = $(".side-nav-title");
 
       if (sidebar.width() === 260) {
+        sidebartitle.addClass("collapsed flex-nowrap overflow-hidden");
         sidebar.addClass("collapsed");
         navLabel.toggle();
         content.css("margin-left", "70px");
       } else {
+        sidebartitle.removeClass("collapsed");
         sidebar.removeClass("collapsed");
         navLabel.toggle();
-        content.css("margin-left", "260px");
+        content.css("margin-left", "262px");
       }
 
       // Re-enable the button after the action
@@ -179,6 +182,17 @@ $(document).ready(function () {
     viewuserList(); // Call the function to load products
   });
 
+
+  $("#faculty-classlist-link").on("click", function (e){
+    e.preventDefault(); // Prevent default behavior
+    let functionRef = viewmyclassSchedule;
+
+    // Check if semester is picked for this session
+    checkSemester(functionRef);
+  });
+
+
+
   // href="room-schedule" id="roomschedule-link" 
 
   // Determine which page to load based on the current URL
@@ -193,7 +207,9 @@ $(document).ready(function () {
     $("#profile-link").trigger("click"); // Trigger the products click event
   } else if (url.endsWith("user-list")){
     $("#userlist-link").trigger("click");
-  } else {
+  } else if (url.endsWith("faculty-class-list")){
+    $("#faculty-classlist-link").trigger("click");
+  }else {
     $("#roomlist-link").trigger("click"); // Default to dashboard if no specific page
   }
 
@@ -207,9 +223,10 @@ $(document).ready(function () {
         if (response.semesterPicked){
           if(pageFunctionRef == viewroomStatus){
             viewroomStatus();
-
           }else if(pageFunctionRef == viewroomSchedule){
             viewroomSchedule();
+          }else if(pageFunctionRef == viewmyclassSchedule){
+            viewmyclassSchedule();
           }
           
         }else{
@@ -279,9 +296,10 @@ $(document).ready(function () {
         } else if (response.status === 'success') {
           if(pageFunctionRef == viewroomStatus){
             viewroomStatus();
-
           }else if(pageFunctionRef == viewroomSchedule){
             viewroomSchedule();
+          }else if(pageFunctionRef == viewmyclassSchedule){
+            viewmyclassSchedule();
           }
         }
       },
@@ -291,6 +309,118 @@ $(document).ready(function () {
       }
       
     });
+  }
+
+
+  function viewmyclassSchedule(){
+    $.ajax({
+      type: "GET", // Use GET request
+      url: "../faculty-class-list/my-class-schedule.php", // URL for the analytics view
+      dataType: "html", // Expect HTML response
+      success: function (response) {
+        $(".content-page").html(response); // Load the response into the content area
+          // Call function to load the chart
+
+        $("#table-class").DataTable({
+          dom: "rtp",
+          pageLength: 10,
+          ordering: false,
+          drawCallback: function(){
+            $("#class-occupy").on("click", function (e) {
+              e.preventDefault(); // Prevent default behavior
+          
+              const button = $(this); // Reference to the clicked button
+              button.prop("disabled", true); // Disable the button
+    
+              const classID = $(this).data('classid');
+              const subType = $(this).data('subjecttype');
+              const classDay = $(this).data('classday');
+              const roomStatus = $(this).data('status');
+              console.log("Data:", classID, subType, classDay, roomStatus);
+
+              // Call the AJAX function
+              changingclassStatus(classID, subType, classDay, roomStatus);
+              
+            });
+          }
+        });
+
+        
+        
+      },
+      error: function(xhr, status, error) {
+        alert("Failed to load view profile content!");
+        console.error("Error loading content on viewProfile.php:", status, error);
+      }
+
+    });
+
+  }
+
+  function changingclassStatus(classID, subType, classDay, roomStatus){
+    $.ajax({
+      type: "GET", // Use GET request
+      url: "../faculty-class-list/class-toggle.html?v=" + new Date().getTime(), // URL for add product view
+      dataType: "html", // Expect HTML response
+      success: function (view) {
+        $(".modal-container").html(view); // Load the modal view
+        $("#staticBackdrop").modal("show");
+        
+        const modal = $('#staticBackdrop');
+        console.log("Modal content loaded successfully.");
+
+        $(".modal-close").on("click", function (e) {
+          e.preventDefault();
+          closeModal(modal); // Pass modal to closeModal function
+        }); 
+
+        // Event listener for the add product form submission
+        $("#form-edit").on("submit", function (e) {
+          e.preventDefault(); // Prevent default form submission
+          updateClassStatus(classID, subType, classDay, roomStatus); // Call function to save product
+        });
+        
+      },
+      error: function (xhr, status, error) {
+        alert("Failed to load class class statys modal!");
+        console.error("Error loading modal on class-toggle.html:", status, error);
+      }
+    });
+  }
+
+  function updateClassStatus(classID, subType, classDay, roomStatus){
+    // Debug what's being sent
+    const formEdit = serializeForm("#form-edit");
+    console.log("Sending data:", formEdit);
+    
+    $.ajax({
+      type: "POST", // Use POST request
+      url: `../faculty-class-list/update-class-status.php?classID=${classID}&subType=${subType}&classDay=${classDay}&roomStatus=${roomStatus}`, // URL for saving room
+      data: formEdit, // Serialize the form data for submission
+      dataType: "json", // Expect JSON response
+      success: function (response) {
+        console.log("Response received:", response);
+        if (response.status === "success") {
+          alert('User list updated successfully.');
+          // On success, hide modal and reset form
+          $("#staticBackdrop").modal("hide");
+          $("#form-edit")[0].reset(); // Reset the form
+          // Optionally, reload page to show new entry
+          viewmyclassSchedule();
+        }else if (response.status === "error") {
+          if (response.generalErr){
+            $("#general-error").removeClass("d-none").html(cleanInput(response.generalErr));
+          } else {
+            $("#general-error").addClass("d-none");
+          }
+        }
+      },
+      error: function (xhr, status, error) {
+        alert("Failed to update user profile!");
+        console.error("Error updating data on update-profile.php:", status, error);
+      }
+    });
+
   }
 
   // Function to load analytics view
@@ -477,7 +607,6 @@ $(document).ready(function () {
       }
     });
   }
-
 
 
   //Function to load room schedule view, load content
@@ -685,7 +814,6 @@ $(document).ready(function () {
     });
   }
 
-
   //FUNCTION USER LIST
   //Function to load user list view, load content
   function viewuserList() {
@@ -728,7 +856,7 @@ $(document).ready(function () {
               });
 
             });
-            
+
           }
         });
         
