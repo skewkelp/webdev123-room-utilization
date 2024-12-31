@@ -1,54 +1,51 @@
-let pickSemester = false;
-let viewTable = false;
-
 $(document).ready(function () { 
     //hide restricted elements
   function hideRestrictedElements() {
-      try {
-          const userPermissions = window.userPermissions || {};
+    try {
+      const userPermissions = window.userPermissions || {};
 
-          // Log permissions only if they have changed
-          if (!this.loggedPermissions || 
-            this.loggedPermissions.isAdmin !== userPermissions.isAdmin || 
-            this.loggedPermissions.isStaff !== userPermissions.isStaff) {
-            console.debug('User Permissions:', userPermissions);
-            this.loggedPermissions = userPermissions; // Store current permissions
-          }
-
-          // Use a flag to check if elements have already been hidden
-          let elementsHidden = false;
-
-          // Hide admin elements
-          if (!userPermissions.isAdmin) {
-            $('.admin').addClass('d-none');
-            elementsHidden = true;
-          } else {
-            $('.admin').removeClass('d-none'); // Show if admin
-          }
-
-          // Hide staff elements
-          if (!userPermissions.isStaff) {
-            $('.staff').addClass('d-none');
-            elementsHidden = true;
-          } else {
-            $('.staff').removeClass('d-none'); // Show if staff
-          }
-
-          // Hide elements requiring either permission
-          if (!userPermissions.isAdmin && !userPermissions.isStaff) {
-            $('.restricted').addClass('d-none');
-            elementsHidden = true;
-          } else {
-            $('.restricted').removeClass('d-none'); // Show if either permission
-          }
-
-          // Log if any elements were hidden or shown
-          if (elementsHidden) {
-            // console.debug('Restricted elements updated based on permissions.');
-          }
-      } catch (error) {
-          console.error('Error in hideRestrictedElements function in admin.js:', error);
+      // Log permissions only if they have changed
+      if (!this.loggedPermissions || 
+        this.loggedPermissions.isAdmin !== userPermissions.isAdmin || 
+        this.loggedPermissions.isStaff !== userPermissions.isStaff) {
+        console.debug('User Permissions:', userPermissions);
+        this.loggedPermissions = userPermissions; // Store current permissions
       }
+
+      // Use a flag to check if elements have already been hidden
+      let elementsHidden = false;
+
+      // Hide admin elements
+      if (!userPermissions.isAdmin) {
+        $('.admin').addClass('d-none');
+        elementsHidden = true;
+      } else {
+        $('.admin').removeClass('d-none'); // Show if admin
+      }
+
+      // Hide staff elements
+      if (!userPermissions.isStaff) {
+        $('.staff').addClass('d-none');
+        elementsHidden = true;
+      } else {
+        $('.staff').removeClass('d-none'); // Show if staff
+      }
+
+      // Hide elements requiring either permission
+      if (!userPermissions.isAdmin && !userPermissions.isStaff) {
+        $('.restricted').addClass('d-none');
+        elementsHidden = true;
+      } else {
+        $('.restricted').removeClass('d-none'); // Show if either permission
+      }
+
+      // Log if any elements were hidden or shown
+      if (elementsHidden) {
+        // console.debug('Restricted elements updated based on permissions.');
+      }
+    } catch (error) {
+      console.error('Error in hideRestrictedElements function in admin.js:', error);
+    }
   }
 
   // Debounce function to limit execution frequency
@@ -70,15 +67,13 @@ $(document).ready(function () {
   hideRestrictedElements(); // Call once on page load
   // MutationObserver to watch for added nodes
   const observer = new MutationObserver(function(mutations) {
-      mutations.forEach(function(mutation) {
-          if (mutation.addedNodes.length) {
-              debouncedHideRestrictedElements();
-          }
-      });
+    mutations.forEach(function(mutation) {
+      if (mutation.addedNodes.length) {
+        debouncedHideRestrictedElements();
+      }
+    });
   });
   observer.observe(document.body, { childList: true, subtree: true });
-  
-  
   
   // Function to close the modal
   function closeModal(modal) {
