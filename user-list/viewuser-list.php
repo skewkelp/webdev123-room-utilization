@@ -18,6 +18,8 @@ require_once '../tools/functions.php';  // Add this line
             </div>
         </div>
     </div>
+    <div class="modal-container"></div>
+
     <div class="row admin">
         <div class="col-12">
             <div class="card p-4">
@@ -26,16 +28,16 @@ require_once '../tools/functions.php';  // Add this line
                     <div class="d-flex ct1 flex-row align-items-start justify-content-between gap-5">
                         
                         <div class="input-group w-25">
-                            <input type="text" id="search-subject" class="form-control form-control-light" placeholder="Search user id...">
+                            <input type="text" id="search-subject" class="form-control form-control-light" placeholder="Search user list...">
                             <span class="input-group-text bg-primary border-primary text-white brand-bg-color">
                                 <i class="bi bi-search"></i>
                             </span>
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center gap-3">
-                            <label for="user-type" class="me-2 mb-0 label-text">Filter:</label>
+                            <label for="user-type" class="me-2 mb-0 label-text text-nowrap">Filter User Type:</label>
                             <select id="user-type" class="form-select">
-                                <option value="">--filter user type--</option>
+                                <option value="">--filter--</option>
                                 <option value="Admin-Faculty">Admin-Faculty</option>
                                 <option value="Admin">Admin</option>
                                 <option value="Faculty">Faculty</option>
@@ -99,8 +101,8 @@ require_once '../tools/functions.php';  // Add this line
                                         <td><?= $arr['first_name'] ?></td>
                                         <td><?= $arr['last_name'] ?></td>
                                         <td class="text-nowrap">
-                                            <a href="" class="btn admin edit-room-status" data-id="{$arr['user_id']}">Edit</a>
-                                            <a href="" class="btn admin delete delete-room-status" data-id="{$arr['user_id']}">X</a>
+                                            <a href="" class="btn admin edit-user" data-id="<?= $arr['user_id'] ?>">Edit</a>
+                                            <a href="" class="btn admin delete delete-user" data-id="<?= $arr['user_id'] ?>">X</a>
                                         </td>
                                     </tr>
                                 <?php

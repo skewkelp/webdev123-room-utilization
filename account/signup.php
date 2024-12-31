@@ -37,9 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
         $usernameErr = "username is Required!";
     }
     
-    // elseif ($accountObj->usernameExist($user_id, $username)) {
-    //     $usernameErr = "This username does not exist within the list.";
-    // }
+    
 
     if(empty($password)) {
         $passwordErr = "password is Required!";
@@ -64,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
         $accountObj->last_name = $last_name;
         $accountObj->username = $username;
         $accountObj->password = $password;
-        $accountObj->add();
+        $accountObj->insertAccount();
         header("location: loginwcss.php");
         exit();
     }

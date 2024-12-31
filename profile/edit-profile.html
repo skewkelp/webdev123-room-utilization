@@ -1,0 +1,69 @@
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Edit Profile</h5>
+          <button type="button" class="btn-close modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div> 
+        <form action="" method="post" id="form-edit">
+          <div class="modal-body">
+
+            <input type="hidden" id="account-id" name="account-id">
+            <input type="hidden" id="original-first-name" name="original-first-name">
+            <input type="hidden" id="original-last-name" name="original-last-name">
+            
+            <div style="padding-left: 8px;">
+                <div class="mb-2">
+                    <div class="alert alert-danger d-none" id="general-error"></div>
+                </div>
+            
+                <div class="mb-2">
+                    <label for="first-name" class="form-label">First Name:</label>
+                    <input type="text" class="form-control" id="first-name" name="first-name" placeholder="first-name" maxlength="50"></input>
+                    <div class="invalid-feedback"></div>
+                </div>
+                
+                <br>
+                
+                <div class="mb-2">
+                    <label for="last-name" class="form-label">Last Name:</label>
+                    <input type="text" class="form-control" id="last-name" name="last-name" placeholder="last-name" maxlength="50"></input>
+                    <div class="invalid-feedback"></div>
+                </div>
+
+                <br>
+
+                <div>
+                    <input type="checkbox" id="change-password"> Change Password?
+                    <input type="hidden" id="change-passkey" name="change-passkey" value="false">
+                </div>
+
+                <div class="mb-2 div-password" style="display: none; margin-left: 8%;">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control password-input" id="password" name="password" placeholder="password" maxlength="64" disabled></input>
+                    <input type="checkbox" id="show-password"> Show
+                
+                    <div class="invalid-feedback"></div>
+                </div>
+
+                <br class="div-password">
+
+                <div class="mb-2 div-password" style="display: none; margin-left: 8%;">
+                    <label for="confirm-password" class="form-label">Confirm Password</label>
+                    <input type="password" class="form-control password-input" id="confirm-password" name="confirm-password" placeholder="password" maxlength="64" disabled></input>
+                    <input type="checkbox" id="show-confirm"> Show
+                
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary modal-close" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary brand-bg-color">Edit Profile</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>

@@ -1,6 +1,5 @@
 <?php
 session_start();
-// Add these at the top of viewroomlist.php
 require_once '../tools/functions.php';  // Add this line
 
 ?>
@@ -10,8 +9,9 @@ require_once '../tools/functions.php';  // Add this line
     <div class="row">
         <div class="col-12">
             <div class="page-title-box">
-                <h1 class="page-title">User Information</h1>
+                <h1 class="page-title">User Profile: <?= $_SESSION['account']['first_name'] . ' ' . $_SESSION['account']['last_name'] ?></h1>
             </div>
+            
         </div>
     </div>
     <div class="modal-container"></div>
@@ -28,33 +28,28 @@ require_once '../tools/functions.php';  // Add this line
                         <table id="table-profile" class="table table-centered table-nowrap table-hover mb-0">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
+                                    <th>Account Id</th>
                                     <th>First Name</th>
                                     <th>Last Name</th>
                                     <th>Username</th>
-                                    <th>Role</th>
+                                    <th style="width: 30%;">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
-                                $i = 1;
-                                $array = $accountObj->showAllusers();
-
-                                foreach ($array as $arr) {
+                                $user_id = '';
+                                $user_id = clean_input($_SESSION['account']['account_id']);
+                                $arr = $accountObj->showProfile($user_id);
                                 ?>
-                                
                                 <tr>
-                                    <td><?= $i ?></td>
+                                    <td><?= $arr['account_id'] ?></td>
                                     <td><?= $arr['first_name'] ?></td>
                                     <td><?= $arr['last_name'] ?></td>
                                     <td><?= $arr['username'] ?></td>
-                                    <td><?= $arr['role'] ?></td>
+                                    <td class="text-nowrap" style="">
+                                        <a href="" class="btn user edit-user" data-id="<?= $arr['account_id']?>">Edit Profile</a>
+                                    </td>
                                 </tr>
-
-                                <?php
-                                    $i++;  
-                                }
-                                ?>
                                 
                             </tbody>
                         </table>

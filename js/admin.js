@@ -2,31 +2,53 @@ let pickSemester = false;
 let viewTable = false;
 
 $(document).ready(function () { 
-  //hide restricted elements
+    //hide restricted elements
   function hideRestrictedElements() {
-    try {
-      const userPermissions = window.userPermissions || {};
+      try {
+          const userPermissions = window.userPermissions || {};
 
-      // Log permissions for debugging
-      console.debug('User Permissions:', userPermissions);
+          // Log permissions only if they have changed
+          if (!this.loggedPermissions || 
+            this.loggedPermissions.isAdmin !== userPermissions.isAdmin || 
+            this.loggedPermissions.isStaff !== userPermissions.isStaff) {
+            console.debug('User Permissions:', userPermissions);
+            this.loggedPermissions = userPermissions; // Store current permissions
+          }
 
-      // Hide admin elements
-      if (!userPermissions.isAdmin) {
-        $('.admin').addClass('d-none');
+          // Use a flag to check if elements have already been hidden
+          let elementsHidden = false;
+
+          // Hide admin elements
+          if (!userPermissions.isAdmin) {
+            $('.admin').addClass('d-none');
+            elementsHidden = true;
+          } else {
+            $('.admin').removeClass('d-none'); // Show if admin
+          }
+
+          // Hide staff elements
+          if (!userPermissions.isStaff) {
+            $('.staff').addClass('d-none');
+            elementsHidden = true;
+          } else {
+            $('.staff').removeClass('d-none'); // Show if staff
+          }
+
+          // Hide elements requiring either permission
+          if (!userPermissions.isAdmin && !userPermissions.isStaff) {
+            $('.restricted').addClass('d-none');
+            elementsHidden = true;
+          } else {
+            $('.restricted').removeClass('d-none'); // Show if either permission
+          }
+
+          // Log if any elements were hidden or shown
+          if (elementsHidden) {
+            // console.debug('Restricted elements updated based on permissions.');
+          }
+      } catch (error) {
+          console.error('Error in hideRestrictedElements function in admin.js:', error);
       }
-
-      // Hide staff elements
-      if (!userPermissions.isStaff) {
-        $('.staff').addClass('d-none');
-      }
-
-      // Hide elements requiring either permission
-      if (!userPermissions.isAdmin && !userPermissions.isStaff) {
-        $('.restricted').addClass('d-none');
-      }
-    } catch (error) {
-      console.error('Error in hideRestrictedElements function in admin.js:', error);
-    }
   }
 
   // Debounce function to limit execution frequency
@@ -45,11 +67,7 @@ $(document).ready(function () {
   const debouncedHideRestrictedElements = debounce(hideRestrictedElements, 100);
 
   // Initial hide
-  hideRestrictedElements();
-
-  // Single ajaxComplete handler
-  $(document).ajaxComplete(debouncedHideRestrictedElements);
-
+  hideRestrictedElements(); // Call once on page load
   // MutationObserver to watch for added nodes
   const observer = new MutationObserver(function(mutations) {
       mutations.forEach(function(mutation) {
@@ -59,11 +77,19 @@ $(document).ready(function () {
       });
   });
   observer.observe(document.body, { childList: true, subtree: true });
+  
+  
+  
   // Function to close the modal
   function closeModal(modal) {
     const modalElement = modal[0]; // Get the first DOM element from the jQuery object
     modalElement.classList.remove('active'); // Remove active class
     modalElement.style.display = 'none'; // Set display to none
+  }
+
+  // Function to serializeForm
+  function serializeForm(formId) {
+    return $(formId).serialize(); // Serialize the form and return the result
   }
 
   // Event listener for navigation links
@@ -197,6 +223,7 @@ $(document).ready(function () {
     });
   }
 
+  //Function to load choose semester, load content
   function chooseSemester(pageFunctionRef) {
     $.ajax({
       type: "GET",
@@ -233,7 +260,7 @@ $(document).ready(function () {
     });
   }
 
-  
+  //chosen semester
   function selectedSemester(form, pageFunctionRef){
     $.ajax({
       url: '../admin/save-semester.php',
@@ -266,7 +293,6 @@ $(document).ready(function () {
     });
   }
 
-
   // Function to load analytics view
   function viewProfile() {
     $.ajax({
@@ -277,18 +303,24 @@ $(document).ready(function () {
         $(".content-page").html(response); // Load the response into the content area
           // Call function to load the chart
 
-          $("#table-profile").DataTable({
+        $("#table-profile").DataTable({
           dom: "rtp",
           pageLength: 10,
           ordering: false
         });
 
-        $(".edit-room").on("click", function (e) {
+        $(".edit-user").on("click", function (e) {
           e.preventDefault(); // Prevent default behavior
       
           const button = $(this); // Reference to the clicked button
           button.prop("disabled", true); // Disable the button
 
+          const accountID = $(this).data('id');
+          // Call the AJAX function
+          editProfile(accountID).always(function() {
+            button.prop("disabled", false); // Re-enable the button after AJAX completes
+          });
+          
         });
         
       },
@@ -300,7 +332,1164 @@ $(document).ready(function () {
     });
   }
   
-  // Function to load room status view
+  //load modal edit user list
+  function editProfile(accountID) {
+    // Split the composite ID into its parts
+    return $.ajax({
+      type: "GET", // Use GET request
+      url: "../profile/edit-profile.html?v=" + new Date().getTime(), // URL 
+      dataType: "html", // Expect JSON response
+      success: function (view) {
+        // Assuming 'view' contains the new content you want to display
+        $(".modal-container").empty().html(view); // Load the modal view
+        $("#staticBackdrop").modal("show"); // Show the modal
+        const modal =  $('#staticBackdrop');
+
+        // Then fetch and populate the data
+        $.ajax({
+          url: `../fetch-data/fetch-profile-record.php?accountID=${accountID}`, 
+          dataType: "json",
+          success: function(data) {
+            console.log('Fetched data:', data);
+            // Determine user role based on admin and staff status
+            $('#account-id').val(data.account_id);
+            $('#original-first-name').val(data.first_name);
+            $('#original-last-name').val(data.last_name);
+            $('#first-name').val(data.first_name);
+            $('#last-name').val(data.last_name);
+            console.log('Fetched data:', data);
+
+          },
+          error: function(xhr, status, error) {
+            alert("Failed to fetch profile record!");
+            console.error("Error fetching data on fetch-profile-record.php:", status, error);
+          }
+        });
+      
+        $('#show-password').on("change", function(){
+          const passwordField = $('#password');
+          if (this.checked) {
+            passwordField.attr('type', 'text'); // Change to text to show password
+          } else {
+            passwordField.attr('type', 'password'); // Change back to password
+          }
+        });
+
+        $('#show-confirm').on("change", function(){
+          const passwordField = $('#confirm-password');
+          if (this.checked) {
+            passwordField.attr('type', 'text'); // Change to text to show password
+          } else {
+            passwordField.attr('type', 'password'); // Change back to password
+          }
+        });
+
+        $('#change-password').on("change", function(){
+          if (this.checked) {
+            $('.div-password').show(); // Show all divs with class 'div-account'
+            $('.password-input').prop('disabled', false); // Enable inputs
+            $('#change-passkey').val('true');
+          } else {
+            $('.div-password').hide(); 
+            $('.password-input').prop('disabled', true); // Enable inputs
+            $('#change-passkey').val('false');
+          }
+        });
+
+        $(".modal-close").on("click", function (e) {
+          e.preventDefault();
+          closeModal(modal);
+        }); 
+
+        $("#form-edit").on("submit", function (e) {
+          e.preventDefault();
+          updateProfile();
+        });
+      },
+      error: function (xhr, status, error) {
+        alert("Failed to load edit user list modal!");
+        console.error("Error loading modal on edit-user.html:", status, error);
+      }
+    });
+  }
+
+  //update user from list
+  function updateProfile(){
+    // Debug what's being sent
+    const formEdit = serializeForm("#form-edit");
+    console.log("Sending data:", formEdit);
+    
+    $.ajax({
+      type: "POST", // Use POST request
+      url: "../profile/update-profile.php", // URL for saving room
+      data: formEdit, // Serialize the form data for submission
+      dataType: "json", // Expect JSON response
+      success: function (response) {
+        console.log("Response received:", response);
+        if (response.status === "error") {
+          // Handle validation errors
+          if (response.generalErr){
+            $("#general-error").removeClass("d-none").html(cleanInput(response.generalErr));
+          } else {
+            $("#general-error").addClass("d-none");
+          }
+        
+          if(response.first_nameErr){
+            $("#first-name").addClass("is-invalid");
+            $("#first-name").siblings(".invalid-feedback").text(response.first_nameErr).show();
+          } else {
+            $("#first-name").removeClass("is-invalid");
+          }
+
+          if(response.last_nameErr){
+            $("#last-name").addClass("is-invalid");
+            $("#last-name").siblings(".invalid-feedback").text(response.last_nameErr).show();
+          } else {
+            $("#last-name").removeClass("is-invalid");
+          }
+
+          if(response.passwordErr){
+            $("#password").addClass("is-invalid");
+            $("#password").siblings(".invalid-feedback").text(response.passwordErr).show();
+          } else {
+            $("#password").removeClass("is-invalid");
+          }
+
+          if(response.confirm_passwordErr){
+            $("#confirm-password").addClass("is-invalid");
+            $("#confirm-password").siblings(".invalid-feedback").text(response.confirm_passwordErr).show();
+          } else {
+            $("#confirm-password").removeClass("is-invalid");
+          }
+
+        } else if (response.status === "success") {
+          alert('User list updated successfully.');
+          // On success, hide modal and reset form
+          $("#staticBackdrop").modal("hide");
+          $("#form-edit")[0].reset(); // Reset the form
+          // Optionally, reload page to show new entry
+          viewProfile();
+        }
+      },
+      error: function (xhr, status, error) {
+        alert("Failed to update user profile!");
+        console.error("Error updating data on update-profile.php:", status, error);
+      }
+    });
+  }
+
+
+
+  //Function to load room schedule view, load content
+  function viewroomSchedule() {
+    $.ajax({
+      type: "GET", // Use GET request
+      url: "../room-schedule/viewroom-schedule.php?v=" + new Date().getTime(), // URL for the analytics view
+      dataType: "html", // Expect HTML response
+      success: function (response) {
+        $(".content-page").html(response); // Load the response into the content are
+        
+        $.fn.dataTable.ext.errMode = 'none'; // Suppress DataTables error messages
+
+        const semesterPK = $("#filter-room").data('semester');
+        const semesterArr = semesterPK.split('|');
+        var semester = semesterArr[0];
+        let schoolYear = semesterArr[1];
+        let semesterText = '';
+
+        if(semester == '1'){
+          semesterText = '1st Sem|';
+        }else if(semester == '2'){
+          semesterText = '2nd Sem|';
+        }else{
+          console.error("Error, semesterText is empty on function viewroomschedule():", error);
+        }
+
+        $('#chosen-semester').text(semesterText + schoolYear);
+
+        function getAllSchedules(roomID, semesterPK){
+          $.ajax({
+            url: `../fetch-schedule/fetch-class-schedule.php?selectedRoom=${roomID}&semesterPK=${semesterPK}`, 
+            dataType: "json",
+            success: function(data) {
+              console.log('Fetched data:', data);
+              if (data.error) { // Check for an error property in the JSON response
+                alert(data.message || "An error occurred fetching the schedule."); // Display specific error message or a generic one
+                console.error("Server-side error:", data.message);
+                return; // Exit the success handler
+              }
+              populateTable(data);
+
+            },
+            error: function(xhr, status, error) {
+              alert("Failed to fetch class schedule record!");
+              console.error("Error fetching data on fetch-class-schedule.php:", status, error);
+            }
+            
+          });
+        // Example usage
+        }
+
+        function populateTable(schedules) {
+          var timeSlots = [
+            '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00', '10:30',
+            '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
+            '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30',
+            '19:00', '19:30', '20:00'
+          ];
+      
+          var daySlots = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+          
+          let tableHead = $('#schedule-header');
+          let tableBody = $('#schedule-data');
+          tableBody.empty(); // Clear existing content
+          tableHead.empty();
+
+          for (let i = 0; i < 1; i++) {
+            let time = 'Time';
+            let tableRow = $('<tr></tr>');
+            tableRow.append('<th class="border-start border-end dt-column-title">' + time + '</th>');
+
+            for (let j = 0; j < daySlots.length; j++) {
+              let day = daySlots[j];
+              tableRow.append('<th class="border-start border-end dt-column-title" data-day="' + day + '">' + day + '</th>');
+
+            }
+            tableHead.append(tableRow);
+          }
+
+          if(!schedules){
+            for (let i = 0; i < timeSlots.length; i++) {
+              let time = timeSlots[i];
+              let tableRow = $('<tr></tr>');
+              tableRow.attr('data-time', time);
+              tableRow.append('<td class="border-start border-end">' + time + '</td>');
+
+              for (let j = 0; j < daySlots.length; j++) {
+                let day = daySlots[j];
+                let tableCell = $('<td></td>');
+                tableCell.addClass('border-start border-end');
+                tableCell.attr('data-day', day);
+
+                tableRow.append(tableCell);
+              }
+              tableBody.append(tableRow);
+            }
+            $('#room-name-title').text('SELECT A ROOM TO FILTER');
+
+            return;
+          }
+
+          tableBody.empty(); // Clear existing content
+
+          let filledCells = {};
+          let classCount = 0;
+
+          for (var i = 0; i < timeSlots.length; i++) {
+            let time = timeSlots[i];
+            let tableRow = $('<tr></tr>');
+            tableRow.attr('data-time', time);
+            tableRow.append('<td class="border-start border-end">' + time + '</td>');
+
+            for (var j = 0; j < daySlots.length; j++) {
+              let day = daySlots[j];
+              
+              // Skip if this cell is already filled
+              if (filledCells[day + '-' + i]) {
+                continue; // Skip this day if the time slot is filled
+              }
+
+              let tableCell = $('<td></td>');
+              tableCell.addClass('border-start border-end');
+              tableCell.attr('data-day', day);
+
+              let foundClass = false;
+              for (var k = 0; k < schedules.length; k++) {
+                let schedule = schedules[k];
+                if (schedule.class_day.toLowerCase() === day.toLowerCase() &&
+                  time >= schedule.start_time && time < schedule.end_time) {
+                  
+                  // Calculate rowspan
+                  let rowSpan = 1;
+                  for (var l = i + 1; l < timeSlots.length; l++) {
+                    if (timeSlots[l] >= schedule.start_time && timeSlots[l] < schedule.end_time) {
+                      rowSpan++;
+                      filledCells[day + '-' + l] = true; // Mark this cell as filled
+                    } else {
+                      break; // Stop if we reach a time not in the range
+                    }
+                  }
+
+                  // Render the cell with rowspan
+                  tableCell.attr('rowspan', rowSpan);
+                  tableCell.html(schedule.subject_code + '<br>' + schedule.section_name + '<br>' + schedule.instructor_name);
+                  tableCell.addClass('class-scheduled');
+                  foundClass = true;
+
+                  classCount++;
+                  // Mark all subsequent rows as filled
+                  for (var m = 1; m < rowSpan; m++) {
+                    filledCells[day + '-' + (i + m)] = true; // Mark subsequent rows
+                  }
+                  break; // Exit the loop after placing the class
+                }
+              }
+
+              if (!foundClass) {
+                tableCell.html(''); // Empty cell if no class is scheduled
+              }
+
+              if(classCount == 0){//schedule feed, empty
+                $("#schedule-count").show();
+              }else{
+                $("#schedule-count").hide();
+              }
+
+              tableRow.append(tableCell);
+            }
+            tableBody.append(tableRow);
+          }
+        } 
+        
+        $("#filter-room").on("submit", function (e) {
+          e.preventDefault(); // Prevent default behavior
+          const roomID = $('#room').val();
+        
+          if (roomID) {
+            $('#room-name-title').text($('#room option:selected').text());
+            // Update room name title
+            getAllSchedules(roomID, semesterPK);
+          }
+           // Call function to add product
+        });
+
+        populateTable();//call to load time
+
+        let table = $("#table-room-schedule").DataTable({
+            dom: "rtp", // Set DataTable options
+            pageLength: 29, // Default page length
+            ordering: false,
+            scrollY: "calc(100vh - 100px)",
+            scrollCollapse: true,
+            language: {
+                "emptyTable": "",
+                "zeroRecords": "" 
+            }
+        });
+  
+      },
+      error: function(xhr, status, error) {
+        alert("Failed to load room schedule content!");
+        console.error("Error loading content on viewroom-schedule.php:", status, error);
+      }
+    });
+  }
+
+
+  //FUNCTION USER LIST
+  //Function to load user list view, load content
+  function viewuserList() {
+    $.ajax({
+      type: "GET", // Use GET request
+      url: "../user-list/viewuser-list.php", // URL for the analytics view
+      dataType: "html", // Expect HTML response
+      success: function (response) {
+        $(".content-page").html(response); // Load the response into the content area
+         // Call function to load the chart
+
+        let table = $("#table-user-list").DataTable({
+          dom: "rtp",
+          pageLength: 10,
+          ordering: false
+        });
+        
+        // Bind custom input to DataTable search
+        $("#search-subject").on("keyup", function () {
+          table.search(this.value).draw(); // Search room based on input
+        });
+
+        $("#user-type").on("change", function () {
+          const filterRole = $('#user-type').val();
+          
+          table.column(4).search(filterRole).draw(); // Added draw() to refresh the table
+        });
+
+
+        $("#add-user").on("click", function (e) {
+          e.preventDefault(); // Prevent default behavior
+          addUserList(); // Call function to add 
+        });
+
+
+        $(".edit-user").on("click", function (e) {
+          e.preventDefault(); // Prevent default behavior
+          const button = $(this); // Reference to the clicked button
+          button.prop("disabled", true); // Disable the button
+          
+          const userID = $(this).data('id');
+          // Call the AJAX function
+          editUserList(userID).always(function() {
+            button.prop("disabled", false); // Re-enable the button after AJAX completes
+          });
+
+        });
+
+        $(".delete-user").on("click", function (e) {
+          e.preventDefault(); // Prevent default behavior
+          const button = $(this); // Reference to the clicked button
+          button.prop("disabled", true); // Disable the button
+          
+          const userID = $(this).data('id');
+          // Call the AJAX function
+          deletingUser(userID).always(function() {
+            button.prop("disabled", false); // Re-enable the button after AJAX completes
+          });
+
+        });
+        
+      },
+      error: function(xhr, status, error) {
+        alert("Failed to load user list content!");
+        console.error("Error loading content on viewuser-list.php:", status, error);
+      }
+    });
+  }
+
+  //load modal add user list
+  function addUserList() {
+    $.ajax({
+      type: "GET", // Use GET request
+      url: "../user-list/add-user.html?v=" + new Date().getTime(), // URL for add product view
+      dataType: "html", // Expect HTML response
+      success: function (view) {
+        $(".modal-container").html(view); // Load the modal view
+        $("#staticBackdrop").modal("show");
+        
+        const modal = $('#staticBackdrop');
+        console.log("Modal content loaded successfully.");
+
+        $('#show-password').on("change", function(){
+          const passwordField = $('#password');
+          if (this.checked) {
+            passwordField.attr('type', 'text'); // Change to text to show password
+          } else {
+            passwordField.attr('type', 'password'); // Change back to password
+          }
+        });
+
+        $('#user-role').on("change", function() {
+          const selectedOption = $(this).val();
+          // Show or hide the divs based on selected option
+          let displayedText = '';
+          if(selectedOption == "faculty"){
+            displayedText = 'Account Details for Faculty';
+          }else if(selectedOption =="admin-faculty"){
+            displayedText = 'Account Details for Admin-Faculty';
+          }else if(selectedOption =="admin"){
+            displayedText = 'Account Details for Admin';
+          }
+
+          $('#account-for').text(displayedText);
+
+          if (selectedOption === 'faculty' || 
+            selectedOption === 'admin-faculty' || 
+            selectedOption === 'admin') {
+            
+            $('.div-account').show(); // Show all divs with class 'div-account'
+            $('.account-input').prop('disabled', false); // Enable inputs
+            $('#determiner').val('true');
+          } else {
+            $('.div-account').hide(); // Hide all divs with class 'div-account'
+            $('.account-input').prop('disabled', true); // Disable inputs
+            $('#determiner').val('false');
+          }
+        });
+
+        $(".modal-close").on("click", function (e) {
+          e.preventDefault();
+          closeModal(modal); // Pass modal to closeModal function
+        }); 
+
+        // Event listener for the add product form submission
+        $("#form-add").on("submit", function (e) {
+          e.preventDefault(); // Prevent default form submission
+
+
+          saveUser(); // Call function to save product
+        });
+        
+      },
+      error: function (xhr, status, error) {
+        alert("Failed to load add user modal!");
+        console.error("Error loading modal on add-user.html:", status, error);
+      }
+    });
+  }
+
+  //save user from user list
+  function saveUser(){
+    // Debug what's being sent
+    const formAdd = serializeForm("#form-add");
+    console.log("Sending data:", formAdd);
+    
+    $.ajax({
+      type: "POST", // Use POST request
+      url: "../user-list/save-user.php?", // URL for saving room
+      data: formAdd, // Serialize the form data for submission
+      dataType: "json", // Expect JSON response
+      success: function (response) {
+        console.log("Response received:", response);
+        if (response.status === "error") {
+          // Handle validation errors 
+          if (response.generalErr){
+            $("#general-error").removeClass("d-none").html(cleanInput(response.generalErr));
+          } else {
+            $("#general-error").addClass("d-none");
+          }
+          
+          if (response.user_idErr){
+            $("#user-id").addClass("is-invalid");
+            $("#user-id").siblings(".invalid-feedback").text(response.user_idErr).show();
+            $("#example-id").show();
+            $("#example-id").addClass("text-danger");
+          } else {
+            $("#user-id").removeClass("is-invalid");
+            $("#example-id").removeClass("text-danger");
+            $("#example-id").hide();
+          }
+
+          if (response.usernameErr){
+            $("#username").addClass("is-invalid");
+            $("#username").siblings(".invalid-feedback").text(response.usernameErr).show();
+            $("#example-username").show();
+            $("#example-username").addClass("text-danger");
+          } else {
+            $("#username").removeClass("is-invalid");
+            $("#example-username").removeClass("text-danger");
+            $("#example-username").hide();
+          }
+          
+          if(response.user_roleErr){
+            $("#user-role").addClass("is-invalid");
+            $("#user-role").siblings(".invalid-feedback").text(response.user_roleErr).show();
+          } else {
+            $("#user-role").removeClass("is-invalid");
+          }
+
+          //account Error validations
+          if (response.generalErr1){
+            $("#general-error-1").removeClass("d-none").html(cleanInput(response.generalErr1));
+          } else {
+            $("#general-error-1").addClass("d-none");
+          }
+
+          if(response.first_nameErr){
+            $("#first-name").addClass("is-invalid");
+            $("#first-name").siblings(".invalid-feedback").text(response.first_nameErr).show();
+          } else {
+            $("#first-name").removeClass("is-invalid");
+          }
+
+          if(response.last_nameErr){
+            $("#last-name").addClass("is-invalid");
+            $("#last-name").siblings(".invalid-feedback").text(response.last_nameErr).show();
+          } else {
+            $("#last-name").removeClass("is-invalid");
+          }
+
+          if(response.passwordErr){
+            $("#password").addClass("is-invalid");
+            $("#password").siblings(".invalid-feedback").text(response.passwordErr).show();
+          } else {
+            $("#password").removeClass("is-invalid");
+          }
+
+        } else if (response.status === "success") {
+          // On success, hide modal and reset form
+          $("#staticBackdrop").modal("hide");
+          $("#form-add")[0].reset(); // Reset the form
+          // Optionally, reload page to show new entry
+          viewuserList();
+        }
+      },
+      error: function (xhr, status, error) {
+        alert("Failed to add user!");
+        console.error("Error saving data on save-user.php:", status, error);
+       }
+
+    });
+  }
+
+  //load modal edit user list
+  function editUserList(userID) {
+    // Split the composite ID into its parts
+    return $.ajax({
+      type: "GET", // Use GET request
+      url: "../user-list/edit-user.html?v=" + new Date().getTime(), // URL 
+      dataType: "html", // Expect JSON response
+      success: function (view) {
+        // Assuming 'view' contains the new content you want to display
+        $(".modal-container").empty().html(view); // Load the modal view
+        $("#staticBackdrop").modal("show"); // Show the modal
+        const modal =  $('#staticBackdrop');
+
+        // Then fetch and populate the data
+        $.ajax({
+          url: `../fetch-data/fetch-user-record.php?userID=${userID}`, 
+          dataType: "json",
+          success: function(data) {
+            console.log('Fetched data:', data);
+            $('#original-user-id').val(userID);
+            $('#user-id').val(userID);
+
+            $('#original-username').val(data.username);
+            $('#username').val(data.username);
+            
+            // Determine user role based on admin and staff status
+            let is_admin = data.is_admin; // This will be a string
+            let is_staff = data.is_staff; // This will be a string
+            let user_role = '';
+
+            if (is_admin == '1' || is_staff == '1') {
+              if (is_admin == '1' && is_staff == '0') {
+                user_role = 'admin';
+              } else if (is_admin == '0' && is_staff == '1') {
+                user_role = 'faculty';
+              } else if (is_admin == '1' && is_staff == '1') {
+                user_role = 'admin-faculty';
+              }
+              $('#original-first-name').val(data.first_name);
+              $('#original-last-name').val(data.last_name);
+              $('#first-name').val(data.first_name);
+              $('#last-name').val(data.last_name);
+              
+            } else if (is_admin == '0' && is_staff == '0') {
+              user_role = 'student';
+            } else {
+              console.error("Error fetching data: unexpected values for is_admin or is_staff.", {
+                is_admin: is_admin,
+                is_staff: is_staff
+              });
+            }
+            //select
+            $('#user-role').val(user_role).trigger("change");
+            ;
+    
+          },
+          error: function(xhr, status, error) {
+            alert("Failed to fetch user list record!");
+            console.error("Error fetching data on fetch-user-record.php:", status, error);
+          }
+        });
+        
+        $('#user-role').on("change", function() {
+          const selectedOption = $(this).val();
+          // Show or hide the divs based on selected option
+          let displayedText = '';
+          if(selectedOption == "faculty"){
+            displayedText = 'Account Details for Faculty';
+          }else if(selectedOption =="admin-faculty"){
+            displayedText = 'Account Details for Admin-Faculty';
+          }else if(selectedOption =="admin"){
+            displayedText = 'Account Details for Admin';
+          }
+
+          $('#account-for').text(displayedText);
+
+          if (selectedOption === 'faculty' || 
+            selectedOption === 'admin-faculty' || 
+            selectedOption === 'admin') {
+            
+            $('.div-account').show(); // Show all divs with class 'div-account'
+            $('.account-input').prop('disabled', false); // Enable inputs
+            $('#determiner').val('true');
+          } else {
+            $('.div-account').hide(); // Hide all divs with class 'div-account'
+            $('.account-input').prop('disabled', true); // Disable inputs
+            $('#determiner').val('false');
+          }
+        });
+
+        $('#show-password').on("change", function(){
+          const passwordField = $('#password');
+          if (this.checked) {
+            passwordField.attr('type', 'text'); // Change to text to show password
+          } else {
+            passwordField.attr('type', 'password'); // Change back to password
+          }
+        });
+
+        $('#change-password').on("change", function(){
+          if (this.checked) {
+            $('.div-password').show(); // Show all divs with class 'div-account'
+            $('#change-passkey').val('true');
+          } else {
+            $('.div-password').hide(); 
+            $('#change-passkey').val('false');
+          }
+        });
+
+        $(".modal-close").on("click", function (e) {
+          e.preventDefault();
+          closeModal(modal);
+        }); 
+
+        $("#form-edit").on("submit", function (e) {
+          e.preventDefault();
+          updateUser();
+        });
+      },
+      error: function (xhr, status, error) {
+        alert("Failed to load edit user list modal!");
+        console.error("Error loading modal on edit-user.html:", status, error);
+      }
+    });
+  }
+
+  //update user from list
+  function updateUser(){
+    // Debug what's being sent
+    const formEdit = serializeForm("#form-edit");
+    console.log("Sending data:", formEdit);
+    
+    $.ajax({
+      type: "POST", // Use POST request
+      url: "../user-list/update-user.php", // URL for saving room
+      data: formEdit, // Serialize the form data for submission
+      dataType: "json", // Expect JSON response
+      success: function (response) {
+        console.log("Response received:", response);
+        if (response.status === "error") {
+          // Handle validation errors
+          if (response.generalErr){
+            $("#general-error").removeClass("d-none").html(cleanInput(response.generalErr));
+          } else {
+            $("#general-error").addClass("d-none");
+          }
+          
+          if (response.user_idErr){
+            $("#user-id").addClass("is-invalid");
+            $("#user-id").siblings(".invalid-feedback").text(response.user_idErr).show();
+            $("#example-id").show();
+            $("#example-id").addClass("text-danger");
+          } else {
+            $("#user-id").removeClass("is-invalid");
+            $("#example-id").removeClass("text-danger");
+            $("#example-id").hide();
+          }
+
+          if (response.usernameErr){
+            $("#username").addClass("is-invalid");
+            $("#username").siblings(".invalid-feedback").text(response.usernameErr).show();
+            $("#example-username").show();
+            $("#example-username").addClass("text-danger");
+          } else {
+            $("#username").removeClass("is-invalid");
+            $("#example-username").removeClass("text-danger");
+            $("#example-username").hide();
+          }
+          
+          if(response.user_roleErr){
+            $("#user-role").addClass("is-invalid");
+            $("#user-role").siblings(".invalid-feedback").text(response.user_roleErr).show();
+          } else {
+            $("#user-role").removeClass("is-invalid");
+          }
+
+          //account Error validations
+          if (response.generalErr1){
+            $("#general-error-1").removeClass("d-none").html(cleanInput(response.generalErr1));
+          } else {
+            $("#general-error-1").addClass("d-none");
+          }
+
+          if(response.first_nameErr){
+            $("#first-name").addClass("is-invalid");
+            $("#first-name").siblings(".invalid-feedback").text(response.first_nameErr).show();
+          } else {
+            $("#first-name").removeClass("is-invalid");
+          }
+
+          if(response.last_nameErr){
+            $("#last-name").addClass("is-invalid");
+            $("#last-name").siblings(".invalid-feedback").text(response.last_nameErr).show();
+          } else {
+            $("#last-name").removeClass("is-invalid");
+          }
+
+          if(response.passwordErr){
+            $("#password").addClass("is-invalid");
+            $("#password").siblings(".invalid-feedback").text(response.passwordErr).show();
+          } else {
+            $("#password").removeClass("is-invalid");
+          }
+
+        } else if (response.status === "success") {
+          alert('User list updated successfully.');
+          // On success, hide modal and reset form
+          $("#staticBackdrop").modal("hide");
+          $("#form-edit")[0].reset(); // Reset the form
+          // Optionally, reload page to show new entry
+          viewuserList();
+        }
+      },
+      error: function (xhr, status, error) {
+        alert("Failed to update user list!");
+        console.error("Error updating data on update-user.php:", status, error);
+      }
+    });
+  }
+
+  //load modal delete user list
+  function deletingUser(userID){
+    return $.ajax({
+      type: "GET", // Use GET request
+      url: "../user-list/deleting-user.html?v=" + new Date().getTime(), // URL to get product data
+      dataType: "html", // Expect JSON response
+      success: function (view) {
+        // Assuming 'view' contains the new content you want to display
+        $(".modal-container").empty().html(view); // Load the modal view
+        $("#staticBackdrop").modal("show"); // Show the modal
+        $("#staticBackdroped").attr("data-id");
+
+        const modal = $('#staticBackdrop');
+      
+        $(".modal-close").on("click", function (e) {
+          e.preventDefault();
+          closeModal(modal); // Pass modal to closeModal function
+        }); 
+
+        // Event listener for the add product form submission
+        $("#form-delete").on("submit", function (e) {
+          e.preventDefault(); // Prevent default form submission
+          deleteUser(userID); // Call function to save product
+        });
+      },
+      error: function(xhr, status, error) {
+        alert("Failed loading delete class detail modal!");
+        console.error("Error loading modal on deleting-subjects-details.html:", status, error);
+      }
+
+    });
+  } 
+
+  //delete user from list
+  function deleteUser(userID){
+    const submitButton = $("#form-delete button[type='submit']");
+    submitButton.prop('disabled', true);
+    
+    const formDelete = serializeForm("#form-delete");
+    console.log("Sending data:", formDelete);
+
+    $.ajax({
+      type: "POST", // Use POST request
+      url: `../user-list/delete-user.php?userID=${userID}`, // URL for saving room
+      data: formDelete, // Serialize the form data for submission, Add ID to form data
+      dataType: "json", // Expect JSON response
+      success: function (response) {
+        console.log("Response received:", response);
+        if (response.status === "success") {
+          // On success, hide modal and reset form
+          $("#staticBackdrop").modal("hide");
+          $("#form-delete")[0].reset(); // Reset the form
+          // Optionally, reload page to show new entry
+          alert("User deleted successful!");
+
+          viewuserList();
+        }
+      },
+      error: function(xhr, status, error) {
+        alert("Failed to delete class detail!");
+        console.error("Error deleting data on delete-class-details.php:", status, error);
+      }
+
+    });
+  }
+
+
+  //FUNCTIONS FOR PAGE ROOM-LIST
+  // Function to load room list
+  function viewroomList() {
+    $.ajax({
+      type: "GET", // Use GET request
+      url: "../room-list/viewroomlist.php", // URL for the analytics view
+      dataType: "html", // Expect HTML response
+      success: function (response) {
+        $(".content-page").html(response); // Load the response into the content area
+         // Call function to load the chart
+        var table = $("#table-room-list").DataTable({
+          dom: "rtp",
+          pageLength: 10,
+          ordering: false
+        });
+        
+        // Bind custom input to DataTable search
+        $("#custom-search").on("keyup", function () {
+          table.search(this.value).draw(); // Search room based on input
+        });
+        
+        // Bind custom input to DataTable search
+        $("#custom-search").on("keyup", function () {
+          table.search(this.value).draw(); // Search room based on input
+        });
+
+        $("#add-room").on("click", function (e) {
+          e.preventDefault(); // Prevent default behavior
+          addRoom(); // Call function to add product
+        });
+
+        $(".room-status").on("click", function (e) {
+          e.preventDefault(); // Prevent default behavior
+          // editRoom(); // Call the function to load products
+        });
+
+        $(".room-schedule").on("click", function (e) {
+          e.preventDefault(); // Prevent default behavior
+          // editRoom(); // Call the function to load products
+        });
+
+        $(".edit-room").on("click", function (e) {
+          e.preventDefault(); // Prevent default behavior
+      
+          const button = $(this); // Reference to the clicked button
+          button.prop("disabled", true); // Disable the button
+          
+          const roomCode = $(this).data('roomcode');
+          const roomNo = $(this).data('roomno');
+
+           // Call the AJAX function
+          // editRoom(this.dataset.id);
+          // Call the AJAX function
+          editRoom(roomCode, roomNo).always(function() {
+            button.prop("disabled", false); // Re-enable the button after AJAX completes
+          });
+
+        });
+        
+      },
+      error: function(xhr, status, error) {
+        alert("Failed to load view room list content!");
+        console.error("Error loading content on viewroomlist.php:", status, error);
+      }
+    });
+  }
+
+  //load modal add room details
+  function addRoom() {
+    $.ajax({
+      type: "GET", // Use GET request
+      url: "../room-list/add.html?v=" + new Date().getTime(), // URL for add product view
+      dataType: "html", // Expect HTML response
+      success: function (view) {
+        $(".modal-container").html(view); // Load the modal view
+        $("#staticBackdrop").modal("show"); // Show the modal
+
+        const modal = $('#staticBackdrop');
+
+        // fetchroomType(); // Load room type for the select input
+        const rtypeText = $('#dropdown-room-type');
+        const rtypeId = $('#hidden-room-type-id');
+        const rtypeList = $('#dropdown-list-room-type');
+        customDropdown(rtypeText, rtypeList, rtypeId, "../fetch-data/fetch-roomtype.php", function(data, dropdownList) {
+          $.each(data, function(index, rtype) {
+              dropdownList.append(
+                  $('<div>', {
+                      text: rtype.room_type_desc, // Displayed text
+                      'data-value': rtype.type_id // Value attribute
+                  })
+              );
+          });
+        });
+
+        $(".modal-close").on("click", function (e) {
+          e.preventDefault();
+          closeModal(modal); // Pass modal to closeModal function
+        }); 
+
+        // Event listener for the add  form submission
+        $("#form-add").on("submit", function (e) {
+          e.preventDefault(); // Prevent default form submission
+          saveRoom(); // Call function to save data
+        });
+      },
+      error: function (xhr, status, error) {
+        alert("Failed to load add room modal!");
+        console.error("Error loading modal on add.html:", status, error);
+      }
+
+    });
+  }
+
+  //save room details
+  function saveRoom(){
+    const formAdd = serializeForm("#form-add");
+    console.log("Sending data:", formAdd);
+
+    $.ajax({
+      type: "POST", // Use POST request
+      url: "../room-list/save-room.php", // URL for saving room
+      data: formAdd, // Serialize the form data for submission
+      dataType: "json", // Expect JSON response
+      success: function (response) {
+        if (response.status === "error") {
+          // Handle validation errors
+          if (response.generalErr){
+            $("#general-error").removeClass("d-none").html(cleanInput(response.generalErr));
+          } else {
+            $("#general-error").addClass("d-none");
+          }
+
+          if (response.room_nameErr){
+            $("#room-name").addClass("is-invalid"); // Mark field as invalid
+            $("#room-name").siblings(".invalid-feedback").text(response.room_nameErr).show(); // Show error message
+          } else {
+            $("#room-name").removeClass("is-invalid"); // Remove invalid class if no error
+          }
+          
+          if (response.room_typeErr){
+            $("#dropdown-room-type").addClass("is-invalid"); // Mark field as invalid
+            $("#dropdown-room-type").siblings(".invalid-feedback").text(response.room_typeErr).show(); // Show error message
+          } else {
+            $("#dropdown-room-type").removeClass("is-invalid"); // Remove invalid class if no error
+          }
+          
+        } else if (response.status === "success") {
+          // On success, hide modal and reset form
+          $("#staticBackdrop").modal("hide");
+          $("form")[0].reset(); // Reset the form
+          // Optionally, reload roomlist to show new entry
+          viewroomList();
+        }
+      },
+      error: function (xhr, status, error) {
+        alert("Failed to add room details!");
+        console.error("Error saving data on save-room.php:", status, error);
+      }
+
+    });
+  }
+  
+  //load modal edit room details
+  function editRoom(roomCode, roomNo) {
+    return $.ajax({
+      type: "GET", // Use GET request
+      url: "../room-list/edit.php?v=" + new Date().getTime(), // URL to get product data
+      dataType: "html", // Expect JSON response
+      success: function (view) {
+        // Assuming 'view' contains the new content you want to display
+        $(".modal-container").empty().html(view); // Load the modal view
+        $("#staticBackdrop").modal("show"); // Show the modal
+        $("#staticBackdroped").attr("data-id", roomCode, roomNo);
+
+        const modal = $('#staticBackdrop');
+
+          //function to fetch record list of room
+        $.ajax({
+          url: `../fetch-data/fetch-room.php?roomCode=${roomCode}&roomNo=${roomNo}`, //2 parameters separated by &
+          dataType: "json",
+          success: function(data) {
+              console.log('Fetched data:', data);
+             
+              $('#room-name').val(data.room_name);
+              $('#dropdown-room-type').val(data.room_type);
+              $('#hidden-room-type-id').val(data.room_code);
+
+          },
+          error: function(xhr, status, error) {
+            alert("Failed to fetch room details record!");
+            console.error("Error fetching data on fetch-room.php:", status, error);
+          }
+          
+        });
+
+
+        const rtypeText = $('#dropdown-room-type');
+        const rtypeId = $('#hidden-room-type-id');
+        const rtypeList = $('#dropdown-list-room-type');
+        customDropdown(rtypeText, rtypeList, rtypeId, "../fetch-data/fetch-roomtype.php", function(data, dropdownList) {
+          $.each(data, function(index, rtype) {
+              dropdownList.append(
+                  $('<div>', {
+                      text: rtype.room_type_desc, // Displayed text
+                      'data-value': rtype.room_type_id // Value attribute
+                  })
+              );
+          });
+        });
+
+        $(".modal-close").on("click", function (e) {
+          e.preventDefault();
+          closeModal(modal); // Pass modal to closeModal function
+        }); 
+
+        // Event listener for the add product form submission
+        $("#form-edit").on("submit", function (e) {
+          e.preventDefault(); // Prevent default form submission
+          updateRoom(roomCode, roomNo); // Call function to save product
+        });
+      },
+      error: function (xhr, status, error) {
+        alert("Failed to load edit room details modal!");
+        console.error("Error loading modal on edit.php:", status, error);
+      }
+    });
+  }
+
+  //update room details
+  function updateRoom(roomCode, roomNo) {
+    // Debug what's being sent
+    const formEdit = serializeForm("#form-edit");
+    console.log("Sending data:", formEdit);
+
+    $.ajax({
+      type: "POST", // Use POST request
+      url: `../room-list/update-room.php?roomCode=${roomCode}&roomNo=${roomNo}`, // URL for saving room
+      data: formEdit, // Serialize the form data for submission
+      dataType: "json", // Expect JSON response
+      success: function (response) {
+        if (response.status === "error") {
+          // Handle validation errors
+          if (response.generalErr){
+            $("#general-error").removeClass("d-none").html(cleanInput(response.generalErr));
+          } else {
+            $("#general-error").addClass("d-none");
+          }
+
+          if (response.room_nameErr) {
+            $("#room-name").addClass("is-invalid"); // Mark field as invalid
+            $("#room-name").siblings(".invalid-feedback").text(response.room_nameErr).show(); // Show error message
+          } else {
+            $("#room-name").removeClass("is-invalid"); // Remove invalid class if no error
+          }
+          
+          if (response.room_typeErr) {
+            $("#dropdown-room-type").addClass("is-invalid");
+            $("#dropdown-room-type")
+              .siblings(".invalid-feedback")
+              .text(response.room_typeErr)
+              .show();
+          } else {
+            $("#dropdown-room-type").removeClass("is-invalid");
+          }
+          
+        } else if (response.status === "success") {
+          // On success, hide modal and reset form
+          $("#staticBackdrop").modal("hide");
+          $("form")[0].reset(); // Reset the form
+          // Optionally, reload products to show new entry
+          viewroomList();
+        }
+      },
+      error: function (xhr, status, error) {
+        alert("Failed to edit room details!");
+        console.error("Error updating data on update-room.php:", status, error);
+      }
+    });
+  }
+
+
+  //FUNCTIONS FOR PAGE CLASS-STATUs || ROOM-STATUS
+  //Function to load room status view
   function viewroomStatus(){
     $.ajax({
       type: "GET", // Use GET request
@@ -772,584 +1961,8 @@ $(document).ready(function () {
     });
   }
 
-
-  //Function to load room schedule view, load content
-  //edit here
-  function viewroomSchedule() {
-    $.ajax({
-      type: "GET", // Use GET request
-      url: "../room-schedule/viewroom-schedule.php?v=" + new Date().getTime(), // URL for the analytics view
-      dataType: "html", // Expect HTML response
-      success: function (response) {
-        $(".content-page").html(response); // Load the response into the content are
-        
-        $.fn.dataTable.ext.errMode = 'none'; // Suppress DataTables error messages
-
-        const semesterPK = $("#filter-room").data('semester');
-        const semesterArr = semesterPK.split('|');
-        var semester = semesterArr[0];
-        let schoolYear = semesterArr[1];
-        let semesterText = '';
-
-        if(semester == '1'){
-          semesterText = '1st Sem|';
-        }else if(semester == '2'){
-          semesterText = '2nd Sem|';
-        }else{
-          console.error("Error, semesterText is empty on function viewroomschedule():", error);
-        }
-
-        $('#chosen-semester').text(semesterText + schoolYear);
-
-
-        function getAllSchedules(roomID, semesterPK){
-          $.ajax({
-            url: `../fetch-schedule/fetch-class-schedule.php?selectedRoom=${roomID}&semesterPK=${semesterPK}`, 
-            dataType: "json",
-            success: function(data) {
-              console.log('Fetched data:', data);
-              if (data.error) { // Check for an error property in the JSON response
-                alert(data.message || "An error occurred fetching the schedule."); // Display specific error message or a generic one
-                console.error("Server-side error:", data.message);
-                return; // Exit the success handler
-              }
-              populateTable(data);
-
-            },
-            error: function(xhr, status, error) {
-              alert("Failed to fetch class schedule record!");
-              console.error("Error fetching data on fetch-class-schedule.php:", status, error);
-            }
-            
-          });
-        // Example usage
-        }
-
-        
-
-        function populateTable(schedules) {
-          var timeSlots = [
-            '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00', '10:30',
-            '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
-            '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30',
-            '19:00', '19:30', '20:00'
-          ];
-      
-          var daySlots = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-          
-          let tableHead = $('#schedule-header');
-          let tableBody = $('#schedule-data');
-          tableBody.empty(); // Clear existing content
-          tableHead.empty();
-
-          for (let i = 0; i < 1; i++) {
-            let time = 'Time';
-            let tableRow = $('<tr></tr>');
-            tableRow.append('<th class="border-start border-end dt-column-title">' + time + '</th>');
-
-            for (let j = 0; j < daySlots.length; j++) {
-              let day = daySlots[j];
-              tableRow.append('<th class="border-start border-end dt-column-title" data-day="' + day + '">' + day + '</th>');
-
-            }
-            tableHead.append(tableRow);
-          }
-
-          if(!schedules){
-            for (let i = 0; i < timeSlots.length; i++) {
-              let time = timeSlots[i];
-              let tableRow = $('<tr></tr>');
-              tableRow.attr('data-time', time);
-              tableRow.append('<td class="border-start border-end">' + time + '</td>');
-
-              for (let j = 0; j < daySlots.length; j++) {
-                let day = daySlots[j];
-                let tableCell = $('<td></td>');
-                tableCell.addClass('border-start border-end');
-                tableCell.attr('data-day', day);
-
-                tableRow.append(tableCell);
-              }
-              tableBody.append(tableRow);
-            }
-            $('#room-name-title').text('SELECT A ROOM TO FILTER');
-
-            return;
-          }
-
-          tableBody.empty(); // Clear existing content
-
-          let filledCells = {};
-          let classCount = 0;
-
-          for (var i = 0; i < timeSlots.length; i++) {
-            let time = timeSlots[i];
-            let tableRow = $('<tr></tr>');
-            tableRow.attr('data-time', time);
-            tableRow.append('<td class="border-start border-end">' + time + '</td>');
-
-            for (var j = 0; j < daySlots.length; j++) {
-              let day = daySlots[j];
-              
-              // Skip if this cell is already filled
-              if (filledCells[day + '-' + i]) {
-                continue; // Skip this day if the time slot is filled
-              }
-
-              let tableCell = $('<td></td>');
-              tableCell.addClass('border-start border-end');
-              tableCell.attr('data-day', day);
-
-              let foundClass = false;
-              for (var k = 0; k < schedules.length; k++) {
-                let schedule = schedules[k];
-                if (schedule.class_day.toLowerCase() === day.toLowerCase() &&
-                  time >= schedule.start_time && time < schedule.end_time) {
-                  
-                  // Calculate rowspan
-                  let rowSpan = 1;
-                  for (var l = i + 1; l < timeSlots.length; l++) {
-                    if (timeSlots[l] >= schedule.start_time && timeSlots[l] < schedule.end_time) {
-                      rowSpan++;
-                      filledCells[day + '-' + l] = true; // Mark this cell as filled
-                    } else {
-                      break; // Stop if we reach a time not in the range
-                    }
-                  }
-
-                  // Render the cell with rowspan
-                  tableCell.attr('rowspan', rowSpan);
-                  tableCell.html(schedule.subject_code + '<br>' + schedule.section_name + '<br>' + schedule.instructor_name);
-                  tableCell.addClass('class-scheduled');
-                  foundClass = true;
-
-                  classCount++;
-                  // Mark all subsequent rows as filled
-                  for (var m = 1; m < rowSpan; m++) {
-                    filledCells[day + '-' + (i + m)] = true; // Mark subsequent rows
-                  }
-                  break; // Exit the loop after placing the class
-                }
-              }
-
-              if (!foundClass) {
-                tableCell.html(''); // Empty cell if no class is scheduled
-              }
-
-              if(classCount == 0){//schedule feed, empty
-                $("#schedule-count").show();
-              }else{
-                $("#schedule-count").hide();
-              }
-
-              tableRow.append(tableCell);
-            }
-
-            tableBody.append(tableRow);
-          }
-          
-        } 
-        
-
-        $("#filter-room").on("submit", function (e) {
-          e.preventDefault(); // Prevent default behavior
-          const roomID = $('#room').val();
-        
-          if (roomID) {
-            $('#room-name-title').text($('#room option:selected').text());
-            // Update room name title
-            getAllSchedules(roomID, semesterPK);
-          }
-           // Call function to add product
-        });
-
-        populateTable();//call to load time
-
-
-
-        let table = $("#table-room-schedule").DataTable({
-            dom: "rtp", // Set DataTable options
-            pageLength: 29, // Default page length
-            ordering: false,
-            scrollY: "calc(100vh - 100px)",
-            scrollCollapse: true,
-            language: {
-                "emptyTable": "",
-                "zeroRecords": "" 
-            }
-        });
-   
-   
-
-      },
-      error: function(xhr, status, error) {
-        alert("Failed to load room schedule content!");
-        console.error("Error loading content on viewroom-schedule.php:", status, error);
-      }
-    });
-  }
-
-  // Function to load analytics view
-  function viewuserList() {
-    $.ajax({
-      type: "GET", // Use GET request
-      url: "viewuser-list.php", // URL for the analytics view
-      dataType: "html", // Expect HTML response
-      success: function (response) {
-        $(".content-page").html(response); // Load the response into the content area
-         // Call function to load the chart
-
-        $("#add-user").on("click", function (e) {
-          e.preventDefault(); // Prevent default behavior
-          addUserList(); // Call function to add 
-        });
-
-
-        var table = $("#table-user-list").DataTable({
-          dom: "rtp",
-          pageLength: 10,
-          ordering: false
-        });
-        
-        // Bind custom input to DataTable search
-        $("#search-subject").on("keyup", function () {
-          table.search(this.value).draw(); // Search room based on input
-        });
-
-        
-        
-
-        $(".edit-user").on("click", function (e) {
-          e.preventDefault(); // Prevent default behavior
-      
-          const button = $(this); // Reference to the clicked button
-          button.prop("disabled", true); // Disable the button
-          
-          // const roomCode = $(this).data('roomcode');
-          // const roomNo = $(this).data('roomno');
-
-          // Call the AJAX function
-          // editRoom(roomCode, roomNo).always(function() {
-          //   button.prop("disabled", false); // Re-enable the button after AJAX completes
-          // });
-
-        });
-        
-      },
-      error: function(xhr, status, error) {
-        alert("Failed to load user list content!");
-        console.error("Error loading content on viewuser-list.php:", status, error);
-      }
-    });
-  }
-
- function addUserList() {
-    $.ajax({
-      type: "GET", // Use GET request
-      url: "../user-list/add-user.html?v=" + new Date().getTime(), // URL for add product view
-      dataType: "html", // Expect HTML response
-      success: function (view) {
-        $(".modal-container").html(view); // Load the modal view
-        console.log("Modal content loaded successfully.");
-        $("#staticBackdrop").modal("show");
-        const modal = $('#staticBackdrop');
-        
-        
-
-        $(".modal-close").on("click", function (e) {
-          e.preventDefault();
-          closeModal(modal); // Pass modal to closeModal function
-        }); 
-
-        // Event listener for the add product form submission
-        $("#form-add").on("submit", function (e) {
-          e.preventDefault(); // Prevent default form submission
-          saveclassDetails(); // Call function to save product
-        });
-        
-      },
-      error: function (xhr, status, error) {
-        alert("Failed to load add class details modal!");
-        console.error("Error loading modal on add-class-detail.html:", status, error);
-      }
-    });
-  }
-
-
-  // Function to load analytics view
-  function viewroomList() {
-    $.ajax({
-      type: "GET", // Use GET request
-      url: "../room-list/viewroomlist.php", // URL for the analytics view
-      dataType: "html", // Expect HTML response
-      success: function (response) {
-        $(".content-page").html(response); // Load the response into the content area
-         // Call function to load the chart
-        var table = $("#table-room-list").DataTable({
-          dom: "rtp",
-          pageLength: 10,
-          ordering: false
-        });
-        
-        // Bind custom input to DataTable search
-        $("#custom-search").on("keyup", function () {
-          table.search(this.value).draw(); // Search room based on input
-        });
-        
-        // Bind custom input to DataTable search
-        $("#custom-search").on("keyup", function () {
-          table.search(this.value).draw(); // Search room based on input
-        });
-
-        $("#add-room").on("click", function (e) {
-          e.preventDefault(); // Prevent default behavior
-          addRoom(); // Call function to add product
-        });
-
-        $(".room-status").on("click", function (e) {
-          e.preventDefault(); // Prevent default behavior
-          // editRoom(); // Call the function to load products
-        });
-
-        $(".room-schedule").on("click", function (e) {
-          e.preventDefault(); // Prevent default behavior
-          // editRoom(); // Call the function to load products
-        });
-
-        $(".edit-room").on("click", function (e) {
-          e.preventDefault(); // Prevent default behavior
-      
-          const button = $(this); // Reference to the clicked button
-          button.prop("disabled", true); // Disable the button
-          
-          const roomCode = $(this).data('roomcode');
-          const roomNo = $(this).data('roomno');
-
-           // Call the AJAX function
-          // editRoom(this.dataset.id);
-          // Call the AJAX function
-          editRoom(roomCode, roomNo).always(function() {
-            button.prop("disabled", false); // Re-enable the button after AJAX completes
-          });
-
-        });
-        
-      },
-      error: function(xhr, status, error) {
-        alert("Failed to load view room list content!");
-        console.error("Error loading content on viewroomlist.php:", status, error);
-      }
-    });
-  }
-
-  //Function for ROOM LIST, MODAL AJAX
-  // Function to show the add product modal
-  function editRoom(roomCode, roomNo) {
-    return $.ajax({
-      type: "GET", // Use GET request
-      url: "../room-list/edit.php?v=" + new Date().getTime(), // URL to get product data
-      dataType: "html", // Expect JSON response
-      success: function (view) {
-        // Assuming 'view' contains the new content you want to display
-        $(".modal-container").empty().html(view); // Load the modal view
-        $("#staticBackdrop").modal("show"); // Show the modal
-        $("#staticBackdroped").attr("data-id", roomCode, roomNo);
-
-        const modal = $('#staticBackdrop');
-
-          //function to fetch record list of room
-        $.ajax({
-          url: `../fetch-data/fetch-room.php?roomCode=${roomCode}&roomNo=${roomNo}`, //2 parameters separated by &
-          dataType: "json",
-          success: function(data) {
-              console.log('Fetched data:', data);
-             
-              $('#room-name').val(data.room_name);
-              $('#dropdown-room-type').val(data.room_type);
-              $('#hidden-room-type-id').val(data.room_code);
-
-          },
-          error: function(xhr, status, error) {
-            alert("Failed to fetch room details record!");
-            console.error("Error fetching data on fetch-room.php:", status, error);
-          }
-          
-        });
-
-
-        const rtypeText = $('#dropdown-room-type');
-        const rtypeId = $('#hidden-room-type-id');
-        const rtypeList = $('#dropdown-list-room-type');
-        customDropdown(rtypeText, rtypeList, rtypeId, "../fetch-data/fetch-roomtype.php", function(data, dropdownList) {
-          $.each(data, function(index, rtype) {
-              dropdownList.append(
-                  $('<div>', {
-                      text: rtype.room_type_desc, // Displayed text
-                      'data-value': rtype.room_type_id // Value attribute
-                  })
-              );
-          });
-        });
-
-        $(".modal-close").on("click", function (e) {
-          e.preventDefault();
-          closeModal(modal); // Pass modal to closeModal function
-        }); 
-
-        // Event listener for the add product form submission
-        $("#form-edit-room").on("submit", function (e) {
-          e.preventDefault(); // Prevent default form submission
-          updateRoom(roomCode, roomNo); // Call function to save product
-        });
-      },
-      error: function (xhr, status, error) {
-        alert("Failed to load edit room details modal!");
-        console.error("Error loading modal on edit.php:", status, error);
-      }
-    });
-  }
-
-  //updateRoom
-  function updateRoom(roomCode, roomNo) {
-    $.ajax({
-      type: "POST", // Use POST request
-      url: `../room-list/update-room.php?roomCode=${roomCode}&roomNo=${roomNo}`, // URL for saving room
-      data: $("form").serialize(), // Serialize the form data for submission
-      dataType: "json", // Expect JSON response
-      success: function (response) {
-        if (response.status === "error") {
-          // Handle validation errors
-          if (response.generalErr){
-            $("#general-error").removeClass("d-none").html(cleanInput(response.generalErr));
-          } else {
-            $("#general-error").addClass("d-none");
-          }
-
-          if (response.room_nameErr) {
-            $("#room-name").addClass("is-invalid"); // Mark field as invalid
-            $("#room-name").siblings(".invalid-feedback").text(response.room_nameErr).show(); // Show error message
-          } else {
-            $("#room-name").removeClass("is-invalid"); // Remove invalid class if no error
-          }
-          
-          if (response.room_typeErr) {
-            $("#dropdown-room-type").addClass("is-invalid");
-            $("#dropdown-room-type")
-              .siblings(".invalid-feedback")
-              .text(response.room_typeErr)
-              .show();
-          } else {
-            $("#dropdown-room-type").removeClass("is-invalid");
-          }
-          
-        } else if (response.status === "success") {
-          // On success, hide modal and reset form
-          $("#staticBackdrop").modal("hide");
-          $("form")[0].reset(); // Reset the form
-          // Optionally, reload products to show new entry
-          viewroomList();
-        }
-      },
-      error: function (xhr, status, error) {
-        alert("Failed to edit room details!");
-        console.error("Error updating data on update-room.php:", status, error);
-      }
-    });
-  }
-
-  //function to show the add room modal
-  function addRoom() {
-    $.ajax({
-      type: "GET", // Use GET request
-      url: "../room-list/add.html?v=" + new Date().getTime(), // URL for add product view
-      dataType: "html", // Expect HTML response
-      success: function (view) {
-        $(".modal-container").html(view); // Load the modal view
-        $("#staticBackdrop").modal("show"); // Show the modal
-
-        const modal = $('#staticBackdrop');
-
-        // fetchroomType(); // Load room type for the select input
-        const rtypeText = $('#dropdown-room-type');
-        const rtypeId = $('#hidden-room-type-id');
-        const rtypeList = $('#dropdown-list-room-type');
-        customDropdown(rtypeText, rtypeList, rtypeId, "../fetch-data/fetch-roomtype.php", function(data, dropdownList) {
-          $.each(data, function(index, rtype) {
-              dropdownList.append(
-                  $('<div>', {
-                      text: rtype.room_type_desc, // Displayed text
-                      'data-value': rtype.type_id // Value attribute
-                  })
-              );
-          });
-        });
-
-        $(".modal-close").on("click", function (e) {
-          e.preventDefault();
-          closeModal(modal); // Pass modal to closeModal function
-        }); 
-
-        // Event listener for the add product form submission
-        $("#form-add-room").on("submit", function (e) {
-          e.preventDefault(); // Prevent default form submission
-          saveRoom(); // Call function to save product
-        });
-      },
-      error: function (xhr, status, error) {
-        alert("Failed to load add room modal!");
-        console.error("Error loading modal on add.html:", status, error);
-      }
-
-    });
-  }
-
-  // Function to save a new room
-  function saveRoom(){
-    $.ajax({
-      type: "POST", // Use POST request
-      url: "../room-list/save-room.php", // URL for saving room
-      data: $("form").serialize(), // Serialize the form data for submission
-      dataType: "json", // Expect JSON response
-      success: function (response) {
-        if (response.status === "error") {
-          // Handle validation errors
-          if (response.generalErr){
-            $("#general-error").removeClass("d-none").html(cleanInput(response.generalErr));
-          } else {
-            $("#general-error").addClass("d-none");
-          }
-
-          if (response.room_nameErr){
-            $("#room-name").addClass("is-invalid"); // Mark field as invalid
-            $("#room-name").siblings(".invalid-feedback").text(response.room_nameErr).show(); // Show error message
-          } else {
-            $("#room-name").removeClass("is-invalid"); // Remove invalid class if no error
-          }
-          
-          if (response.room_typeErr){
-            $("#dropdown-room-type").addClass("is-invalid"); // Mark field as invalid
-            $("#dropdown-room-type").siblings(".invalid-feedback").text(response.room_typeErr).show(); // Show error message
-          } else {
-            $("#dropdown-room-type").removeClass("is-invalid"); // Remove invalid class if no error
-          }
-          
-        } else if (response.status === "success") {
-          // On success, hide modal and reset form
-          $("#staticBackdrop").modal("hide");
-          $("form")[0].reset(); // Reset the form
-          // Optionally, reload roomlist to show new entry
-          viewroomList();
-        }
-      },
-      error: function (xhr, status, error) {
-        alert("Failed to add room details!");
-        console.error("Error saving data on save-room.php:", status, error);
-      }
-
-    });
-  }
-  
-  //SUBJECT DETAILS FUNCTION
+  //SUBJECT DETAILS FUNCTIONS
+  //load modal add subject details
   function addsubjectDetails(prospectus) {
     $.ajax({
       type: "GET", // Use GET request
@@ -1381,16 +1994,17 @@ $(document).ready(function () {
       }
     });
   }
-
+  
+  //save subject details      
   function savesubjectDetails(prospectus){
     // Debug what's being sent
-    const formSubjectDetails = $("#form-add").serialize();
-    console.log("Sending data:", formSubjectDetails);
+    const formAdd = serializeFrom("#form-add");
+    console.log("Sending data:", formAdd);
     
     $.ajax({
       type: "POST", // Use POST request
       url: `../class-room-status/save-subject-details.php?prospectus=${prospectus}`, // URL for saving room
-      data: formSubjectDetails, // Serialize the form data for submission
+      data: formAdd, // Serialize the form data for submission
       dataType: "json", // Expect JSON response
       success: function (response) {
         console.log("Response received:", response);
@@ -1450,6 +2064,7 @@ $(document).ready(function () {
     });
   }
 
+  //load modal edit subject details      
   function editSubjectDetails(subjectID, prospectus) {
     // Split the composite ID into its parts
     return $.ajax({
@@ -1504,15 +2119,16 @@ $(document).ready(function () {
     });
   }
 
+  //update subject details      
   function updatesubjectDetails(){
     // Debug what's being sent
-    const formSubjectDetails = $("#form-edit").serialize();
-    console.log("Sending data:", formSubjectDetails);
+    const formEdit = serializeForm("#form-edit");
+    console.log("Sending data:", formEdit);
     
     $.ajax({
       type: "POST", // Use POST request
       url: "../class-room-status/update-subject-details.php", // URL for saving room
-      data: formSubjectDetails, // Serialize the form data for submission
+      data: formEdit, // Serialize the form data for submission
       dataType: "json", // Expect JSON response
       success: function (response) {
         console.log("Response received:", response);
@@ -1572,6 +2188,7 @@ $(document).ready(function () {
     });
   }
 
+  //load modal delete subject details    
   function deletingSubjectDetails(subjectID, prospectus){
     return $.ajax({
       type: "GET", // Use GET request
@@ -1604,17 +2221,18 @@ $(document).ready(function () {
     });
   } 
 
+  //delete subject details  
   function deleteSubjectDetails(subjectID, prospectusID){
     const submitButton = $("#form-delete button[type='submit']");
     submitButton.prop('disabled', true);
     
-    const formSubjectDetails = $("#form-delete").serialize();
-    console.log("Sending data:", formSubjectDetails);
+    const formDelete = serializeForm("#form-delete");
+    console.log("Sending data:", formDelete);
 
     $.ajax({
       type: "POST", // Use POST request
       url: `../class-room-status/delete-subject-details.php?subjectID=${subjectID}&prospectusID=${prospectusID}`, // URL for saving room
-      data: formSubjectDetails, // Serialize the form data for submission, Add ID to form data
+      data: formDelete, // Serialize the form data for submission, Add ID to form data
       dataType: "json", // Expect JSON response
       success: function (response) {
         console.log("Response received:", response);
@@ -1635,8 +2253,8 @@ $(document).ready(function () {
   }
 
 
-  //Function for class details, MODAL AJAX
-  //add room status
+  //CLASS DETAILS FUNCTION
+  //load modal add class details
   function addclassDetails(prospectus = null) {
     if(prospectus !== null){
       var subjectUrl = `../fetch-data/fetch-subject.php?prospectusID=${prospectus}`;
@@ -1758,17 +2376,16 @@ $(document).ready(function () {
     });
   }
 
-  //Function for class details, php handling
   //save class details
   function saveclassDetails(){
     // Debug what's being sent
-    const formClassDetails = $("#form-add").serialize();
-    console.log("Sending data:", formClassDetails);
+    const formAdd = serializeForm("#form-add");
+    console.log("Sending data:", formAdd);
     
     $.ajax({
       type: "POST", // Use POST request
       url: "../class-room-status/save-class-detail.php", // URL for saving room
-      data: formClassDetails, // Serialize the form data for submission
+      data: formAdd, // Serialize the form data for submission
       dataType: "json", // Expect JSON response
       success: function (response) {
         console.log("Response received:", response);
@@ -1841,7 +2458,8 @@ $(document).ready(function () {
 
     });
   }
-
+  
+  //load modal edit class details
   function editclassDetails(classId, subType, prospectus = null) {
     // Split the composite ID into its parts
     return $.ajax({
@@ -1965,15 +2583,16 @@ $(document).ready(function () {
     });
   }
 
+  //update class details
   function updateclassDetails(){
     // Debug what's being sent
-    const formClassDetails = $("#form-edit").serialize();
-    console.log("Sending data:", formClassDetails);
+    const formEdit = serializeForm("#form-edit");
+    console.log("Sending data:", formEdit);
     
     $.ajax({
       type: "POST", // Use POST request
       url: "../class-room-status/update-class-detail.php", // URL for saving room
-      data: formClassDetails, // Serialize the form data for submission
+      data: formEdit, // Serialize the form data for submission
       dataType: "json", // Expect JSON response
       success: function (response) {
         console.log("Response received:", response);
@@ -2038,7 +2657,7 @@ $(document).ready(function () {
     });
   }
 
-  //Load delete modal
+  //load modal delete class details
   function deletingclassDetails(classId, subType){
     return $.ajax({
       type: "GET", // Use GET request
@@ -2087,17 +2706,18 @@ $(document).ready(function () {
     });
   } 
 
+  //delete class details
   function deleteclassDetails(){
     const submitButton = $("#form-delete button[type='submit']");
     submitButton.prop('disabled', true);
     
-    const formClassDetails = $("#form-delete").serialize();
-    console.log("Sending data:", formClassDetails);
+    const formDelete = serializeForm("#form-delete");
+    console.log("Sending data:", formDelete);
 
     $.ajax({
       type: "POST", // Use POST request
       url: "../class-room-status/delete-class-details.php", // URL for saving room
-      data: formClassDetails, // Serialize the form data for submission, Add ID to form data
+      data: formDelete, // Serialize the form data for submission, Add ID to form data
       dataType: "json", // Expect JSON response
       success: function (response) {
         console.log("Response received:", response);
@@ -2118,8 +2738,8 @@ $(document).ready(function () {
   }
 
 
-  //Function for room status, MODAL AJAX
-  //add room status
+  //CLASS STATUS || ROOM STATUS FUNCTION
+  //load modal add room status
   function addroomStatus() {
     $.ajax({
       type: "GET", // Use GET request
@@ -2236,15 +2856,16 @@ $(document).ready(function () {
     });
   }
 
+  //save room status
   function saveroomStatus(){
     // Debug what's being sent  
-    const formaddclassStatus = $("#form-add").serialize();
-    console.log("Sending data:", formaddclassStatus);
+    const formAdd = serializeForm("#form-add");
+    console.log("Sending data:", formAdd);
     
     $.ajax({
       type: "POST", // Use POST request
       url: "../class-room-status/save-room-status.php", // URL for saving room
-      data: formaddclassStatus, // Serialize the form data for submission
+      data: formAdd, // Serialize the form data for submission
       dataType: "json", // Expect JSON response
       success: function (response) {
         if (response.status === "error") {
@@ -2357,6 +2978,7 @@ $(document).ready(function () {
     });
   }
 
+  //load modal edit class status
   function editroomStatus(classID, subType, classDay){
     return $.ajax({
       type: "GET", // Use GET request
@@ -2460,18 +3082,18 @@ $(document).ready(function () {
     });
   }
 
+  //update class status  
   function updateroomStatus(){
     const submitButton = $("#form-edit button[type='submit']");
     submitButton.prop('disabled', true);
-
     // Debug what's being sent
-    const formClassStatus = $("#form-edit").serialize();
-    console.log("Sending data:", formClassStatus);
-
+    const formEdit = serializeForm("#form-edit");
+    console.log("Sending data:", formEdit);
+    
     $.ajax({
       type: "POST", // Use POST request
       url: "../class-room-status/update-room-status.php?v=" + new Date().getTime(), // URL for saving room
-      data: formClassStatus, // Serialize the form data for submission, Add ID to form data
+      data: formEdit, // Serialize the form data for submission, Add ID to form data
       dataType: "json", // Expect JSON response
       success: function (response) {
         if (response.status === "error") {
@@ -2548,7 +3170,7 @@ $(document).ready(function () {
 
   }
 
-  //Load delete modal
+  //Load modal delete class status
   function deleteconfirmationStatus(classID, subType, classDay){
     return $.ajax({
       type: "GET", // Use GET request
@@ -2600,17 +3222,18 @@ $(document).ready(function () {
     });
   }
 
+  //delete class status
   function deleteroomStatus(){
     const submitButton = $("#form-delete button[type='submit']");
     submitButton.prop('disabled', true);
     // Debug what's being sent
-    const formdeleteClassStatus = $("#form-delete").serialize();
-    console.log("Sending data:", formdeleteClassStatus);
-    
+    const formDelete = serializeForm("#form-delete");
+    console.log("Sending data:", formDelete);
+
     $.ajax({
       type: "POST", // Use POST request
       url: "../class-room-status/delete-room-status.php", // URL for saving room
-      data: formdeleteClassStatus, // Serialize the form data for submission, Add ID to form data
+      data: formDelete, // Serialize the form data for submission, Add ID to form data
       dataType: "json", // Expect JSON response
       success: function (response) {
         if (response.status === "success") {
@@ -2628,6 +3251,7 @@ $(document).ready(function () {
 
     });
   }
+
   //function to fetch room name, goes to roomlist folder, fetch-room-name
   function customDropdown(optionText, dropdownId, optionId, fetchUrl, appendOptionsCallback) {
     const dropdownList = dropdownId;

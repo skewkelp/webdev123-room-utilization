@@ -3,12 +3,21 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="staticBackdropLabel">Add User</h5>
+          <h5 class="modal-title" id="staticBackdropLabel">Edit User</h5>
           <button type="button" class="btn-close modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div> 
-        <form action="" method="post" id="form-add">
+        <form action="" method="post" id="form-edit">
           <div class="modal-body">
-     
+            <input type="hidden" id="original-user-id" name="original-user-id">
+            <input type="hidden" id="original-username" name="original-username">
+            <input type="hidden" id="original-is-admin" name="original-is-admin">
+            <input type="hidden" id="original-is-staff" name="original-is-staff">
+            
+            <input type="hidden" id="original-user-role" name="original-user-role">
+            <input type="hidden" id="original-first-name" name="original-first-name">
+            <input type="hidden" id="original-last-name" name="original-last-name">
+            <input type="hidden" id="original-password" name="original-password">
+            
             <div style="padding-left: 8px;">
                 <div class="mb-2">
                     <div class="alert alert-danger d-none" id="general-error"></div>
@@ -70,7 +79,12 @@
 
                 <br class="div-account" style="display: none;">
 
-                <div class="mb-2 div-account" style="display: none;">
+                <div class="div-account" style="display: none;">
+                    <input type="checkbox" id="change-password"> Edit Password?
+                    <input type="hidden" id="change-passkey" name="change-passkey" value="false">
+                </div>
+
+                <div class="mb-2 div-password" style="display: none; margin-left: 8%;">
                     <label for="password" class="form-label">Password</label>
                     <input type="password" class="form-control account-input" id="password" name="password" placeholder="password" maxlength="64" disabled></input>
                     <input type="checkbox" id="show-password"> Show Password
@@ -82,7 +96,7 @@
           </div>
           <div class="modal-footer">
               <button type="button" class="btn btn-secondary modal-close" data-bs-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary brand-bg-color">Add User</button>
+              <button type="submit" class="btn btn-primary brand-bg-color">Edit User</button>
           </div>
         </form>
       </div>

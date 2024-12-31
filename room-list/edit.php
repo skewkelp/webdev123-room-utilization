@@ -21,7 +21,7 @@
           aria-label="Close"
         ></button>
       </div>
-      <form action="" method="post" id="form-edit-room">
+      <form action="" method="post" id="form-edit">
         <div class="modal-body">
           
           <div class="mb-2">

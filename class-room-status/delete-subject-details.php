@@ -12,8 +12,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $prospectus_id = clean_input($_GET['prospectusID']);
 
     $roomObj->subject_code = $subject_code;
-    $roomObj->prospectus_id = $prospectus_id;
-
+z
     if($roomObj->deleteSubjectDetails()){
         echo json_encode(['status' => 'success', 'debug' => [
             'class_id deleted' => $roomObj->log_cid,

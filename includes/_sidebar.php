@@ -35,6 +35,5 @@
                 <span class="sidebar-button-text ms-2">User List</span>
             </a>
         </li>
-        
     </ul>
 </div>

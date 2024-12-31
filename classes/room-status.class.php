@@ -353,8 +353,6 @@ class RoomStatus{
     }
 
 
-
-
     function showAllStatus($selectedDay = null){
         $sql = 
             "SELECT
