@@ -700,7 +700,36 @@ $(document).ready(function () {
         let table = $("#table-user-list").DataTable({
           dom: "rtp",
           pageLength: 10,
-          ordering: false
+          ordering: false,
+          drawCallback: function(){
+            
+            $(".edit-user").on("click", function (e) {
+              e.preventDefault(); // Prevent default behavior
+              const button = $(this); // Reference to the clicked button
+              button.prop("disabled", true); // Disable the button
+              
+              const userID = $(this).data('id');
+              // Call the AJAX function
+              editUserList(userID).always(function() {
+                button.prop("disabled", false); // Re-enable the button after AJAX completes
+              });
+
+            });
+
+            $(".delete-user").on("click", function (e) {
+              e.preventDefault(); // Prevent default behavior
+              const button = $(this); // Reference to the clicked button
+              button.prop("disabled", true); // Disable the button
+              
+              const userID = $(this).data('id');
+              // Call the AJAX function
+              deletingUser(userID).always(function() {
+                button.prop("disabled", false); // Re-enable the button after AJAX completes
+              });
+
+            });
+            
+          }
         });
         
         // Bind custom input to DataTable search
@@ -721,31 +750,6 @@ $(document).ready(function () {
         });
 
 
-        $(".edit-user").on("click", function (e) {
-          e.preventDefault(); // Prevent default behavior
-          const button = $(this); // Reference to the clicked button
-          button.prop("disabled", true); // Disable the button
-          
-          const userID = $(this).data('id');
-          // Call the AJAX function
-          editUserList(userID).always(function() {
-            button.prop("disabled", false); // Re-enable the button after AJAX completes
-          });
-
-        });
-
-        $(".delete-user").on("click", function (e) {
-          e.preventDefault(); // Prevent default behavior
-          const button = $(this); // Reference to the clicked button
-          button.prop("disabled", true); // Disable the button
-          
-          const userID = $(this).data('id');
-          // Call the AJAX function
-          deletingUser(userID).always(function() {
-            button.prop("disabled", false); // Re-enable the button after AJAX completes
-          });
-
-        });
         
       },
       error: function(xhr, status, error) {
