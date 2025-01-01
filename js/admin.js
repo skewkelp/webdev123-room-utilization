@@ -140,6 +140,18 @@ $(document).ready(function () {
 
   });
 
+  // Function to set the selected room (and store in localStorage)
+  function setSelectedRoom(roomName) {
+    localStorage.setItem("selectedRoom", roomName);
+    $("#roomschedule-link").data("room", roomName); // Update the data attribute as well
+  }
+
+  // Function to get the selected room from localStorage
+  function getSelectedRoom() {
+    return localStorage.getItem("selectedRoom");
+  }
+
+
   
   //SIDE BAR NAVIGATION LINK BUTTON
   // Event listener for the roomlist-link
@@ -147,6 +159,22 @@ $(document).ready(function () {
     e.preventDefault(); // Prevent default behavior
     viewroomList(); // Call the function to load analytics
   });
+
+  
+
+  function handleClassStatusClick(e) {
+    e.preventDefault();
+    let roomName= $(this).data('room'); 
+
+    console.log("room:", roomName);
+    let functionRef = viewroomStatus;
+    // Check if semester is picked for this session
+    checkSemester(functionRef, roomName);
+  }
+
+  $("#classlist-link").on("click", handleClassStatusClick);
+
+
 
 
   // Event listener for the claslist-link
@@ -158,14 +186,22 @@ $(document).ready(function () {
     checkSemester(functionRef);
   });
 
-  //Event listener for the roomschedule-link
-  $("#roomschedule-link").on("click", function (e) {
-    e.preventDefault(); // Prevent default behavior
+
+  
+
+  function handleRoomScheduleClick(e) {
+    e.preventDefault();
+    let roomName= $(this).data('room'); 
+
+    console.log("room:", roomName);
     let functionRef = viewroomSchedule;
-    
     // Check if semester is picked for this session
-    checkSemester(functionRef);
-  });
+    checkSemester(functionRef, roomName);
+  }
+
+  //Event listener for the roomschedule-link
+  $("#roomschedule-link").on("click", handleRoomScheduleClick);
+
 
   $("#profile-link").on("click", function (e) {
     e.preventDefault(); // Prevent default behavior
@@ -187,19 +223,25 @@ $(document).ready(function () {
   });
 
 
-
   // href="room-schedule" id="roomschedule-link" 
-
   // Determine which page to load based on the current URL
   let url = window.location.href;
+
   if (url.endsWith("room-list")) {
     $("#roomlist-link").trigger("click"); // Trigger the dashboard click event
   } else if (url.endsWith("class-status")) {
     $("#classlist-link").trigger("click"); // Trigger the roomstatus click 
-  } else if (url.endsWith("room-schedule")) {
-    $("#roomschedule-link").trigger("click"); // Trigger the products click event
+  
+  } else if (url.endsWith("room-schedule")){
+    let storedRoom = getSelectedRoom();
+    if(storedRoom && storedRoom !== ""){
+      $("#roomschedule-link").data("room", storedRoom);
+      $("#roomschedule-link").trigger("click"); // Trigger the roomschedule click event
+      
+    }
+    $("#roomschedule-link").trigger("click"); // Trigger the roomschedule click event
   } else if (url.endsWith("profile-page")) {
-    $("#profile-link").trigger("click"); // Trigger the products click event
+    $("#profile-link").trigger("click"); // Trigger the profile link click event
   } else if (url.endsWith("user-list")){
     $("#userlist-link").trigger("click");
   } else if (url.endsWith("faculty-class-list")){
@@ -207,9 +249,13 @@ $(document).ready(function () {
   }else {
     $("#roomlist-link").trigger("click"); // Default to dashboard if no specific page
   }
+  // else if(url.endsWith("room-schedule?")){
+  //   // window.location.assign("room-schedule");
+  // }
+
 
   //Check if semester is selected
-  function checkSemester(pageFunctionRef){
+  function checkSemester(pageFunctionRef, roomName){
     $.ajax({
       url: '../fetch-data/check-semester-picked.php',
       method: 'GET',
@@ -219,11 +265,11 @@ $(document).ready(function () {
           if(pageFunctionRef == viewroomStatus){
             viewroomStatus();
           }else if(pageFunctionRef == viewroomSchedule){
-            viewroomSchedule();
+            viewroomSchedule(roomName);
           }else if(pageFunctionRef == viewmyclassSchedule){
             viewmyclassSchedule();
           }
-          
+
         }else{
           chooseSemester(pageFunctionRef);
         }
@@ -239,7 +285,7 @@ $(document).ready(function () {
   function chooseSemester(pageFunctionRef) {
     $.ajax({
       type: "GET",
-      url: "../admin/choose-semester.php",
+      url: "../main-page/choose-semester.php",
       dataType: "html",
       success: function (response) {
         $(".content-page").html(response);
@@ -275,7 +321,7 @@ $(document).ready(function () {
   //chosen semester
   function selectedSemester(form, pageFunctionRef){
     $.ajax({
-      url: '../admin/save-semester.php',
+      url: '../main-page/save-semester.php',
       method: 'POST',
       data: form.serialize(), // Now properly serializes the form data
       dataType: 'json',
@@ -605,7 +651,7 @@ $(document).ready(function () {
 
 
   //Function to load room schedule view, load content
-  function viewroomSchedule() {
+  function viewroomSchedule(roomName = null) {
     $.ajax({
       type: "GET", // Use GET request
       url: "../room-schedule/viewroom-schedule.php?v=" + new Date().getTime(), // URL for the analytics view
@@ -613,6 +659,10 @@ $(document).ready(function () {
       success: function (response) {
         $(".content-page").html(response); // Load the response into the content are
         
+        
+        console.log("roomName :", roomName);
+
+
         $.fn.dataTable.ext.errMode = 'none'; // Suppress DataTables error messages
 
         const semesterPK = $("#filter-room").data('semester');
@@ -626,7 +676,7 @@ $(document).ready(function () {
         }else if(semester == '2'){
           semesterText = '2nd Sem|';
         }else{
-          console.error("Error, semesterText is empty on function viewroomschedule():", error);
+          console.error("Error, semesterText is empty on function viewroomSchedule():", error);
         }
 
         $('#chosen-semester').text(semesterText + schoolYear);
@@ -787,18 +837,23 @@ $(document).ready(function () {
            // Call function to add product
         });
 
+        if(roomName !== undefined){
+          $('#room').val(roomName);
+          $('#filter-room').trigger("submit");
+        }
+
         populateTable();//call to load time
 
         let table = $("#table-room-schedule").DataTable({
-            dom: "rtp", // Set DataTable options
-            pageLength: 29, // Default page length
-            ordering: false,
-            scrollY: "calc(100vh - 100px)",
-            scrollCollapse: true,
-            language: {
-                "emptyTable": "",
-                "zeroRecords": "" 
-            }
+          dom: "rtp", // Set DataTable options
+          pageLength: 29, // Default page length
+          ordering: false,
+          scrollY: "calc(100vh - 100px)",
+          scrollCollapse: true,
+          language: {
+              "emptyTable": "",
+              "zeroRecords": "" 
+          }
         });
   
       },
@@ -814,7 +869,7 @@ $(document).ready(function () {
   function viewuserList() {
     $.ajax({
       type: "GET", // Use GET request
-      url: "../user-list/viewuser-list.php", // URL for the analytics view
+      url: "../admin/user-list/viewuser-list.php", // URL for the analytics view
       dataType: "html", // Expect HTML response
       success: function (response) {
         $(".content-page").html(response); // Load the response into the content area
@@ -886,7 +941,7 @@ $(document).ready(function () {
   function addUserList() {
     $.ajax({
       type: "GET", // Use GET request
-      url: "../user-list/add-user.html?v=" + new Date().getTime(), // URL for add product view
+      url: "../admin/user-list/add-user.html?v=" + new Date().getTime(), // URL for add product view
       dataType: "html", // Expect HTML response
       success: function (view) {
         $(".modal-container").html(view); // Load the modal view
@@ -961,7 +1016,7 @@ $(document).ready(function () {
     
     $.ajax({
       type: "POST", // Use POST request
-      url: "../user-list/save-user.php?", // URL for saving room
+      url: "../admin/user-list/save-user.php?", // URL for saving room
       data: formAdd, // Serialize the form data for submission
       dataType: "json", // Expect JSON response
       success: function (response) {
@@ -1052,7 +1107,7 @@ $(document).ready(function () {
     // Split the composite ID into its parts
     return $.ajax({
       type: "GET", // Use GET request
-      url: "../user-list/edit-user.html?v=" + new Date().getTime(), // URL 
+      url: "../admin/user-list/edit-user.html?v=" + new Date().getTime(), // URL 
       dataType: "html", // Expect JSON response
       success: function (view) {
         // Assuming 'view' contains the new content you want to display
@@ -1100,7 +1155,6 @@ $(document).ready(function () {
             }
             //select
             $('#user-role').val(user_role).trigger("change");
-            ;
     
           },
           error: function(xhr, status, error) {
@@ -1181,7 +1235,7 @@ $(document).ready(function () {
     
     $.ajax({
       type: "POST", // Use POST request
-      url: "../user-list/update-user.php", // URL for saving room
+      url: "../admin/user-list/update-user.php", // URL for saving room
       data: formEdit, // Serialize the form data for submission
       dataType: "json", // Expect JSON response
       success: function (response) {
@@ -1271,7 +1325,7 @@ $(document).ready(function () {
   function deletingUser(userID){
     return $.ajax({
       type: "GET", // Use GET request
-      url: "../user-list/deleting-user.html?v=" + new Date().getTime(), // URL to get product data
+      url: "../admin/user-list/deleting-user.html?v=" + new Date().getTime(), // URL to get product data
       dataType: "html", // Expect JSON response
       success: function (view) {
         // Assuming 'view' contains the new content you want to display
@@ -1310,7 +1364,7 @@ $(document).ready(function () {
 
     $.ajax({
       type: "POST", // Use POST request
-      url: `../user-list/delete-user.php?userID=${userID}`, // URL for saving room
+      url: `../admin/user-list/delete-user.php?userID=${userID}`, // URL for saving room
       data: formDelete, // Serialize the form data for submission, Add ID to form data
       dataType: "json", // Expect JSON response
       success: function (response) {
@@ -1334,6 +1388,25 @@ $(document).ready(function () {
   }
 
 
+    // // Event listener for the room-schedule link
+    // $(".room-schedule").on("click", function (e) {
+    //   e.preventDefault(); // Prevent default behavior if needed
+      
+    //   let roomName = $(this).data('room'); 
+    //   $("#roomschedule-link").data('room', roomName);
+    //   // console.log("roomName:", globalRoom);
+    //   const newUrl = "room-schedule"; // Assuming href is "room-schedule"
+    
+    //   window.history.pushState({}, '', newUrl);
+
+    //   let functionRef = viewroomSchedule;
+    //   // Check if semester is picked for this session
+    //   checkSemester(functionRef, roomName);
+    //           // console.log("url:", newUrl);
+    // });
+
+  
+
   //FUNCTIONS FOR PAGE ROOM-LIST
   // Function to load room list
   function viewroomList() {
@@ -1344,6 +1417,8 @@ $(document).ready(function () {
       success: function (response) {
         $(".content-page").html(response); // Load the response into the content area
          // Call function to load the chart
+        localStorage.setItem("selectedRoom", "");
+
         var table = $("#table-room-list").DataTable({
           dom: "rtp",
           pageLength: 10,
@@ -1355,25 +1430,30 @@ $(document).ready(function () {
           table.search(this.value).draw(); // Search room based on input
         });
         
-        // Bind custom input to DataTable search
-        $("#custom-search").on("keyup", function () {
-          table.search(this.value).draw(); // Search room based on input
-        });
 
         $("#add-room").on("click", function (e) {
           e.preventDefault(); // Prevent default behavior
           addRoom(); // Call function to add product
         });
 
+
         $(".room-status").on("click", function (e) {
           e.preventDefault(); // Prevent default behavior
           // editRoom(); // Call the function to load products
         });
 
-        $(".room-schedule").on("click", function (e) {
-          e.preventDefault(); // Prevent default behavior
-          // editRoom(); // Call the function to load products
-        });
+        
+        $(".room-schedule").on("click", function(e){
+          // e.preventDefault(); // Prevent default behavior
+          const newUrl = "room-schedule"; // Assuming href is "room-schedule"
+          let roomName= $(this).data('room'); 
+          setSelectedRoom(roomName);
+          // console.log("room:", roomName);
+          // window.location.href = newUrl;
+          window.location.assign(newUrl);
+          // window.history.pushState({}, '', newUrl);
+        }); // Trigger the roomschedule click event
+  
 
         $(".edit-room").on("click", function (e) {
           e.preventDefault(); // Prevent default behavior
@@ -1405,7 +1485,7 @@ $(document).ready(function () {
   function addRoom() {
     $.ajax({
       type: "GET", // Use GET request
-      url: "../room-list/add.html?v=" + new Date().getTime(), // URL for add product view
+      url: "../admin/room-list-modals/add.html?v=" + new Date().getTime(), // URL for add product view
       dataType: "html", // Expect HTML response
       success: function (view) {
         $(".modal-container").html(view); // Load the modal view
@@ -1454,7 +1534,7 @@ $(document).ready(function () {
 
     $.ajax({
       type: "POST", // Use POST request
-      url: "../room-list/save-room.php", // URL for saving room
+      url: "../admin/room-list-modals/save-room.php", // URL for saving room
       data: formAdd, // Serialize the form data for submission
       dataType: "json", // Expect JSON response
       success: function (response) {
@@ -1500,7 +1580,7 @@ $(document).ready(function () {
   function editRoom(roomCode, roomNo) {
     return $.ajax({
       type: "GET", // Use GET request
-      url: "../room-list/edit.php?v=" + new Date().getTime(), // URL to get product data
+      url: "../admin/room-list-modals/edit.php?v=" + new Date().getTime(), // URL to get product data
       dataType: "html", // Expect JSON response
       success: function (view) {
         // Assuming 'view' contains the new content you want to display
@@ -1570,7 +1650,7 @@ $(document).ready(function () {
 
     $.ajax({
       type: "POST", // Use POST request
-      url: `../room-list/update-room.php?roomCode=${roomCode}&roomNo=${roomNo}`, // URL for saving room
+      url: `../admin/room-list-modals/update-room.php?roomCode=${roomCode}&roomNo=${roomNo}`, // URL for saving room
       data: formEdit, // Serialize the form data for submission
       dataType: "json", // Expect JSON response
       success: function (response) {
@@ -1620,11 +1700,11 @@ $(document).ready(function () {
   function viewroomStatus(){
     $.ajax({
       type: "GET", // Use GET request
-      url: "../class-room-status/viewclass-status.php", // URL for the analytics view
+      url: "../room-status/viewclass-status.php", // URL for the analytics view
       dataType: "html", // Expect HTML response
       success: function (response) {
         $(".content-page").html(response); // Load the response into the content area
-        
+
         //FOR SUBJECT TABLE --start
         const selectProspectus = document.getElementById("dropdown-subject-prospectus");
         var countDefault = false;
@@ -2093,7 +2173,7 @@ $(document).ready(function () {
   function addsubjectDetails(prospectus) {
     $.ajax({
       type: "GET", // Use GET request
-      url: "../class-room-status/add-subject-details.html?v=" + new Date().getTime(), // URL for add product view
+      url: "../admin/subject-detail-modals/add-subject-details.html?v=" + new Date().getTime(), // URL for add product view
       dataType: "html", // Expect HTML response
       success: function (view) {
         $(".modal-container").html(view); // Load the modal view
@@ -2125,12 +2205,12 @@ $(document).ready(function () {
   //save subject details      
   function savesubjectDetails(prospectus){
     // Debug what's being sent
-    const formAdd = serializeFrom("#form-add");
+    const formAdd = serializeForm("#form-add");
     console.log("Sending data:", formAdd);
     
     $.ajax({
       type: "POST", // Use POST request
-      url: `../class-room-status/save-subject-details.php?prospectus=${prospectus}`, // URL for saving room
+      url: `../admin/subject-detail-modals/save-subject-details.php?prospectus=${prospectus}`, // URL for saving room
       data: formAdd, // Serialize the form data for submission
       dataType: "json", // Expect JSON response
       success: function (response) {
@@ -2196,7 +2276,7 @@ $(document).ready(function () {
     // Split the composite ID into its parts
     return $.ajax({
       type: "GET", // Use GET request
-      url: "../class-room-status/edit-subject-details.html?v=" + new Date().getTime(), // URL 
+      url: "../admin/subject-detail-modals/edit-subject-details.html?v=" + new Date().getTime(), // URL 
       dataType: "html", // Expect JSON response
       success: function (view) {
         // Assuming 'view' contains the new content you want to display
@@ -2254,7 +2334,7 @@ $(document).ready(function () {
     
     $.ajax({
       type: "POST", // Use POST request
-      url: "../class-room-status/update-subject-details.php", // URL for saving room
+      url: "../admin/subject-detail-modals/update-subject-details.php", // URL for saving room
       data: formEdit, // Serialize the form data for submission
       dataType: "json", // Expect JSON response
       success: function (response) {
@@ -2319,7 +2399,7 @@ $(document).ready(function () {
   function deletingSubjectDetails(subjectID, prospectus){
     return $.ajax({
       type: "GET", // Use GET request
-      url: "../class-room-status/deleting-subject-details.html?v=" + new Date().getTime(), // URL to get product data
+      url: "../admin/subject-detail-modals/deleting-subject-details.html?v=" + new Date().getTime(), // URL to get product data
       dataType: "html", // Expect JSON response
       success: function (view) {
         // Assuming 'view' contains the new content you want to display
@@ -2358,7 +2438,7 @@ $(document).ready(function () {
 
     $.ajax({
       type: "POST", // Use POST request
-      url: `../class-room-status/delete-subject-details.php?subjectID=${subjectID}&prospectusID=${prospectusID}`, // URL for saving room
+      url: `../admin/subject-detail-modals/delete-subject-details.php?subjectID=${subjectID}&prospectusID=${prospectusID}`, // URL for saving room
       data: formDelete, // Serialize the form data for submission, Add ID to form data
       dataType: "json", // Expect JSON response
       success: function (response) {
@@ -2391,7 +2471,7 @@ $(document).ready(function () {
     
     $.ajax({
       type: "GET", // Use GET request
-      url: "../class-room-status/add-class-detail.html?v=" + new Date().getTime(), // URL for add product view
+      url: "../admin/class-detail-modals/add-class-details.html?v=" + new Date().getTime(), // URL for add product view
       dataType: "html", // Expect HTML response
       success: function (view) {
         $(".modal-container").html(view); // Load the modal view
@@ -2498,7 +2578,7 @@ $(document).ready(function () {
       },
       error: function (xhr, status, error) {
         alert("Failed to load add class details modal!");
-        console.error("Error loading modal on add-class-detail.html:", status, error);
+        console.error("Error loading modal on add-class-details.html:", status, error);
       }
     });
   }
@@ -2511,7 +2591,7 @@ $(document).ready(function () {
     
     $.ajax({
       type: "POST", // Use POST request
-      url: "../class-room-status/save-class-detail.php", // URL for saving room
+      url: "../admin/class-detail-modals/save-class-details.php", // URL for saving room
       data: formAdd, // Serialize the form data for submission
       dataType: "json", // Expect JSON response
       success: function (response) {
@@ -2580,7 +2660,7 @@ $(document).ready(function () {
       },
       error: function(xhr, status, error) {
         alert("Failed to add class details!");
-        console.error("Error saving data on save-class-detail.php:", status, error);
+        console.error("Error saving data on save-class-details.php:", status, error);
       }
 
     });
@@ -2591,7 +2671,7 @@ $(document).ready(function () {
     // Split the composite ID into its parts
     return $.ajax({
       type: "GET", // Use GET request
-      url: "../class-room-status/edit-class-detail.html?v=" + new Date().getTime(), // URL 
+      url: "../admin/class-detail-modals/edit-class-details.html?v=" + new Date().getTime(), // URL 
       dataType: "html", // Expect JSON response
       success: function (view) {
         // Assuming 'view' contains the new content you want to display
@@ -2705,7 +2785,7 @@ $(document).ready(function () {
       },
       error: function(xhr, status, error) {
         alert('Failed to load edit class details modal!');
-        console.error("Error loading modal on edit-class-detail.html:", status, error);
+        console.error("Error loading modal on edit-class-details.html:", status, error);
       }
     });
   }
@@ -2718,7 +2798,7 @@ $(document).ready(function () {
     
     $.ajax({
       type: "POST", // Use POST request
-      url: "../class-room-status/update-class-detail.php", // URL for saving room
+      url: "../admin/class-detail-modals/update-class-details.php", // URL for saving room
       data: formEdit, // Serialize the form data for submission
       dataType: "json", // Expect JSON response
       success: function (response) {
@@ -2778,7 +2858,7 @@ $(document).ready(function () {
       },
       error: function(xhr, status, error) {
         alert('Failed to update class details!');
-        console.error("Error on updating data on update-class-detail.php.:", status, error);
+        console.error("Error on updating data on update-class-details.php.:", status, error);
       }
 
     });
@@ -2788,7 +2868,7 @@ $(document).ready(function () {
   function deletingclassDetails(classId, subType){
     return $.ajax({
       type: "GET", // Use GET request
-      url: "../class-room-status/deleting-class-detail.html?v=" + new Date().getTime(), // URL to get product data
+      url: "../admin/class-detail-modals/deleting-class-details.html?v=" + new Date().getTime(), // URL to get product data
       dataType: "html", // Expect JSON response
       success: function (view) {
         // Assuming 'view' contains the new content you want to display
@@ -2827,7 +2907,7 @@ $(document).ready(function () {
       },
       error: function(xhr, status, error) {
         alert("Failed loading delete class detail modal!");
-        console.error("Error loading modal on deleting-class-detail.html:", status, error);
+        console.error("Error loading modal on deleting-class-details.html:", status, error);
       }
 
     });
@@ -2843,7 +2923,7 @@ $(document).ready(function () {
 
     $.ajax({
       type: "POST", // Use POST request
-      url: "../class-room-status/delete-class-details.php", // URL for saving room
+      url: "../admin/class-detail-modals/delete-class-details.php", // URL for saving room
       data: formDelete, // Serialize the form data for submission, Add ID to form data
       dataType: "json", // Expect JSON response
       success: function (response) {
@@ -2870,7 +2950,7 @@ $(document).ready(function () {
   function addroomStatus() {
     $.ajax({
       type: "GET", // Use GET request
-      url: "../class-room-status/add-room-status.html?v=" + new Date().getTime(), // URL for add product view
+      url: "../admin/room-status-modals/add-room-status.html?v=" + new Date().getTime(), // URL for add product view
       dataType: "html", // Expect HTML response
       success: function (view) {
         $(".modal-container").html(view); // Load the modal view
@@ -2991,7 +3071,7 @@ $(document).ready(function () {
     
     $.ajax({
       type: "POST", // Use POST request
-      url: "../class-room-status/save-room-status.php", // URL for saving room
+      url: "../admin/room-status-modals/save-room-status.php", // URL for saving room
       data: formAdd, // Serialize the form data for submission
       dataType: "json", // Expect JSON response
       success: function (response) {
@@ -3109,7 +3189,7 @@ $(document).ready(function () {
   function editroomStatus(classID, subType, classDay){
     return $.ajax({
       type: "GET", // Use GET request
-      url: "../class-room-status/edit-room-status.php?v=" + new Date().getTime(), // URL to get product data
+      url: "../admin/room-status-modals/edit-room-status.php?v=" + new Date().getTime(), // URL to get product data
       dataType: "html", // Expect JSON response
       success: function (view) {
         // Assuming 'view' contains the new content you want to display
@@ -3219,7 +3299,7 @@ $(document).ready(function () {
     
     $.ajax({
       type: "POST", // Use POST request
-      url: "../class-room-status/update-room-status.php?v=" + new Date().getTime(), // URL for saving room
+      url: "../admin/room-status-modals/update-room-status.php?v=" + new Date().getTime(), // URL for saving room
       data: formEdit, // Serialize the form data for submission, Add ID to form data
       dataType: "json", // Expect JSON response
       success: function (response) {
@@ -3301,7 +3381,7 @@ $(document).ready(function () {
   function deleteconfirmationStatus(classID, subType, classDay){
     return $.ajax({
       type: "GET", // Use GET request
-      url: "../class-room-status/delete-confirmation-status.html?v=" + new Date().getTime(), // URL to get product data
+      url: "../admin/room-status-modals/delete-confirmation-status.html?v=" + new Date().getTime(), // URL to get product data
       dataType: "html", // Expect JSON response
       success: function (view) {
         // Assuming 'view' contains the new content you want to display
@@ -3359,7 +3439,7 @@ $(document).ready(function () {
 
     $.ajax({
       type: "POST", // Use POST request
-      url: "../class-room-status/delete-room-status.php", // URL for saving room
+      url: "../admin/room-status-modals/delete-room-status.php", // URL for saving room
       data: formDelete, // Serialize the form data for submission, Add ID to form data
       dataType: "json", // Expect JSON response
       success: function (response) {

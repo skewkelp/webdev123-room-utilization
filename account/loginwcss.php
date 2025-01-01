@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $data = $accountObj->fetch($username);
         error_log("Login successful - User data: " . print_r($data, true));
         $_SESSION['account'] = $data;
-        header('location: ../admin/room-list.php');
+        header('location: ../main-page/room-list.php');
     }else{
         error_log("Login failed");
         $loginErr = 'Invalid username/password';
@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 } else {
     if (isset($_SESSION['account'])) {
         if ($_SESSION['account']['is_staff']) {
-            header('location: ../admin/room-list.php');
+            header('location: ../main-page/room-list.php');
         }
     }
 }

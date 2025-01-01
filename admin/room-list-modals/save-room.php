@@ -1,7 +1,7 @@
 <?php
 
-require_once('../tools/functions.php');
-require_once('../classes/room.class.php');
+require_once('../../tools/functions.php');
+require_once('../../classes/room.class.php');
 
 
 $split_PK = $room_code = $room_no = '';

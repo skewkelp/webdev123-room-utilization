@@ -1,7 +1,7 @@
 <?php
 
-require_once('../tools/functions.php');
-require_once('../classes/room-status.class.php');
+require_once('../../tools/functions.php');
+require_once('../../classes/room-status.class.php');
 
 $class_id = '';
 $subject_type = $class_day = '';

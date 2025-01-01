@@ -25,7 +25,7 @@
                 <i class="bi schedule-icon">
                     <img src="../img/sidebar-icon/schedule-icon.png" alt="" width="27.5px" height="27.5px">
                 </i>
-                <span class="sidebar-button-text ms-2">Schedule</span>
+                <span class="sidebar-button-text ms-2">Room Schedule</span>
             </a>
         </li>
 

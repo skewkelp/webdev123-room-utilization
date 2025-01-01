@@ -1,7 +1,7 @@
 <?php
 
-require_once('../tools/functions.php');
-require_once('../classes/room-status.class.php');
+require_once('../../tools/functions.php');
+require_once('../../classes/room-status.class.php');
 
 
 $original_class_id = $original_subject_id = $original_subject_type = $original_section_id = '';

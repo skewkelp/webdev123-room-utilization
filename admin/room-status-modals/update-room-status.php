@@ -1,7 +1,7 @@
 <?php
 session_start();
-require_once('../tools/functions.php');
-require_once('../classes/room-status.class.php');
+require_once('../../tools/functions.php');
+require_once('../../classes/room-status.class.php');
 
 //(class-details)room-id, subject-id, section-id, teacher-assigned, 
 //(class-time)start-time, end-time, day

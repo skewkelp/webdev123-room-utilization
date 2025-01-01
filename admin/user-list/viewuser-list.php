@@ -1,12 +1,12 @@
 <?php
 // Add these at the top of viewroomlist.php
-require_once '../tools/functions.php';  // Add this line
+require_once '../../tools/functions.php';  // Add this line
   
 ?>
 
 <div class="container-fluid">
     <?php
-        require_once '../classes/account.class.php';
+        require_once '../../classes/account.class.php';
         $userObj = new Account();  
        
     ?>

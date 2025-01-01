@@ -79,24 +79,22 @@ require_once '../tools/functions.php';  // Add this line
                                 $array = $roomObj->showAllrooms();
 
                                 foreach ($array as $arr) {
-                                ?>
-                                    <tr>
-                                        <td><?= $i ?></td>
-                                        <td><?= $arr['room_code'] . ' ' . $arr['room_no'] ?></td>
-                                        <td><?= $arr['room_details'] ?></td>
-                                        <td class="text-nowrap">
-                                            <a href="" class="btn room-schedule">Schedule</a>
-                                            <a href="" class="btn room-status">Status</a>
-                                            <?php if (hasPermission('admin')): ?>
-                                            <a href="" class="btn admin edit-room" data-roomcode="<?= $arr['room_code'] ?>" data-roomno="<?= $arr['room_no'] ?>">Edit</a>
-                                            <?php endif; ?>
-                                        </td>
-                                    </tr>
-                                <?php
-                                    $i++;  
+                            ?>
+                                <tr>
+                                    <td><?= $i ?></td>
+                                    <td><?= $arr['room_code'] . ' ' . $arr['room_no'] ?></td>
+                                    <td><?= $arr['room_details'] ?></td>
+                                    <td class="text-nowrap">
+                                        <a href="room-schedule" data-room="<?=  $arr['room_code'] . ' ' . $arr['room_no']?>" class="btn user room-schedule">Schedule</a>
+                                        <?php if (hasPermission('admin')): ?>
+                                        <a href="" class="btn admin edit-room" data-roomcode="<?= $arr['room_code'] ?>" data-roomno="<?= $arr['room_no'] ?>">Edit</a>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                            <?php
+                                $i++;  
                                 }
-                                ?>
-                
+                            ?>
                             </tbody>
                         </table>
                     </div> <!-- end table-responsive-->

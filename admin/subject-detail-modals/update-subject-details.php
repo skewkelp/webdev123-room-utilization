@@ -1,8 +1,8 @@
 <?php
 session_start();
 
-require_once('../tools/functions.php');
-require_once('../classes/room-status.class.php');
+require_once('../../tools/functions.php');
+require_once('../../classes/room-status.class.php');
 
 
 $subject_code = $description = $lec_units = $lab_units = $total_units = '';
