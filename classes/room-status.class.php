@@ -578,7 +578,35 @@ class RoomStatus{
 
  
     //CHECK IF EXISTING SUBJECT EXIST ON A SECTION
-    function checkSubjectSectionExisting($excludeID){
+    function checkSubjectSectionExisting($excludeSubType){
+        $sql = "SELECT class.class_id AS class_id
+        FROM class_details class
+        WHERE (class.subject_id = :subject_id AND class.subject_type = :subject_type) AND (class.course_abbr = :course_abbr AND class.year_level = :year_level AND class.section = :section)";
+        
+        if($excludeSubType !== null){
+            $sql .= " AND class.subject_type != :excludeSubType";
+        }
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':subject_type', $this->subject_type);
+        $query->bindParam(':subject_id', $this->subject_id);
+        $query->bindParam(':course_abbr', $this->course_abbr);
+        $query->bindParam(':year_level', $this->year_level);
+        $query->bindParam(':section', $this->section);
+        
+        if($excludeSubType !== null){
+            $query->bindParam(':excludeSubType', $excludeSubType);   
+        }
+
+        if ($query->execute()) {
+            $data = $query->fetch();
+            return $data ? $data['class_id'] : null;
+        }
+        return null;
+    }
+    
+    //CHECK IF EXISTING SUBJECT TYPE EXIST FOR SECTION
+    function checkSubTypeExisting($excludeID){
         $sql = "SELECT class.class_id AS class_id
         FROM class_details class
         WHERE (class.subject_id = :subject_id AND class.subject_type = :subject_type) AND (class.course_abbr = :course_abbr AND class.year_level = :year_level AND class.section = :section)";
@@ -604,7 +632,10 @@ class RoomStatus{
         }
         return null;
     }
+    
 
+
+    
     function checkClassIDExisting($recordID, $excludeID = null){
         $sql = "SELECT 
             DISTINCT class.class_id AS class_id, 
@@ -636,7 +667,7 @@ class RoomStatus{
 
 
     //CHECK IF EXISTING SUBJECT_NAME AND SECTION_NAME ALREADY EXIST, condition for class id when it can be unique
-    function checkConditionClassDetailPK(){
+    function checkConditionClassDetailPK($excludeID = null){
         $sql = "SELECT
             DISTINCT class.subject_id AS subject_id,
             class.class_id AS class_id,
@@ -645,18 +676,44 @@ class RoomStatus{
         FROM class_details class
 
         WHERE class.subject_id = :subject_id AND (class.course_abbr = :course_abbr AND class.year_level = :year_level AND class.section = :section)
-        ;";
+        ";
+
+        if($excludeID !== null){
+            $sql .= " AND class.class_id != :excludeID;";
+        }
 
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':subject_id', $this->subject_id);
         $query->bindParam(':course_abbr', $this->course_abbr);
         $query->bindParam(':year_level', $this->year_level);
         $query->bindParam(':section', $this->section);
+
+
+        if($excludeID !== null){
+            $query->bindParam(':excludeID', $excludeID);
+        }
+
         $query->execute();
         $data = $query->fetch();
         return $data ? ['class_id' => $data['class_id'], 'subject_id' => $data['subject_id'], 'section_name' => $data['section_name']] : null;
     }
 
+    //CHECK A SUB FOR CLASS IF IT HAS 2 SUB TYPES,
+    function checkClassTypeCount(){
+        $sql = "SELECT COUNT(*)
+        FROM class_details class
+        WHERE class.subject_id = :subject_id AND (class.course_abbr = :course_abbr AND class.year_level = :year_level AND class.section = :section);";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':subject_id', $this->subject_id);
+        $query->bindParam(':course_abbr', $this->course_abbr);
+        $query->bindParam(':year_level', $this->year_level);
+        $query->bindParam(':section', $this->section);
+
+        $query->execute();
+        $count = $query->fetchColumn();
+        return $count > 1;
+    }
  
     //CHECK IF AN EXISTING TIME ROW ALREADY EXIST ON TABLE
     function checkExistingClassTime($excludeClassID = null, $excludeSubtype = null, $excludeDay = null){

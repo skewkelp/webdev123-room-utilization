@@ -173,7 +173,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
         exit;
     }
 
-    $existing_class = $roomObj->checkSubjectSectionExisting($original_class_id);
+    $existing_class = $roomObj->checkSubjectSectionExisting($original_subject_type);
     if($existing_class != null){
         $generalErr = '<strong>EXISTING DATA!</strong> <br> This subject already exists for this section with class ID ' . $existing_class;
         $subject_idErr = 'Cannot update a subject that exist for this section.';
@@ -186,10 +186,11 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
         exit;
     }
 
+      
+    $existing_classID = '';
     //check condition for class id, if false then same class id can be added
     $match_classDetails = $roomObj->checkConditionClassDetailPK();
     if($match_classDetails == null){
-
         $existing_classID = $roomObj->checkClassIDExisting($class_id, $original_class_id);
         //if true, existing class_id,
 
@@ -206,9 +207,14 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
         }
 
     }
+    $condition = false;
 
-    if($match_classDetails != null){    
-        if($class_id != $match_classDetails['class_id']){
+    if($match_classDetails != null ){
+        if($roomObj->checkClassTypeCount()){
+            $condition = true;
+        } 
+
+        if($class_id != $match_classDetails['class_id'] && $condition == true){
             $generalErr = '<strong>MATCHED CLASS ID!</strong> <br>This class matched with <strong>' . $match_classDetails['class_id'] . '</strong> with subject ' . $match_classDetails['subject_id'] . ' for section ' . $match_classDetails['section_name'];
             $class_idErr = 'Class ID should match with the same subject for this section.';
         
@@ -221,7 +227,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
         }
     }
 
-    
 
     if($roomObj->updateClassDetails()){
         echo json_encode(['status' => 'success']);
