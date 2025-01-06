@@ -24,7 +24,7 @@ require_once '../tools/functions.php';  // Add this line
 
         if($semesterText == '1'){
           $semesterText = '1st Sem|';
-        }else if(semesterText == '2'){
+        }else if($semesterText == '2'){
           $semesterText = '2nd Sem|';
         }else{
           $semesterText = 'ERROR! semester not initialized';
