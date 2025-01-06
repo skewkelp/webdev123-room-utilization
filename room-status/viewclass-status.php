@@ -104,8 +104,8 @@ require_once '../tools/functions.php';  // Add this line
                                 <td><?= $arr['subject_id'] ?></td>
                                 <td><?= $arr['sub_desc'] ?></td>
                                 <td><?= $arr['total_units'] ?></td>
-                                <td><?= $arr['lab_units'] ?></td>
                                 <td><?= $arr['lec_units'] ?></td>
+                                <td><?= $arr['lab_units'] ?></td>
                                 <td class="text-nowrap" style="">
                                     <a href="" class="btn admin w-50 edit-subject-details" data-subjectid="<?= $arr['subject_id']?>">Edit</a>
                                     <a href="" class="btn admin w-50 delete delete-subject-details" data-subjectid="<?= $arr['subject_id']?>">Delete</a>
