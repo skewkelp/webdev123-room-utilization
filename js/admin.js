@@ -2449,11 +2449,21 @@ $(document).ready(function () {
           $("#form-delete")[0].reset(); // Reset the form
           // Optionally, reload page to show new entry
           viewroomStatus();
+
+        }else{
+          console.error("Error deleting data on delete-subject-details.php:", response.message);
+          alert("Failed to delete subject details!");
+          $("#staticBackdrop").modal("hide");
+          $("#form-delete")[0].reset(); // Reset the form
+          viewroomStatus();
         }
       },
       error: function(xhr, status, error) {
-        alert("Failed to delete class detail!");
-        console.error("Error deleting data on delete-class-details.php:", status, error);
+        alert("Failed to delete subject details!");
+        console.error("Error deleting data on delete-subject-details.php:", status, error);
+        $("#staticBackdrop").modal("hide");
+        $("#form-delete")[0].reset(); // Reset the form
+        viewroomStatus();
       }
 
     });

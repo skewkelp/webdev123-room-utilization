@@ -12,16 +12,16 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $prospectus_id = clean_input($_GET['prospectusID']);
 
     $roomObj->subject_code = $subject_code;
-z
+    $roomObj->prospectus_id = $prospectus_id;
+
+    // echo json_encode(['status' => 'error', 'message' => $prospectus_id]);
+
     if($roomObj->deleteSubjectDetails()){
-        echo json_encode(['status' => 'success', 'debug' => [
-            'class_id deleted' => $roomObj->log_cid,
-        ]]);
+        echo json_encode(['status' => 'success']);
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'Something went wrong when deleting the class details.']);
+        echo json_encode(['status' => 'error', 'message' => 'Something went wrong when deleting the subject details.']);
     }
     exit;
-
 }
 
 ?>

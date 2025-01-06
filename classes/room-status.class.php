@@ -202,7 +202,7 @@ class RoomStatus{
 
         $sql = "INSERT INTO subject_details (subject_code, `description`, total_units, lec_units, lab_units, subject_prospectus_id) VALUES (:subject_code, :description, :total_units, :lec_units, :lab_units, :prospectus_id);";
         $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':subject_code', $this->description);
+        $query->bindParam(':subject_code', $this->subject_code);
         $query->bindParam(':description', $this->description);
         $query->bindParam(':total_units', $this->total_units);
         $query->bindParam(':lec_units', $this->lec_units);

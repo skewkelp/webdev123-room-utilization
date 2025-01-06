@@ -101,7 +101,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $roomObj->lec_units = $lec_units;
     $roomObj->lab_units = $lab_units;
     $roomObj->prospectus_id = $prospectus_id;
-    
+
 
     if ($roomObj->insertSubjectDetails()) {
         echo json_encode(['status' => 'success']);
