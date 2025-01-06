@@ -6,7 +6,6 @@ class RoomStatus{
     public $semester = '';
     public $school_year = '';
 
-    
     //PK ROOM 
     public $room_code = '';
     public $room_no = '';
@@ -825,7 +824,7 @@ class RoomStatus{
         return $data;
     }
 
-    function fetchclassDetailsRecord($classID, $subType){
+    function fetchclassDetailsRecord($classID, $subType, $semesterID = null, $schoolYear = null){
         // $sql = "SELECT * FROM class_details WHERE id = :recordID;";
         $sql = 
             "SELECT 
@@ -839,7 +838,9 @@ class RoomStatus{
                 CONCAT(class.course_abbr, class.year_level, class.section) AS section_name, 
                 
                 class.teacher_assigned AS teacher_id,
-                CONCAT(acc.last_name,', ',acc.first_name) AS teacher_name 
+                CONCAT(acc.last_name,', ',acc.first_name) AS teacher_name,
+                class.semester AS semester_id,
+                class.school_year AS school_year 
 
             FROM class_details class 
             LEFT JOIN section_details sec ON class.course_abbr = sec.course_abbr AND class.year_level = sec.year_level AND class.section = sec.section
@@ -848,13 +849,22 @@ class RoomStatus{
             LEFT JOIN user_list user ON fac.user_id = user.user_id
             LEFT JOIN account acc ON user.user_id = acc.account_id
             
-            WHERE class.class_id = :classID AND class.subject_type = :subType
+            WHERE class.class_id = :classID AND class.subject_type = :subType 
         ;";
+        if($semesterID !== null && $schoolYear !== null){
+            $sql .= " AND (class.semester = :semesterID AND class.school_year = :schoolYear)";
+        }
+        
         
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':classID', $classID);
         $query->bindParam(':subType', $subType);
-
+        
+        if($semesterID !== null && $schoolYear !== null){
+            $query->bindParam(':semesterID', $semesterID);
+            $query->bindParam(':schoolYear', $schoolYear);
+        }
+        
         $data = null;
         if ($query->execute()) {
             $data = $query->fetch();
@@ -862,7 +872,7 @@ class RoomStatus{
         return $data;
     }
 
-    function fetchroomstatusRecord($recordClassID, $recordSubType, $recordClassDay){
+    function fetchroomstatusRecord($recordClassID, $recordSubType, $recordClassDay, $semesterID = null, $schoolYear = null){
         $sql = 
             "SELECT
                 sched.class_id AS class_id,
@@ -884,7 +894,9 @@ class RoomStatus{
                 rtype.room_description AS room_type,
                 
                 sched.status AS room_status,
-                sched.remarks AS remarks
+                sched.remarks AS remarks,
+                sched.semester AS semester,
+                sched.school_year AS school_year
 
             FROM
                 semester sem
@@ -906,14 +918,22 @@ class RoomStatus{
                 account acc ON user.user_id = acc.account_id
         
                 
-            WHERE sched.class_id = :recordClassID AND sched.subject_type= :recordSubType AND sched.day= :recordClassDay
-        
+            WHERE sched.class_id = :recordClassID AND sched.subject_type= :recordSubType AND sched.day= :recordClassDay 
         ;";
-      
+
+        if($semesterID !== null && $schoolYear !== null){
+            $sql .= " AND (sched.semester = :semesterID AND sched.school_year = :schoolYear)";
+        }
+
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':recordClassID', $recordClassID);
         $query->bindParam(':recordSubType', $recordSubType);
         $query->bindParam(':recordClassDay', $recordClassDay);
+        
+        if($semesterID !== null && $schoolYear !== null){
+            $query->bindParam(':semesterID', $semesterID);
+            $query->bindParam(':schoolYear', $schoolYear);
+        }
         $data = null;
         if ($query->execute()) {
             $data = $query->fetch();
@@ -931,21 +951,28 @@ class RoomStatus{
     }
 
     function deleteClassDetails(){
-        $sql = "DELETE FROM class_details WHERE class_id = :class_id AND subject_type = :subject_type;";
+        $sql = "DELETE FROM class_details WHERE class_id = :class_id AND subject_type = :subject_type
+            AND (semester = :semester AND school_year = :school_year)
+        ;";
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':class_id', $this->class_id);
         $query->bindParam(':subject_type', $this->subject_type);
+        $query->bindParam(':semester', $this->semester);
+        $query->bindParam(':school_year', $this->school_year);
         $query->execute();
         return true;
     }
 
     function deleteClassSchedule(){
         $sql = "DELETE FROM class_schedule WHERE class_id = :class_id AND subject_type = :subject_type AND `day` = :class_day
+            AND (semester = :semester AND school_year = :school_year)
         ;";
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':class_id', $this->class_id);
         $query->bindParam(':subject_type', $this->subject_type);
         $query->bindParam(':class_day', $this->day_id);
+        $query->bindParam(':semester', $this->semester);
+        $query->bindParam(':school_year', $this->school_year);
         $query->execute();
 
         return true;
@@ -1077,7 +1104,7 @@ class RoomStatus{
     }
 
     //for semester dropdown
-    public function fetchclassesOption(){
+    public function fetchclassesOption($semesterID = null, $schoolYear = null){
         $sql = "SELECT 
                 CONCAT(class.class_id,' ', class.subject_id) AS class_sub,
                 CONCAT(sub.lec_units,'|', sub.lab_units) AS subject_units,
@@ -1086,9 +1113,24 @@ class RoomStatus{
                 class.subject_type AS subject_type
 
             FROM class_details class LEFT JOIN subject_details sub ON class.subject_id = sub.subject_code
-            GROUP BY class.class_id
-            ORDER BY class_id ASC;";
+            
+            ";
+
+        if($semesterID !== null && $schoolYear !== null){
+            $sql .= " WHERE class.semester = :semesterID AND class.school_year = :schoolYear";
+
+        }
+
+        $sql .= " GROUP BY class.class_id 
+            ORDER BY subject_id ASC;";
+        
         $query = $this->db->connect()->prepare($sql);
+        
+        if($semesterID !== null && $schoolYear !== null){
+            $query->bindParam(':semesterID', $semesterID);
+            $query->bindParam(':schoolYear', $schoolYear);
+        }
+
         $data = null;
         if ($query->execute()) {
             $data = $query->fetchAll(PDO::FETCH_ASSOC);

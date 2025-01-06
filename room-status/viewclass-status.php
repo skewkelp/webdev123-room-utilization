@@ -155,7 +155,7 @@ require_once '../tools/functions.php';  // Add this line
                     </div>
                     <div class="table-responsive">
                         <!-- 2. Table Class Details -->
-                        <table id="table-class-details" class="table table-centered table-nowrap table-hover mb-0">
+                        <table id="table-class-details" class="table table-centered table-nowrap table-hover mb-0" data-semester="<?= $semester_PK?>">
                             <thead>
                                 <tr>
                                     <th>ID</th>
@@ -333,11 +333,11 @@ require_once '../tools/functions.php';  // Add this line
                      
                         </div>
                         <?php if (hasPermission('admin')): ?>
-                            <a id="add-room-status" href="#" class="btn admin btn-primary open-modal-button">Add Class Status</a>
+                            <a id="add-room-status" href="#" class="btn admin btn-primary open-modal-button" data-semester="<?= $semester_PK?>">Add Class Status</a>
                         <?php endif; ?>
                     </div>
                     <div class="table-responsive">
-                        <table id="table-room-status" class="table table-centered table-nowrap table-hover mb-0">
+                        <table id="table-room-status" class="table table-centered table-nowrap table-hover mb-0" data-semester="<?= $semester_PK?>">
                             <thead>
                                 <tr>
                                     <th>ID</th>

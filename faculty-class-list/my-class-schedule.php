@@ -77,7 +77,7 @@ require_once '../tools/functions.php';  // Add this line
                                     <td><?= $arr['room_status'] ?></td>
                                     <td><?= $arr['remarks'] ?></td>
                                     <td class="text-nowrap">
-                                        <a href="" class="btn room-schedule">Schedule</a>
+                                        <a href="room-schedule" data-room="<?= $arr['room_name']?>" class="btn room-schedule">Schedule</a>
                                         <a href="" id="class-occupy" class="btn staff" data-classid="<?= $arr['class_id'] ?>" data-subjecttype="<?= $arr['subject_type'] ?>" data-classday="<?= $arr['class_day'] ?>"  data-status="<?= $arr['room_status']?>">Occupy</a>
                                     </td>
                                 </tr>

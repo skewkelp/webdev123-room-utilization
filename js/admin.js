@@ -152,7 +152,6 @@ $(document).ready(function () {
   }
 
 
-  
   //SIDE BAR NAVIGATION LINK BUTTON
   // Event listener for the roomlist-link
   $("#roomlist-link").on("click", function (e) {
@@ -367,6 +366,19 @@ $(document).ready(function () {
           pageLength: 10,
           ordering: false,
           drawCallback: function(){
+        
+            $(".room-schedule").on("click", function(e){
+              // e.preventDefault(); // Prevent default behavior
+              const newUrl = "room-schedule"; // Assuming href is "room-schedule"
+              let roomName= $(this).data('room'); 
+              setSelectedRoom(roomName);
+              // console.log("room:", roomName);
+              // window.location.href = newUrl;
+              window.location.assign(newUrl);
+              // window.history.pushState({}, '', newUrl);
+            }); // Trigger the roomschedule click event
+      
+
             $("#class-occupy").on("click", function (e) {
               e.preventDefault(); // Prevent default behavior
           
@@ -1841,6 +1853,12 @@ $(document).ready(function () {
           pageLength: 10,
           ordering: false,
           drawCallback: function() {
+            const semesterPK = $('#table-room-status').data('semester');
+            let splitSemester = semesterPK.split('|');
+            let semesterID = splitSemester[0];
+            let schoolYear = splitSemester[1];
+            // console.error("TEST VAR SEMESTER :", semesterPK);
+
             // First binding here
             $(".edit-class-details").off('click').on("click", function(e) {
               e.preventDefault();
@@ -1863,7 +1881,7 @@ $(document).ready(function () {
               const classId = $(this).data('classid');
               const subType = $(this).data('subtype');
 
-              deletingclassDetails(classId, subType).always(function() {
+              deletingclassDetails(classId, subType, semesterID, schoolYear).always(function() {
                   button.prop("disabled", false);
               });
             });
@@ -1947,7 +1965,7 @@ $(document).ready(function () {
         const roomstatusText= $('#dropdown-room-status');
         const roomstatusList = $('#dropdown-list-room-status');
         const roomstatusId = $('#hidden-room-status-id');
-        customDropdown(roomstatusText, roomstatusList, roomstatusId, "../fetch-data/fetch-subject.php", function(data, dropdownList) {
+        customDropdown(roomstatusText, roomstatusList, roomstatusId, "", function(data, dropdownList) {
           var statusArr = ['OCCUPIED', 'AVAILABLE'];
           
           $.each(statusArr, function (index, roomstatus) {
@@ -2018,8 +2036,14 @@ $(document).ready(function () {
         //FOR CLASS STATUS SCHEDULE TABLE--start
          // Call function to load modal form class status
         $("#add-room-status").on("click", function (e) {
-           e.preventDefault(); // Prevent default behavior
-          addroomStatus(); // Call function to add status
+          e.preventDefault(); // Prevent default behavior
+          const semesterPK = $(this).data('semester');
+          let splitSemester = semesterPK.split('|');
+          let semesterID = splitSemester[0];
+          let schoolYear = splitSemester[1];
+
+          // console.error("TEST VAR SEMESTER :", semesterPK);
+          addroomStatus(semesterID, schoolYear); // Call function to add status
         });
 
       
@@ -2027,7 +2051,13 @@ $(document).ready(function () {
           e.preventDefault();
           const button = $(this);
           button.prop("disabled", true);
-          
+  
+          const semesterPK = $('#table-room-status').data('semester');
+          let splitSemester = semesterPK.split('|');
+          let semesterID = splitSemester[0];
+          let schoolYear = splitSemester[1];
+          // console.error("TEST VAR SEMESTER :", semesterPK);
+
           $(".edit-room-status").off('click').on("click", function(e){
             e.preventDefault();
             const button = $(this);
@@ -2037,7 +2067,7 @@ $(document).ready(function () {
             const subType = $(this).data('subjecttype');
             const classDay = $(this).data('classday');
 
-            editroomStatus(classId, subType, classDay).always(function(){
+            editroomStatus(classId, subType, classDay, semesterID, schoolYear).always(function(){
               button.prop("disabled", false);
             });
           });
@@ -2070,7 +2100,7 @@ $(document).ready(function () {
             const subType = $(this).data('subjecttype');
             const classDay = $(this).data('classday');
 
-            deleteconfirmationStatus(classId, subType, classDay).always(function(){
+            deleteconfirmationStatus(classId, subType, classDay, semesterID, schoolYear).always(function(){
               button.prop("disabled", false);
             });
           });
@@ -2875,7 +2905,7 @@ $(document).ready(function () {
   }
 
   //load modal delete class details
-  function deletingclassDetails(classId, subType){
+  function deletingclassDetails(classId, subType, semesterID, schoolYear){
     return $.ajax({
       type: "GET", // Use GET request
       url: "../admin/class-detail-modals/deleting-class-details.html?v=" + new Date().getTime(), // URL to get product data
@@ -2889,7 +2919,7 @@ $(document).ready(function () {
         const modal = $('#staticBackdrop');
         
         $.ajax({
-          url: `../fetch-data/fetch-class-detail.php?classId=${classId}&subType=${subType}`,
+          url: `../fetch-data/fetch-class-detail.php?classId=${classId}&subType=${subType}&semesterID=${semesterID}&schoolYear=${schoolYear}`,
           dataType: "json",
           success: function(data) {
             console.log('Fetched data:', data.class_id, data.subtype_id); // For debugging
@@ -2897,6 +2927,10 @@ $(document).ready(function () {
             $('#hidden-class-id').val(data.class_id);
             //Fetch class subject id
             $('#hidden-subtype-id').val(data.subtype_id);
+            //Fetch class id from query
+            $('#semester-id').val(data.semester_id);
+            //Fetch class subject id
+            $('#school-year').val(data.school_year);
           },
           error: function(xhr, status, error) {
             alert("Error fetching status record!");
@@ -2944,6 +2978,12 @@ $(document).ready(function () {
           $("#form-delete")[0].reset(); // Reset the form
           // Optionally, reload page to show new entry
           viewroomStatus();
+        }else{
+          console.error("Error deleting data on delete-class=details.php:", response.message);
+          alert("Failed to delete class details!");
+          $("#staticBackdrop").modal("hide");
+          $("#form-delete")[0].reset(); // Reset the form
+          viewroomStatus();
         }
       },
       error: function(xhr, status, error) {
@@ -2957,7 +2997,12 @@ $(document).ready(function () {
 
   //CLASS STATUS || ROOM STATUS FUNCTION
   //load modal add room status
-  function addroomStatus() {
+  function addroomStatus(semesterID = null, schoolYear = null) {
+    if(semesterID !== null && schoolYear !==null){
+      var classUrl = `../fetch-data/fetch-classes.php?semesterID=${semesterID}&schoolYear=${schoolYear}`;
+    }else{
+      var classUrl = `../fetch-data/fetch-classes.php`;
+    }
     $.ajax({
       type: "GET", // Use GET request
       url: "../admin/room-status-modals/add-room-status.html?v=" + new Date().getTime(), // URL for add product view
@@ -2973,7 +3018,7 @@ $(document).ready(function () {
         const classText = $('#dropdown-class-id');
         const classId = $('#hidden-class-id');
         const classList = $('#dropdown-list-class-id');
-        customDropdown(classText, classList, classId, "../fetch-data/fetch-classes.php", function(data, dropdownList) {
+        customDropdown(classText, classList, classId, classUrl, function(data, dropdownList) {
           $.each(data, function (index, classes) {
             dropdownList.append(
               $("<div>", {
@@ -3196,7 +3241,8 @@ $(document).ready(function () {
   }
 
   //load modal edit class status
-  function editroomStatus(classID, subType, classDay){
+  function editroomStatus(classID, subType, classDay, semesterID = null, schoolYear = null){
+    
     return $.ajax({
       type: "GET", // Use GET request
       url: "../admin/room-status-modals/edit-room-status.php?v=" + new Date().getTime(), // URL to get product data
@@ -3249,12 +3295,18 @@ $(document).ready(function () {
 
         });
         
+        if(semesterID !== null && schoolYear !==null){
+          var classUrl = `../fetch-data/fetch-classes.php?semesterID=${semesterID}&schoolYear=${schoolYear}`;
+        }else{
+          var classUrl = `../fetch-data/fetch-classes.php`;
+        }
+
         //DROP DOWN FOR CLASS ID
         const classText = $('#dropdown-class-id');
         const classId = $('#hidden-class-id');
         const classList = $('#dropdown-list-class-id');
 
-        customDropdown(classText, classList, classId, "../fetch-data/fetch-classes.php", function(data, dropdownList) {
+        customDropdown(classText, classList, classId, classUrl, function(data, dropdownList) {
           $.each(data, function (index, classes) {
             dropdownList.append(
               $("<div>", {
@@ -3388,7 +3440,7 @@ $(document).ready(function () {
   }
 
   //Load modal delete class status
-  function deleteconfirmationStatus(classID, subType, classDay){
+  function deleteconfirmationStatus(classID, subType, classDay, semesterID, schoolYear){
     return $.ajax({
       type: "GET", // Use GET request
       url: "../admin/room-status-modals/delete-confirmation-status.html?v=" + new Date().getTime(), // URL to get product data
@@ -3402,7 +3454,7 @@ $(document).ready(function () {
         const modal = $('#staticBackdrop');
         
         $.ajax({
-          url: `../fetch-data/fetch-room-status.php?classID=${classID}&subType=${subType}&classDay=${classDay}`,
+          url: `../fetch-data/fetch-room-status.php?classID=${classID}&subType=${subType}&classDay=${classDay}&semesterID=${semesterID}&schoolYear=${schoolYear}`,
           dataType: "json",
           success: function(data) {
             console.log('Fetched data:', data); // For debugging
@@ -3412,6 +3464,10 @@ $(document).ready(function () {
             $("#subject-type").val(data.subject_type);
             //Fetch-class-day
             $("#class-day").val(data.class_day);
+            //Fetch-semester-id
+            $("#semester-id").val(data.semester);
+            //Fetch-school-year
+            $("#school-year").val(data.school_year);
             
           },
           error: function(xhr, status, error) {
@@ -3459,7 +3515,15 @@ $(document).ready(function () {
           $("#form-delete")[0].reset(); // Reset the form
           // Optionally, reload roomlist to show new entry
           viewroomStatus();
+        }else{
+          console.error("Error deleting data on delete-room-status.php:", response.message);
+          alert("Failed to delete class details!");
+          $("#staticBackdrop").modal("hide");
+          $("#form-delete")[0].reset(); // Reset the form
+          viewroomStatus();
         }
+
+        
       },
       error: function(xhr, status, error) {
         alert("Failed to delete class status schedule!");
