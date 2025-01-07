@@ -361,7 +361,11 @@ require_once '../tools/functions.php';  // Add this line
                                     $i = 1;
                                     $array3 = $roomObj->showAllStatus();
                                     
+                                    $condition = false;
                                     foreach ($array3 as $arr) {
+                                        if ($arr['room_status'] == 'AVAILABLE'){ 
+                                            $condition = true;
+                                        }
                                 ?>
                                     <tr>
                                         <td><?= $i ?></td>
@@ -377,7 +381,8 @@ require_once '../tools/functions.php';  // Add this line
                                         <td><?= $arr['remarks'] ?></td>
                                         <td class="text-nowrap">
                                             <a href="" class="btn room-schedule">Schedule</a>
-                                            <a href="" class="btn staff room-status" data-classid="<?= $arr['class_id'] ?>" data-classday="<?= $arr['class_day'] ?>" data-subjecttype="<?= $arr['subject_type'] ?>">Occupy</a>
+                                            <a href="" class="btn staff room-status" data-classid="<?= $arr['class_id'] ?>" data-classday="<?= $arr['class_day'] ?>" data-subjecttype="<?= $arr['subject_type'] ?>" data-condition="<?= $condition ?>">Occupy</a>
+                                            
                                             <?php if (hasPermission('admin')): ?>
                                                 <a href="" class="btn admin edit-room-status" data-classid="<?= $arr['class_id'] ?>" data-classday="<?= $arr['class_day'] ?>" data-subjecttype="<?= $arr['subject_type'] ?>">Edit</a>
                                                 <a href="" class="btn admin delete delete-room-status" data-classid="<?= $arr['class_id'] ?>" data-classday="<?= $arr['class_day'] ?>" data-subjecttype="<?= $arr['subject_type'] ?>">X</a>

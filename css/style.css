@@ -319,6 +319,35 @@ td{
   color: var(--ct-table-color-state, var(--ct-table-color-type, var(--ct-table-color)));
 }
 
+#alert-card{
+  display: none; 
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--brand-color); 
+  opacity: 0.75;
+  z-index: 5000; /* On top of other elements */
+  transition: opacity 0.5s ease; /* Transition for opacity */
+}
+
+#customAlert {  
+  display: none; /* Hidden by default */
+  position: fixed;
+  /* top: 20%; */
+  bottom: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background-color: red; /* Red */
+  color: white;
+  border-radius: 5px;
+  z-index: 9999; /* On top of other elements */
+  opacity: 1;
+  transition: opacity 0.5s ease; /* Transition for opacity */
+}
 
 .wrapper {
   width: 100%;

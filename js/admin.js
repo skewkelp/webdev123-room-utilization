@@ -2083,6 +2083,21 @@ $(document).ready(function () {
             e.preventDefault();
             const button = $(this);
             button.prop("disabled", true);
+
+            const classId = $(this).data('classid');
+            const subType = $(this).data('subjecttype');
+            const classDay = $(this).data('classday');
+            const condition = $(this).data('condition');
+
+            if(condition == false){
+              // alert("This room is Occupied");
+              showAlert('This room is Occupied!',2000);
+
+            }else{
+              // alert("Button Clicked");
+              showAlert('Button Clicked', 2000);
+            }
+
           });
 
           $(".display-status").on("click", function(e){
@@ -3648,5 +3663,35 @@ $(document).ready(function () {
                          .replace(/&gt;/g, '>')
                          .replace(/&amp;/g, '&')
                          .replace(tagRegex, (match) => match);
+  }
+
+  function showAlert(message, duration) {
+    const alertBox = document.getElementById('customAlert');
+    const alertCard = document.getElementById('alert-card');
+
+    alertBox.textContent = message; // Set the alert message
+    alertBox.style.display = 'block'; // Show the alert
+    alertCard.style.display = 'block'; // Show the alert
+
+    // Trigger a reflow to restart the transition
+    alertCard.offsetHeight; // This forces a reflow
+    alertBox.offsetHeight; // This forces a reflow
+
+    // Set the opacity to 1 to fade in
+    alertCard.style.opacity = '0.75';
+    alertBox.style.opacity = '1';
+
+    // Set a timer to hide the alert after the specified duration
+    setTimeout(() => {
+      // Fade out the alert
+      alertCard.style.opacity = '0';
+      alertBox.style.opacity = '0';
+
+      // After the fade-out, hide the elements
+      setTimeout(() => {
+          alertBox.style.display = 'none'; // Hide the alert
+          alertCard.style.display = 'none'; // Hide the alert
+      }, 500); // Match this duration with the CSS transition duration
+  }, duration);
   }
 });

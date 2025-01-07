@@ -13,6 +13,11 @@ require_once '../includes/_head.php';
 ?>
 
 <body id="dashboard">
+    
+    <div id="alert-card">
+        <div id="customAlert"></div>
+    </div>
+
     <div class="wrapper">
         <?php
         require_once '../includes/_topnav.php';
