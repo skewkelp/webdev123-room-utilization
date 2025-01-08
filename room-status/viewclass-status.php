@@ -337,7 +337,7 @@ require_once '../tools/functions.php';  // Add this line
                         <?php endif; ?>
                     </div>
                     <div class="table-responsive">
-                        <table id="table-room-status" class="table table-centered table-nowrap table-hover mb-0" data-semester="<?= $semester_PK?>">
+                        <table id="table-room-status" class="table table-centered table-nowrap table-hover mb-0" data-userid="<?= $_SESSION['account']['account_id'] ?>" data-name="<?= $_SESSION['account']['last_name'] . ', ' . $_SESSION['account']['first_name'] ?>" data-semester="<?= $semester_PK?>">
                             <thead>
                                 <tr>
                                     <th>ID</th>
@@ -378,10 +378,10 @@ require_once '../tools/functions.php';  // Add this line
                                         <td><?= $arr['end_time'] ?></td>
                                         <td><?= $arr['faculty_name'] ?></td>
                                         <td><?= $arr['room_status'] ?></td>
-                                        <td><?= $arr['remarks'] ?></td>
+                                        <td class="check-remarks" data-endtime="<?= $arr['end_time'] ?>" data-remarks="<?= $arr['remarks'] ?>"><?= $arr['remarks'] ?></td>
                                         <td class="text-nowrap">
                                             <a href="" class="btn room-schedule">Schedule</a>
-                                            <a href="" class="btn staff room-status" data-classid="<?= $arr['class_id'] ?>" data-classday="<?= $arr['class_day'] ?>" data-subjecttype="<?= $arr['subject_type'] ?>" data-condition="<?= $condition ?>">Occupy</a>
+                                            <a href="" class="btn staff room-status" data-classid="<?= $arr['class_id'] ?>" data-classday="<?= $arr['class_day'] ?>" data-subjecttype="<?= $arr['subject_type'] ?>" data-status="<?= $arr['room_status']?>" data-faculty="<?= $arr['faculty_name'] ?>" data-condition="<?= $condition ?>">Occupy</a>
                                             
                                             <?php if (hasPermission('admin')): ?>
                                                 <a href="" class="btn admin edit-room-status" data-classid="<?= $arr['class_id'] ?>" data-classday="<?= $arr['class_day'] ?>" data-subjecttype="<?= $arr['subject_type'] ?>">Edit</a>

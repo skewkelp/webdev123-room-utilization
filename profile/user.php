@@ -89,6 +89,5 @@ try {
     </div>
 
     <?php require_once '../includes/_footer.php'; ?>
-    <script src="../js/profile.js"></script>
 </body>
 </html>

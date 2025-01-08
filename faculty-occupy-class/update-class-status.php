@@ -6,15 +6,16 @@ require_once('../classes/room-status.class.php');
 
 
 
-$remarks = '';
+$remarks = $og_remarks = $occupying_remarks = $class_list = '';
+$occupying_remarksErr = $class_listErr = '';
 $class_id = $subject_type = $class_day = $room_status = $new_room_status = '';
 $roomObj = new RoomStatus();
 
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
+    
+    $og_remarks = clean_input($_POST['og-remark']);
 
-    $remarks = clean_input($_POST['remark']);
-
-    if(!empty($_GET['classID']) && !empty($_GET['subType']) && !empty($_GET['classDay']) && !empty($_GET['roomStatus'])){
+    if(!empty($_GET['classID']) && !empty($_GET['subType']) && !empty($_GET['classDay']) && !empty($_GET['roomStatus']) ){
         $class_id = clean_input($_GET['classID']);
         $subject_type = clean_input($_GET['subType']);
         $class_day = clean_input($_GET['classDay']);
@@ -31,6 +32,30 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     }
 
 
+    if(empty($_POST['class-list']) && empty($_POST['class-text'])){
+        $class_listErr = 'Selection of Class from the list is required.';
+    }else if(!empty($_POST['class-text']) && empty($_POST['class-list'])){
+        $class_listErr = 'Select a class from the dropdown.';
+    }
+
+
+    
+    if(empty($_POST['appended-remark'])){
+        $occupying_remarksErr = 'Selection of Class from the list is required.';
+    }else{
+        $occupying_remarks = clean_input($_POST['appended-remark']);
+        $remarks = $occupying_remarks . '::Original Remarks: ' . $og_remarks;
+
+        // $generalErr = '<strong>ERROR FORM!</strong><br> Remarks:<br>' . $remarks;
+
+        // echo json_encode([
+        //     'status' => 'error',
+        //     'generalErr' => $generalErr
+        // ]);
+        // exit;
+    }
+
+    
     if($room_status == 'OCCUPIED'){
         $new_room_status = 'AVAILABLE';
     }else if($room_status == 'AVAILABLE'){
@@ -45,13 +70,17 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
         exit;
     }
 
-    // $generalErr = '<strong>ERROR FORM!</strong><br> ROOM STATUS EMPTY : remarks:' . $remarks;
 
-    // echo json_encode([
-    //     'status' => 'error',
-    //     'generalErr' => $generalErr
-    // ]);
-    // exit;
+    // If there are validation errors, return them as JSON
+    if( !empty($class_listErr) || !empty($occupying_roomErr)){
+        echo json_encode([
+            'status' => 'error',
+            'class_listErr' => $class_listErr,
+            'occupying_remarksErr' => $occupying_remarksErr
+            
+        ]);
+        exit;
+    }
 
     // $generalErr = '<strong>ERROR FORM!</strong><br> primary key are empty: classID' . $class_id .  ' subType:' . $subject_type . ' classDay:' . $class_day . ' roomStatus:' . $room_status;
 

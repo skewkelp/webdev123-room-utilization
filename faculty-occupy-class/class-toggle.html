@@ -1,0 +1,59 @@
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Temporary Occupy:</h5>
+          <button type="button" class="btn-close modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div> 
+        <form action="" method="post" id="form-edit">
+          <div class="modal-body">
+     
+            <div style="padding-left: 8px;">
+                <div class="mb-2">
+                    <div class="alert alert-danger d-none" id="general-error"></div>
+                </div>
+
+                <div class="mb-2">
+                    <P class="form-label">My Class List:</P>
+                    <div class="dropdown">
+                        <input type="text" class="form-control dropdown-input" placeholder="Select or search..." id="dropdown-class" name="class-text">
+                        <input type="hidden" id="class-list" name="class-list"/>
+                        <div class="dropdown-list" id="dropdown-list-class">
+                            <!-- Options will be populated here by JavaScript -->
+                        </div>
+                        <div class="invalid-feedback"></div>
+
+                    </div>
+                </div>
+
+                <br>
+                <hr>
+
+                <div class="mb-2">
+                    <label for="temporary" class="form-label">Temporary Occupying Remark</label>
+                    <textarea class="form-control" id="temporary" placeholder="Select from your class list ..." maxlength="500"></textarea>
+                    <input type="hidden" id="appended-remark" name="appended-remark"/>
+                    <div class="invalid-feedback"></div>
+                </div>
+
+                <br>
+
+                <div class="mb-2">
+                    <label for="remark" class="form-label">Main Faculty Remarks</label>
+                    <textarea class="form-control" id="remark" name="remark" placeholder="Reason..." maxlength="500"></textarea>
+                    <input type="hidden" id="og-remark" name="og-remark"/>
+                    <div class="invalid-feedback"></div>
+                </div>
+                
+            </div>
+
+          </div>
+          <div class="modal-footer">
+              <button type="button" id="close" class="btn btn-secondary modal-close" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" id="submit" class="btn btn-primary brand-bg-color">Confirm</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>

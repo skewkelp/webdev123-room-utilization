@@ -92,7 +92,6 @@ require_once '../tools/functions.php';  // Add this line
         </div>
     </div>
     
-    <script src="../js/profile.js"></script>
 </div>
        
     

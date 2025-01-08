@@ -355,7 +355,7 @@ $(document).ready(function () {
   function viewmyclassSchedule(){
     $.ajax({
       type: "GET", // Use GET request
-      url: "../faculty-class-list/my-class-schedule.php", // URL for the analytics view
+      url: "../faculty-class-list/my-class-schedule.php?v=" + new Date().getTime(), // URL for the analytics view
       dataType: "html", // Expect HTML response
       success: function (response) {
         $(".content-page").html(response); // Load the response into the content area
@@ -366,7 +366,7 @@ $(document).ready(function () {
           pageLength: 10,
           ordering: false,
           drawCallback: function(){
-        
+            
             $(".room-schedule").on("click", function(e){
               // e.preventDefault(); // Prevent default behavior
               const newUrl = "room-schedule"; // Assuming href is "room-schedule"
@@ -410,10 +410,16 @@ $(document).ready(function () {
 
   }
 
-  function changingclassStatus(classID, subType, classDay, roomStatus){
+  function changingclassStatus(classID, subType, classDay, roomStatus, faculty = null, userID, semesterID, schoolYear){
+    if(faculty !== null){
+      var classToggleUrl = "../faculty-occupy-class/class-toggle.html?v=";
+    }else{
+      var classToggleUrl = "../faculty-class-list/class-toggle.html?v=";
+    }
+
     $.ajax({
       type: "GET", // Use GET request
-      url: "../faculty-class-list/class-toggle.html?v=" + new Date().getTime(), // URL for add product view
+      url: classToggleUrl + new Date().getTime(), 
       dataType: "html", // Expect HTML response
       success: function (view) {
         $(".modal-container").html(view); // Load the modal view
@@ -421,6 +427,71 @@ $(document).ready(function () {
         
         const modal = $('#staticBackdrop');
         console.log("Modal content loaded successfully.");
+
+        if(faculty !== null){
+          // Then fetch and populate the data
+          $.ajax({
+            url: `../fetch-data/fetch-room-status.php?classID=${classID}&subType=${subType}&classDay=${classDay}`,
+            dataType: "json",
+            success: function(data){
+              console.log('remarks:', data.remarks);
+              // Populate remark
+              $('#remark').val(data.remarks);
+              $('#og-remark').val(data.remarks);
+              $('#remark').prop('disabled', true);
+              $('#temporary').prop('disabled', true);
+          
+            },
+            error: function(xhr, status, error) {
+              alert("Failed to fetch remark record!");
+              console.error("Error fetching data on fetch-room-status.php:", status, error);
+            }
+          });
+
+          const classText = $('#dropdown-class');
+          const classId = $('#class-list');
+          const classList = $('#dropdown-list-class');
+          const classUrl = `../fetch-data/fetch-facultyclasses.php?semesterID=${semesterID}&schoolYear=${schoolYear}&userID=${userID}`;
+          customDropdown(classText, classList, classId, classUrl, function(data, dropdownList) {
+            //clear previous option
+            dropdownList.empty();
+            // Check if data is empty
+            if (data.length === 0) {
+              $("#general-error").removeClass("d-none").html(cleanInput("<strong>NO HANDLED CLASS!</strong><br>Please contact an admin to add a class to your class list."));
+              $('#dropdown-class').addClass("text-danger");
+              $('#dropdown-class').addClass("is-invalid");
+              $('#dropdown-class').val("Pls close the form");
+              $('#submit').hide(); // Hide submit button
+              return; // Exit if no data
+            }
+            // Remove error class if there are classes
+            $('#submit').show(); // Show submit button
+            $("#general-error").addClass("d-none");
+            $('#dropdown-class').removeClass("text-danger");
+            $('#dropdown-class').removeClass("is-invalid");
+            
+            $.each(data, function(index, cList) {
+              dropdownList.append(
+                $('<div>', {
+                  text: `${cList.class_id}|${cList.subject_code}(${cList.subject_type})|${cList.section_name}|${cList.faculty_name}`, // Displayed text
+                  'data-value': `${cList.class_id}|${cList.subject_type}` // Value attribute
+                })
+              );
+            });
+          });
+
+          // Event listener for when a class is selected
+          $('#class-list').on('change', function (e) {
+            e.preventDefault();
+            const classValue = $('#dropdown-class').val();
+            // Assuming you have a temporary input field or variable
+            $("#temporary").val("Temporary Occupied: " + classValue); 
+            $("#appended-remark").val("Temporary Occupied: " + classValue); 
+            // Call any function you want to execute after selection, e.g., closeModal()
+          });
+
+        }
+
 
         $(".modal-close").on("click", function (e) {
           e.preventDefault();
@@ -430,7 +501,7 @@ $(document).ready(function () {
         // Event listener for the add product form submission
         $("#form-edit").on("submit", function (e) {
           e.preventDefault(); // Prevent default form submission
-          updateClassStatus(classID, subType, classDay, roomStatus); // Call function to save product
+          updateClassStatus(classID, subType, classDay, roomStatus, faculty); // Call function to save product
         });
         
       },
@@ -441,14 +512,28 @@ $(document).ready(function () {
     });
   }
 
-  function updateClassStatus(classID, subType, classDay, roomStatus){
+  function updateClassStatus(classID, subType, classDay, roomStatus, faculty = null, varState = null, remark){
+    if(faculty !== null){
+      var updateUrl = `../faculty-occupy-class/update-class-status.php?classID=${classID}&subType=${subType}&classDay=${classDay}&roomStatus=${roomStatus}`;
+    }else if(varState !== null && varState == 'Temporary Occupying'){//AUTO UPDATE
+      // console.log("ERROR FREE !");
+      // return;
+      if(!classID && !subType && !classDay && !roomStatus && !remark){
+        console.error("Error, data empty:", classID, subType, classDay, roomStatus);
+        return;
+      }
+      var updateUrl = `../faculty-occupy-class/auto-reupdate.php?classID=${classID}&subType=${subType}&classDay=${classDay}&roomStatus=${roomStatus}&remark=${remark}`;
+    }else{
+      var updateUrl = `../faculty-class-list/update-class-status.php?classID=${classID}&subType=${subType}&classDay=${classDay}&roomStatus=${roomStatus}`;
+    }
+
     // Debug what's being sent
     const formEdit = serializeForm("#form-edit");
     console.log("Sending data:", formEdit);
     
     $.ajax({
       type: "POST", // Use POST request
-      url: `../faculty-class-list/update-class-status.php?classID=${classID}&subType=${subType}&classDay=${classDay}&roomStatus=${roomStatus}`, // URL for saving room
+      url: updateUrl, // URL for saving room
       data: formEdit, // Serialize the form data for submission
       dataType: "json", // Expect JSON response
       success: function (response) {
@@ -456,21 +541,50 @@ $(document).ready(function () {
         if (response.status === "success") {
           alert('User list updated successfully.');
           // On success, hide modal and reset form
-          $("#staticBackdrop").modal("hide");
-          $("#form-edit")[0].reset(); // Reset the form
-          // Optionally, reload page to show new entry
-          viewmyclassSchedule();
+          if(faculty !== null){
+            $("#staticBackdrop").modal("hide");
+            $("#form-edit")[0].reset(); // Reset the form
+            // Optionally, reload page to show new entry
+            viewroomStatus();
+          }else if(varState !== null && varState == 'Temporary Occupying'){
+            viewroomStatus();
+          }else{
+            $("#staticBackdrop").modal("hide");
+            $("#form-edit")[0].reset(); // Reset the form
+            // Optionally, reload page to show new entry
+            viewmyclassSchedule();
+          }
+
+          
         }else if (response.status === "error") {
           if (response.generalErr){
             $("#general-error").removeClass("d-none").html(cleanInput(response.generalErr));
           } else {
             $("#general-error").addClass("d-none");
           }
+
+          if (response.class_listErr){
+            $("#class-list").addClass("is-invalid");
+            $("#class-list").siblings(".invalid-feedback").text(response.class_listErr).show();
+          } else {
+            $("#class-list").removeClass("is-invalid");
+          }
+
+          if(response.occupying_remarksErr){
+            $("#appended-remark").addClass("is-invalid");
+            $("#appended-remark").siblings(".invalid-feedback").html(cleanInput(response.occupying_remarksErr)).show();
+          } else {
+            $("#appended-remark").removeClass("is-invalid");
+          }
+
+        }else if (response.status === "ERROR") {
+          alert("Failed to auto update class status!");
+          console.error("Error Auto updating data on auto-reupdate.php:", status, error);
         }
       },
       error: function (xhr, status, error) {
-        alert("Failed to update user profile!");
-        console.error("Error updating data on update-profile.php:", status, error);
+        alert("Failed to update class status!");
+        console.error("Error updating data on update-class-status.php:", status, error);
       }
     });
 
@@ -1923,7 +2037,7 @@ $(document).ready(function () {
 
               // Update the table body with the fetched data
               $("#table-room-status tbody").html(response);
-              
+
             },
             error: function(xhr, status, error) {
               alert("Failed to fetch class status based on day filter!");
@@ -1931,6 +2045,12 @@ $(document).ready(function () {
             }
           });
         }
+
+        //setup to check if table row has the right remark condition
+        $('#day').on("change", function(){
+          setupInterval();
+        });
+
 
         //Custom Dropdown ROOM FORM
         const roomText = $('#dropdown-room-name');
@@ -2046,7 +2166,21 @@ $(document).ready(function () {
           addroomStatus(semesterID, schoolYear); // Call function to add status
         });
 
+        function checkCondition() {
+          // Replace this with your actual condition
+          const conditionMet = true; // Example condition
       
+          if (conditionMet) {
+              $('#table-room-status').trigger('condition');
+          }
+        }
+
+      
+        $('#table-room-status').on('condition', function(e) {
+          // Your logic here when the condition event is triggered
+          console.log('Custom condition event triggered');
+        });
+
         $('#table-room-status').on('click', '.room-schedule, .room-status, .edit-room-status, .display-status, .delete-room-status', function(e) {
           e.preventDefault();
           const button = $(this);
@@ -2057,6 +2191,9 @@ $(document).ready(function () {
           let semesterID = splitSemester[0];
           let schoolYear = splitSemester[1];
           // console.error("TEST VAR SEMESTER :", semesterPK);
+          const userName = $('#table-room-status').data('name');
+          const userID = $('#table-room-status').data('userid');
+
 
           $(".edit-room-status").off('click').on("click", function(e){
             e.preventDefault();
@@ -2084,28 +2221,37 @@ $(document).ready(function () {
             const button = $(this);
             button.prop("disabled", true);
 
-            const classId = $(this).data('classid');
+            const classID = $(this).data('classid');
             const subType = $(this).data('subjecttype');
             const classDay = $(this).data('classday');
             const condition = $(this).data('condition');
+            const roomStatus = $(this).data('status');
+            const facultyAssigned = $(this).data('faculty');
+            
 
-            if(condition == false){
+            if(condition == false && facultyAssigned !== userName){
               // alert("This room is Occupied");
               showAlert('This room is Occupied!',2000);
 
             }else{
-              // alert("Button Clicked");
-              showAlert('Button Clicked', 2000);
+              console.log("Faculty:", facultyAssigned, " User:", userName);
+
+              if(facultyAssigned == userName){
+                // showAlert('Button Clicked', 2000);
+                console.log("Data:", classID, subType, classDay, roomStatus);
+                // Call the AJAX function
+                changingclassStatus(classID, subType, classDay, roomStatus);
+              }else{
+                // showAlert('Button Clicked', 2000);
+                console.log("Data:", classID, subType, classDay, roomStatus, userName, userID, semesterID, schoolYear);
+                // Call the AJAX function
+                changingclassStatus(classID, subType, classDay, roomStatus, userName, userID,semesterID, schoolYear);
+              }
             }
 
           });
 
-          $(".display-status").on("click", function(e){
-            e.preventDefault();
-            const button = $(this);
-            button.prop("disabled", true);
-          });
-
+        
           $(".delete-room-status").on("click", function(e){
             e.preventDefault();
             const button = $(this);
@@ -2120,6 +2266,7 @@ $(document).ready(function () {
             });
           });
         });
+
 
         function initializeDataTable() {
           if ($.fn.DataTable.isDataTable('#table-room-status')) {
@@ -2199,10 +2346,118 @@ $(document).ready(function () {
         
         }
 
+        var foundTarget = false; // Flag to track if the target is found
+        var arrTimer = [];
+        var timerIndex = 0;
+
+        function checkCondition(classID, subType, roomStatus, varState, endTime, classDay){
+          let checkerTimeInterval = arrTimer[timerIndex];
+          checkerTimeInterval = setInterval(() => checkTimeAndRun(classID, subType, roomStatus, varState, endTime, classDay), 3000);
+          
+          timerIndex++;
+        }
+
+        // Function to get the current local time in HH:MM:SS format
+        function getCurrentLocalTime() {
+          const now = new Date();
+          const hours = now.getHours().toString().padStart(2, '0');
+          const minutes = now.getMinutes().toString().padStart(2, '0');
+          const seconds = now.getSeconds().toString().padStart(2, '0');
+          
+          return `${hours}:${minutes}:${seconds}`;
+        }
+
+        // Function to compare current time with specific end time and day
+        function checkTimeAndRun(classID, subType, roomStatus, varState, endTime, targetDay) {
+          const fetchedTime = getCurrentLocalTime();
+          let checkTime = fetchedTime.split(':');
+          let currentTime = `${checkTime[0]}:${checkTime[1]}`;
+          
+          let checkEndTime = endTime.split(':');
+          let targetEndTime = `${checkEndTime[0]}:${checkEndTime[1]}`;
+
+          const now = new Date();   
+          // Get the current day and the target day
+          const currentDay = now.toISOString().split('T')[0]; // Format YYYY-MM-DD
+          const isSameDay = currentDay === targetDay; // Compare with target date
+          
+          let faculty = null;
+          // Compare times and run something if they match
+          if (isSameDay && currentTime === targetEndTime) {
+            console.log("Running the function because the time and date match!");
+            return updateClassStatus(classID, subType, targetDay, roomStatus, faculty, varState);
+          
+          } else {
+            // console.log("No match. Current time:", currentTime);
+            // return null;
+          }
+        }
+
+        // Example usage
+        // const endTime = "12:15:30"; // Example end time from your database
+        // const targetDate = "2023-01-07"; // Example target date in YYYY-MM-DD format
+
+        
+
+        function conditionRemarks() {
+          const targetPhrase = 'Temporary Occupied:';
+          let countFoundTarget = 0;
+          // Iterate over each .check-remarks element
+          $('.check-remarks').each(function() {
+            let checkRemarks = $(this).data('remarks'); // Get remarks for the current element
+            
+            // Check if checkRemarks exists and includes the target phrase
+            if (checkRemarks && checkRemarks.includes(targetPhrase)){
+              console.log("Current Remarks:", checkRemarks);
+
+              const classID = $('.room-status').data('classid');
+              const classDay = $('.room-status').data('classday');
+              const subType = $('.room-status').data('subjecttype');
+              const roomStatus = $('.room-status').data('status');
+              const varState = 'Temporary Occupying';
+              const endTime = $('.check-remarks').data('endtime');
+              
+              console.log("Data:", classID, subType, classDay, roomStatus, varState, endTime);
+              // showAlert('TARGET FOUND!', 2000);
+              countFoundTarget++;
+              // Optionally stop checking if you only want to alert once
+              checkCondition(classID, subType, roomStatus, varState, endTime, classDay);
+            }
+          });
+          console.log("count:", countFoundTarget);
+
+          if(countFoundTarget > 0){
+            stopInterval();
+          }else if(countFoundTarget == 0){
+            // showAlert('Target Not Found!', 2000);
+            stopInterval(); // Stop the interval if target not found
+          }
+      
+        }
+        
+        var remarkCheckerInterval;
+        //setup interval to check conditionRemarks
+        function setupInterval() {
+          remarkCheckerInterval = setInterval(conditionRemarks, 3000);
+        }
+
+        // Function to stop the interval
+        function stopInterval() {
+          clearInterval(remarkCheckerInterval); // Clear the specific interval
+          console.log("Interval stopped.");
+      }
+
+        //Initial 
+        setupInterval();
+
         // initialize
         setCurrentDay();
         selectDay.addEventListener("change", fetchDayData);
         initializeDataTable();
+
+
+
+
         //--end
 
       },
@@ -3587,6 +3842,9 @@ $(document).ready(function () {
           optionText.val(selectedText);
           optionId.val(selectedValue);
           dropdownList.hide();
+
+          // Trigger change event on class-id when an option is selected
+          optionId.trigger('change'); // This will call the change event listener
         });
 
         // Function to filter items
@@ -3619,7 +3877,13 @@ $(document).ready(function () {
         alert('Failed to fetch data.');
       }
     });
-  } 
+  }
+
+  // function handleSelection(selectedText, selectedValue) {
+  //   // Perform the desired action here
+  //   console.log(`Selected: ${selectedText}, Value: ${selectedValue}`);
+  //   // You can add more actions based on the selection
+  // }
 
   // function cleanInput(input) {
   //   // Trim whitespace from both sides of the string

@@ -34,11 +34,11 @@
                 <td>{$arr['end_time']}</td>
                 <td>{$arr['faculty_name']}</td>
                 <td>{$arr['room_status']}</td>
-                <td>{$arr['remarks']}</td>
+                <td class='check-remarks' data-endtime='{$arr['end_time']}' data-remarks='{$arr['remarks']}'>{$arr['remarks']}</td>
 
                 <td class='text-nowrap'>
                     <a href='' class='btn room-schedule'>Schedule</a>
-                    <a href='' class='btn staff room-status' data-classid='{$arr['class_id']}' data-classday='{$arr['class_day']}' data-subjecttype='{$arr['subject_type']}' data-condition='{$condition}'>Occupy</a>
+                    <a href='' class='btn staff room-status' data-classid='{$arr['class_id']}' data-classday='{$arr['class_day']}' data-subjecttype='{$arr['subject_type']}' data-faculty= '{$arr['faculty_name']}' data-status='{$arr['room_status']}'  data-condition='{$condition}'>Occupy</a>
                     <?php if (hasPermission('admin')): ?>
                         <a href='' class='btn admin edit-room-status' data-classid='{$arr['class_id']}' data-classday='{$arr['class_day']}' data-subjecttype='{$arr['subject_type']}'>Edit</a>
                         <a href='' class='btn admin display-status'>Display</a>

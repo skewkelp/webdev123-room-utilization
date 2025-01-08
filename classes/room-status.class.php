@@ -180,12 +180,13 @@ class RoomStatus{
 
     function insertLog(){
         $sql = "INSERT INTO class_logs
-        (class_id, subject_type, `day`) 
-        VALUES (:class_id, :subject_type, :day_id)";
+        (class_id, subject_type, `day`, remarks) 
+        VALUES (:class_id, :subject_type, :day_id, :remarks)";
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':class_id', $this->class_id);
         $query->bindParam(':subject_type', $this->subject_type);
         $query->bindParam(':day_id', $this->day_id);
+        $query->bindParam(':remarks', $this->remarks);
        
         if ($query->execute()) {
             return true;
@@ -859,7 +860,7 @@ class RoomStatus{
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':classID', $classID);
         $query->bindParam(':subType', $subType);
-        
+
         if($semesterID !== null && $schoolYear !== null){
             $query->bindParam(':semesterID', $semesterID);
             $query->bindParam(':schoolYear', $schoolYear);

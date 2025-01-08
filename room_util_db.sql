@@ -104,6 +104,7 @@ CREATE TABLE `class_logs` (
   `class_id` varchar(10) NOT NULL,
   `subject_type` varchar(10) NOT NULL,
   `day` enum('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday') NOT NULL,
+  `remarks` varchar(500) NOT NULL,
   `time_modified` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -135,7 +136,7 @@ CREATE TABLE `class_schedule` (
   `start_time` time NOT NULL,
   `end_time` time NOT NULL,
   `status` enum('OCCUPIED','AVAILABLE') NOT NULL,
-  `remarks` varchar(255) NOT NULL,
+  `remarks` varchar(500) NOT NULL,
   `room_code` varchar(10) NOT NULL,
   `room_no` int(11) NOT NULL,
   `time_created` timestamp NOT NULL DEFAULT current_timestamp(),

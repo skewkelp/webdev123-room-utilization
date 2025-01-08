@@ -220,6 +220,11 @@ body{
   font-size: var(--main-font-size);
 }
 
+/* custom target style, index set up before the navbar and dropdown */
+.active>.page-link, .page-link.active{
+  z-index: 0 !important;  
+}
+
 .btn{
   text-wrap: nowrap;
   color: var(--btn-color);
